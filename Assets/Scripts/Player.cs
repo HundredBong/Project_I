@@ -19,11 +19,18 @@ public class Player : MonoBehaviour
     private float distanceToTarget;
     private Animator anim;
     private bool isAttacking;
-    private bool isChasing;
+    private bool isFlip;
+
+    private Vector3 originScale;
+    private Vector3 flipScale;
 
     private void Awake()
     {
         anim = GetComponent<Animator>();
+
+        originScale = transform.localScale;
+        Vector3 flipVector = new Vector3(-1f, 1f, 1f);
+        flipScale = Vector3.Scale(transform.localScale, flipVector);
     }
 
     private void Update()
@@ -34,6 +41,7 @@ public class Player : MonoBehaviour
         {
             Move();
             TryStartAttack();
+            FlipSprite();
             Debug.Log(targetEnemy.name);
         }
         else
@@ -51,11 +59,12 @@ public class Player : MonoBehaviour
             if (targetEnemy.isDead == false)
             {
                 distanceToTarget = Vector3.Distance(transform.position, targetEnemy.transform.position);
+
                 return;
             }
         }
 
-        //타겟이 없거나 죽었을 경우 새 타겟을 찾음 찾기
+        //타겟이 없거나 죽었을 경우 새 타겟 찾기
         float shortest = float.MaxValue;
         Enemy closestEnemy = null;
 
@@ -81,8 +90,8 @@ public class Player : MonoBehaviour
         {
             distanceToTarget = Mathf.Infinity;
         }
-    }
 
+    }
 
     private void Move()
     {
@@ -126,6 +135,23 @@ public class Player : MonoBehaviour
             {
                 isAttacking = false;
             }
+        }
+    }
+
+    private void FlipSprite()
+    {
+        isFlip = targetEnemy.transform.position.x - transform.position.x > 0 ? true : false;
+
+        transform.localScale = isFlip ? flipScale : originScale;
+    }
+
+    private void OnDrawGizmos()
+    {
+        //저는 기즈모 그리는게 제일 재밌어요 
+        if (targetEnemy != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(transform.position, targetEnemy.transform.position);
         }
     }
 }
