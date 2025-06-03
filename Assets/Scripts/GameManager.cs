@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public List<Enemy> enemyList = new List<Enemy>();
-
     public static GameManager Instance { get; private set; }
+
+    public Player player;
+    public List<Enemy> enemyList = new List<Enemy>();
 
     private void Awake()
     {
@@ -18,5 +19,12 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
+        //------------------------------------------------------------
+
+        if (player == null)
+        {
+            player = FindObjectOfType<Player>();
+        }
     }
 }

@@ -6,9 +6,10 @@ public class Enemy : MonoBehaviour
 {
     public EnemyType type;
 
-    public float health;
-    public float maxHealth;
-    public bool isDead;
+    public float health = 3;
+    public float maxHealth = 3;
+    public bool isDead = false;
+    public float expValue = 1f;
 
     private void OnEnable()
     {
@@ -38,6 +39,8 @@ public class Enemy : MonoBehaviour
 
     private void Die()
     {
+        GameManager.Instance.player.GetExp(expValue);
+
         gameObject.SetActive(false);
         GameManager.Instance.enemyList.Remove(this);
         isDead = true;
