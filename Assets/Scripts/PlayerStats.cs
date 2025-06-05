@@ -144,6 +144,11 @@ public class PlayerStats : MonoBehaviour
         };
     }
 
+    public Dictionary<StatType, int> GetAllLevels()
+    {
+        return statLevels;
+    }
+
     public void RecalculateStats()
     {
         //damage = 5 + damageLevel * 3; //기본 공격력 5 + 레벨당 3씩 추가
