@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -26,5 +27,17 @@ public class GameManager : MonoBehaviour
         {
             player = FindObjectOfType<Player>();
         }
+    }
+
+    [ContextMenu("KR")]
+    public void TestKR()
+    {
+        LanguageManager.SetLanguage(LanguageType.KR);
+    }
+
+    [ContextMenu("EN")]
+    public void TestEN()
+    {
+        LanguageManager.SetLanguage(LanguageType.EN);
     }
 }
