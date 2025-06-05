@@ -4,24 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [Header("이동 및 공격")]
-    public float moveSpeed = 5;
-    public float attackSpeed = 1;
-    public float attackRange = 2;
-    public float chaseRange = 10;
-
-    [Header("체력")]
-    public float health;
-    public float maxHealth = 10;
-
-    [Header("대미지")]
-    public float damage = 1;
-    public float critical = 0;
-
-    [Header("레벨")]
-    public int level = 1;
-    public float currentExp = 0;
-    public float maxExp = 10;
+    //이 클래스는 변수에 따라 행동만 하도록, 변수는 다른곳에서 불러서 쓰기
 
     //Private Field, 원활한 디버그를 위해 public으로 해놓고 추후 전부 private으로 바꿀거임
     public Enemy targetEnemy;
@@ -30,12 +13,14 @@ public class Player : MonoBehaviour
     public bool isAttacking;
     public bool isFlip;
 
+    private PlayerStats stats;
     private Vector3 originScale;
     private Vector3 flipScale;
 
     private void Awake()
     {
         anim = GetComponent<Animator>();
+        stats = GetComponent<PlayerStats>();
 
         originScale = transform.localScale;
         Vector3 flipVector = new Vector3(-1f, 1f, 1f);
@@ -44,7 +29,7 @@ public class Player : MonoBehaviour
 
     private void OnEnable()
     {
-        health = maxHealth;
+        stats.health = stats.maxHealth;
     }
 
     private void Update()
@@ -115,9 +100,9 @@ public class Player : MonoBehaviour
     private void Move()
     {
         //타겟까지의 거리가 추적 가능한 거리라면, 적이 충분히 가깝다면 이동함
-        if (distanceToTarget <= chaseRange && isAttacking == false)
+        if (distanceToTarget <= stats.chaseRange && isAttacking == false)
         {
-            transform.position = Vector3.MoveTowards(transform.position, targetEnemy.transform.position, moveSpeed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, targetEnemy.transform.position, stats.moveSpeed * Time.deltaTime);
             anim.SetBool("1_Move", true);
         }
         else
@@ -128,12 +113,12 @@ public class Player : MonoBehaviour
     private void TryTeleport()
     {
         //타겟까지의 거리가 추적가능한 범위를 벗어나면 
-        if (distanceToTarget > chaseRange)
+        if (distanceToTarget > stats.chaseRange)
         {
             //텔레포트 위치는 타겟과의 거리 유지하면서 앞쪽으로
             Vector3 direction = (targetEnemy.transform.position - transform.position).normalized;
             //TODO : 계산식이 무슨 뜻인지 알아보기
-            Vector3 newPos = targetEnemy.transform.position - direction * attackRange * 0.8f; //공격범위 조금 안쪽
+            Vector3 newPos = targetEnemy.transform.position - direction * stats.attackRange * 0.8f; //공격범위 조금 안쪽
 
             transform.position = newPos;
             Debug.Log("텔레포트");
@@ -142,11 +127,11 @@ public class Player : MonoBehaviour
     private void TryStartAttack()
     {
         //타겟까지의 거리가 공격 가능한 범위 내라면
-        if (distanceToTarget <= attackRange && targetEnemy.isDead == false)
+        if (distanceToTarget <= stats.attackRange && targetEnemy.isDead == false)
         {
             isAttacking = true;
             anim.SetBool("2_Attack", true);
-            anim.speed = anim.speed = attackSpeed;
+            anim.speed = anim.speed = stats.attackSpeed;
         }
         else
         {
@@ -163,7 +148,7 @@ public class Player : MonoBehaviour
 
         if (targetEnemy != null && !targetEnemy.isDead)
         {
-            targetEnemy.TakeDamage(damage);
+            targetEnemy.TakeDamage(stats.damage);
 
             if (targetEnemy.isDead)
             {
@@ -181,23 +166,7 @@ public class Player : MonoBehaviour
 
     public void GetExp(float exp)
     {
-        currentExp += exp;
-        Debug.Log($"{exp} 경험치 획득함, {currentExp} / {maxExp}");
-        while (currentExp >= maxExp)
-        {
-            currentExp -= maxExp;
-            LevelUp();
-        }
-    }
-
-    private void LevelUp()
-    {
-        level++;
-        maxExp *= 1.2f;
-
-        Debug.Log($"레벨 상승함, 현재 레벨 : {level}");
-        //추후 대미지를 올리던, 체력을 올리던, 스탯을 주던 여기에 작성
-
+        stats.GetExp(exp);
 
     }
 
