@@ -31,6 +31,8 @@ public class PlayerStats : MonoBehaviour
 
     //스탯 레벨
     private Dictionary<StatType, int> statLevels = new Dictionary<StatType, int>();
+
+    //StatPanelUI 업데이트용 액션
     public event Action OnStatChanged;
 
     private void Awake()
@@ -64,12 +66,28 @@ public class PlayerStats : MonoBehaviour
 
     public void AddStat(StatType statType, int amount)
     {
-        //올리려는 레벨이 현재 스탯포인트보다 크면 리턴
-        if (statPoint < amount) { return; }
-        //현재 스탯이 최대 스탯을 넘은 상태라면 리턴
-        if (GetStatMax(statType) <= GetStat(statType)) { Debug.Log("최대 레벨에 도달함"); return; }
-        //현재 레벨이 290, 맥스 레벨이 300인 상황에서 amont로 100이 들어왔을 경우 예외처리 필요함.
-        statPoint -= amount;
+        int currentLevel = GetStat(statType);
+        int maxLevel = GetMaxStat(statType);
+        //강화하려는 수치가 최대 레벨까지 남은 양과 보유한 스탯 포인트중 더 낮은 쪽까지만 사용하게 함.
+        int possibleAmount = Mathf.Min(amount, maxLevel - currentLevel, statPoint); //최대까지 남은 수치 계산
+
+        //현재 레벨 280, 최대 300, 선택 수치100, 스탯포인트 200이면 실제 강화량 20
+
+        Debug.Log($"[강화] {statType} + {possibleAmount} (선택값: {amount})");
+
+        //이미 최대치까지 강화된 상태라면
+        if (possibleAmount <= 0)
+        {
+            Debug.Log("강화할 수 없음");
+            return;
+        }
+
+        ////올리려는 레벨이 현재 스탯포인트보다 크면 리턴
+        //if (statPoint < amount) { return; }
+        ////현재 스탯이 최대 스탯을 넘은 상태라면 리턴
+        //if (GetMaxStat(statType) <= GetStat(statType)) { Debug.Log("최대 레벨에 도달함"); return; }
+        ////현재 레벨이 290, 맥스 레벨이 300인 상황에서 amont로 100이 들어왔을 경우 예외처리 필요함.
+        //statPoint -= amount;
 
         //switch (statType)
         //{
@@ -90,12 +108,12 @@ public class PlayerStats : MonoBehaviour
         //        break;
         //}
 
-        statLevels[statType] += amount;
+        statPoint -= possibleAmount;
+        statLevels[statType] += possibleAmount;
 
         RecalculateStats();
-
-        OnStatChanged?.Invoke();    
-}
+        OnStatChanged?.Invoke();
+    }
 
     public int GetStat(StatType statType)
     {
@@ -113,7 +131,7 @@ public class PlayerStats : MonoBehaviour
         return statLevels.TryGetValue(statType, out int level) ? level : 0;
     }
 
-    public int GetStatMax(StatType statType)
+    public int GetMaxStat(StatType statType)
     {
         return statType switch
         {
