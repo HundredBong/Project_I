@@ -34,12 +34,21 @@ public class PlayerStats : MonoBehaviour
 
     //StatPanelUI 업데이트용 액션
     public event Action OnStatChanged;
+    [HideInInspector] public List<StatsSlotUI> slotUIs = new List<StatsSlotUI>();
 
     private void Awake()
     {
         foreach (StatType type in Enum.GetValues(typeof(StatType)))
         {
             statLevels[type] = 0;
+        }
+    }
+
+    private void Update()
+    {
+        foreach (var item in statLevels)
+        {
+            Debug.Log($"{item.Key}, {item.Value}");
         }
     }
 
@@ -144,10 +153,8 @@ public class PlayerStats : MonoBehaviour
         };
     }
 
-    public Dictionary<StatType, int> GetAllLevels()
-    {
-        return statLevels;
-    }
+
+
 
     public void RecalculateStats()
     {
@@ -162,5 +169,27 @@ public class PlayerStats : MonoBehaviour
         critical = GetStat(StatType.Critical) * 0.01f;
         attackSpeed = 1 + GetStat(StatType.AttackSpeed) * 0.01f;
         moveSpeed = 5 + GetStat(StatType.MoveSpeed) * 0.01f;
+    }
+    public Dictionary<StatType, int> GetAllLevels()
+    {
+        return statLevels;
+    }
+
+    public void SetAllLevels(Dictionary<StatType, int> newLevels)
+    {
+        foreach (KeyValuePair<StatType, int> pair in newLevels)
+        {
+            statLevels[pair.Key] = pair.Value;
+        }
+        RecalculateStats();
+        RefreshAllStatUIs();
+    }
+
+    private void RefreshAllStatUIs()
+    {
+        foreach (StatsSlotUI ui in slotUIs)
+        {
+            ui.Refresh();
+        }
     }
 }

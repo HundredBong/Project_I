@@ -73,5 +73,11 @@ public class GameManager : MonoBehaviour
         statSaver.SaveStatLevels(stats.GetAllLevels());
     }
 
+    [ContextMenu("스탯 불러오기")]
+    public void LoadStats()
+    {
+        statSaver.LoadStatLevels(stats.SetAllLevels);
+    }
+
     #endregion
 }

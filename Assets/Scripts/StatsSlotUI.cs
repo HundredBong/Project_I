@@ -31,9 +31,8 @@ public class StatsSlotUI : MonoBehaviour
     public void Init(PlayerStats stats, StatType type)
     {
         this.stats = stats;
+        stats.slotUIs.Add(this);
         this.statType = type;
-
-
 
         Refresh();
         addButton.onClick.AddListener(OnClickAdd);
