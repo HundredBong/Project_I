@@ -36,6 +36,8 @@ public class StatsSlotUI : MonoBehaviour
 
         Refresh();
         addButton.onClick.AddListener(OnClickAdd);
+
+        Debug.Log("[StatsSlotUI] 초기화 완료됨");
     }
 
     public void Refresh()
@@ -45,10 +47,16 @@ public class StatsSlotUI : MonoBehaviour
         ////하지만 내가 원하는건 현재 대미지나 최대 체력이 아닌 별개의 int형 현재 레벨을 가져오고, 그 레벨만큼 대미지 공식이나 최대 체력 공식에 더하는 방식임.
         //statMaxText.text = $"Max Lv. {stats.GetMaxStat(statType)}";
         ////현재는 전부 25000으로 해놓았지만, 추후 switch expression으로 리팩토링 필요함.
-
-        statNameText.text = DataManager.Instance.statNames[statType].GetLocalizedText();
-        statValueText.text = $"Lv. {stats.GetStat(statType)}";
-        statMaxText.text = $"Max Lv. {stats.GetMaxStat(statType)}";
+        try
+        {
+            statNameText.text = DataManager.Instance.statNames[statType].GetLocalizedText();
+            statValueText.text = $"Lv. {stats.GetStat(statType)}";
+            statMaxText.text = $"Max Lv. {stats.GetMaxStat(statType)}";
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[StatSlotUI] Refresh중 예외 발생함, {e.Message}");
+        }
     }
 
     private void OnClickAdd()

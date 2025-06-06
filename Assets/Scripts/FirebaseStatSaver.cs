@@ -10,7 +10,7 @@ public class FirebaseStatSaver : MonoBehaviour
 {
     //파이어베이스 실시간 데이터베이스에서 최상위 경로
     private DatabaseReference dbRef;
-    private bool isReady = false;
+    [HideInInspector] public bool isReady = false;
 
     private void Start()
     {
@@ -81,13 +81,21 @@ public class FirebaseStatSaver : MonoBehaviour
                     }
                 }
 
-                Debug.Log("[FirebaseStatSaver] 스탯 불러오기 성공");
-                onLoaded?.Invoke(loadedStats);
+                MainThreadDispatcher(loadedStats, onLoaded);
+
+                //Debug.Log("[FirebaseStatSaver] 스탯 불러오기 성공");
+                //onLoaded?.Invoke(loadedStats);
             }
             else
             {
                 Debug.LogError("[FirebaseStatSaver] 스탯 불러오기 실패 : " + task.Exception);
             }
         });
+    }
+
+    private async void MainThreadDispatcher(Dictionary<StatType, int> loadedStats, Action<Dictionary<StatType, int>> onLoaded)
+    {
+        await Cysharp.Threading.Tasks.UniTask.SwitchToMainThread();
+        onLoaded?.Invoke(loadedStats);
     }
 }

@@ -34,7 +34,7 @@ public class PlayerStats : MonoBehaviour
 
     //StatPanelUI 업데이트용 액션
     public event Action OnStatChanged;
-    [HideInInspector] public List<StatsSlotUI> slotUIs = new List<StatsSlotUI>();
+    public List<StatsSlotUI> slotUIs = new List<StatsSlotUI>();
 
     private void Awake()
     {
@@ -44,18 +44,10 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        foreach (var item in statLevels)
-        {
-            Debug.Log($"{item.Key}, {item.Value}");
-        }
-    }
-
     public void GetExp(float exp)
     {
         currentExp += exp;
-        Debug.Log($"{exp} 경험치 획득함, {currentExp} / {maxExp}");
+        //Debug.Log($"{exp} 경험치 획득함, {currentExp} / {maxExp}");
         while (currentExp >= maxExp)
         {
             currentExp -= maxExp;
@@ -187,9 +179,13 @@ public class PlayerStats : MonoBehaviour
 
     private void RefreshAllStatUIs()
     {
+        Debug.Log($"[PlayerStats] RefreshAllStatUIs 실행됨, UI개수 : {slotUIs.Count}");
+
         foreach (StatsSlotUI ui in slotUIs)
         {
+            Debug.Log("foreach");
             ui.Refresh();
+            Debug.Log($"[PlayerStats] 새로고침한 UI : {ui.name}");
         }
     }
 }

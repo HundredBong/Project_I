@@ -42,7 +42,7 @@ public class Player : MonoBehaviour
             Move();
             TryStartAttack();
             FlipSprite();
-            Debug.Log(targetEnemy.name);
+            //Debug.Log(targetEnemy.name);
         }
         else
         {
@@ -121,7 +121,7 @@ public class Player : MonoBehaviour
             Vector3 newPos = targetEnemy.transform.position - direction * stats.attackRange * 0.8f; //공격범위 조금 안쪽
 
             transform.position = newPos;
-            Debug.Log("텔레포트");
+            //Debug.Log("텔레포트");
         }
     }
     private void TryStartAttack()

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 
 public class GameManager : MonoBehaviour
 {
@@ -54,6 +55,22 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+
+    private async void Start()
+    {
+        //statSaver, stats가 null인동안 대기함
+        await UniTask.WaitUntil(() => statSaver != null && stats != null && statSaver.gameObject.activeInHierarchy);
+        Debug.Log("[GameManager] FirebaseStatSaver, PlayerStats 초기화 됨");
+
+        //statSaver 초기화 완료까지 대기함
+        await UniTask.WaitUntil(() => statSaver.isReady);
+        Debug.Log("[GameManager] FirebaseStatSaver가 파이어베이스에 연결됨");
+
+        //불러오기 실행
+        statSaver.LoadStatLevels(stats.SetAllLevels);
+        Debug.Log("[GameManager] 스탯 불러오기 실행됨");
+    }
+
     #region ContextMenu
     [ContextMenu("KR")]
     public void TestKR()

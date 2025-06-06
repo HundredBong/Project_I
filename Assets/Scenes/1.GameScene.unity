@@ -26688,7 +26688,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1333783326}
-  - component: {fileID: 1333783325}
+  - component: {fileID: 1333783327}
   m_Layer: 0
   m_Name: Firebase
   m_TagString: Untagged
@@ -26696,18 +26696,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1333783325
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1333783324}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c2d3047b0c4dd9a4d90ba55b5938398b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &1333783326
 Transform:
   m_ObjectHideFlags: 0
@@ -26723,6 +26711,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1333783327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1333783324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f431a1de568402a479de9419365cad21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1341684454
 GameObject:
   m_ObjectHideFlags: 0
@@ -34710,6 +34710,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 7839719640084920751}
+  stats: {fileID: 7839719640084920752}
+  statSaver: {fileID: 1333783327}
   enemyList: []
 --- !u!1 &1744575511
 GameObject:
@@ -47368,6 +47370,7 @@ MonoBehaviour:
   currentExp: 0
   maxExp: 10
   statPoint: 50
+  slotUIs: []
 --- !u!4 &7867030270435134394
 Transform:
   m_ObjectHideFlags: 0
@@ -48519,6 +48522,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 1741753384}
   - {fileID: 303024434}
+  - {fileID: 1333783326}
   - {fileID: 519420032}
   - {fileID: 1789550201}
   - {fileID: 619394802}
@@ -48534,4 +48538,3 @@ SceneRoots:
   - {fileID: 577508719}
   - {fileID: 1101453360}
   - {fileID: 1209822803}
-  - {fileID: 1333783326}
