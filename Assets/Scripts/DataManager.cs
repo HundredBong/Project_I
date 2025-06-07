@@ -10,6 +10,7 @@ public class DataManager : MonoBehaviour
     public static DataManager Instance { get; private set; }
 
     public Dictionary<StatType, StatNameData> statNames = new Dictionary<StatType, StatNameData>();
+    public Dictionary<HUDType, HUDNameData> HUDNames = new Dictionary<HUDType, HUDNameData>();
 
     private void Awake()
     {
@@ -24,12 +25,13 @@ public class DataManager : MonoBehaviour
         //-------------------------------------------
 
         LoadStatName();
+        LoadHUDName();
     }
 
     private void LoadStatName()
     {
         TextAsset statNamaData = Resources.Load<TextAsset>("CSV/StatNameData");
-        string[] lines = statNamaData.text.Split('\n');  
+        string[] lines = statNamaData.text.Split('\n');
 
         //i를 1로 해야 헤더 안읽어옴, CSV라인 갯수만큼 쉼표단위로 읽어옴
         for (int i = 1; i < lines.Length; i++)
@@ -46,7 +48,7 @@ public class DataManager : MonoBehaviour
 
             //데이터 초기화
             StatNameData data = new StatNameData
-            { 
+            {
                 KR = tokens[1].Trim(),
                 EN = tokens[2].Trim()
             };
@@ -54,10 +56,50 @@ public class DataManager : MonoBehaviour
             statNames[key] = data;
         }
     }
+
+    private void LoadHUDName()
+    {
+        TextAsset HUDNameData = Resources.Load<TextAsset>("CSV/HUDNameData");
+        string[] lines = HUDNameData.text.Split('\n');
+
+        for (int i = 1; i < lines.Length; i++)
+        {
+            if (string.IsNullOrEmpty(lines[i])) { continue; }
+
+            string[] tokens = lines[i].Split(',');
+
+            HUDType key = Enum.Parse<HUDType>(tokens[0].Trim());
+
+            HUDNameData data = new HUDNameData
+            {
+                KR= tokens[1].Trim(),
+                EN = tokens[2].Trim()
+            };
+
+            HUDNames[key] = data;
+        }
+    }
 }
 
 [System.Serializable]
 public class StatNameData
+{
+    public string KR;
+    public string EN;
+
+    public string GetLocalizedText()
+    {
+        return LanguageManager.CurrentLanguage switch
+        {
+            LanguageType.KR => KR,
+            LanguageType.EN => EN,
+            _ => KR
+        };
+    }
+}
+
+[System.Serializable]
+public class HUDNameData
 {
     public string KR;
     public string EN;

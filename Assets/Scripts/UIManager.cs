@@ -51,6 +51,8 @@ public class UIManager : MonoBehaviour
     {
         //페이지는 항상 하나만 떠야함. 
 
+        Debug.Log("페이지 오픈");
+
         if (currentPage != null)
         {
             currentPage.Close();

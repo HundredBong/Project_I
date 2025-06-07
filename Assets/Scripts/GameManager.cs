@@ -93,29 +93,57 @@ public class GameManager : MonoBehaviour
     }
 
     #region ContextMenu
-    [ContextMenu("KR")]
-    public void TestKR()
+    //[ContextMenu("KR")]
+    //public void TestKR()
+    //{
+    //    LanguageManager.SetLanguage(LanguageType.KR);
+    //}
+
+    //[ContextMenu("EN")]
+    //public void TestEN()
+    //{
+    //    LanguageManager.SetLanguage(LanguageType.EN);
+    //}
+
+    //[ContextMenu("Ω∫≈» ¿˙¿Â")]
+    //public void SaveStats()
+    //{
+    //    statSaver.SaveStatLevels(stats.GetAllLevels());
+    //}
+
+    //[ContextMenu("Ω∫≈» ∫“∑Øø¿±‚")]
+    //public void LoadStats()
+    //{
+    //    statSaver.LoadStatLevels(stats.SetAllLevels);
+    //}
+
+    #endregion
+
+#if UNITY_EDITOR
+    [MenuItem("Tools/Set Language KR")]
+    public static void SetLanguageKR()
     {
         LanguageManager.SetLanguage(LanguageType.KR);
     }
 
-    [ContextMenu("EN")]
-    public void TestEN()
+    [MenuItem("Tools/Set Language EN")]
+    public static void SetLanguageEN()
     {
         LanguageManager.SetLanguage(LanguageType.EN);
     }
 
-    [ContextMenu("Ω∫≈» ¿˙¿Â")]
-    public void SaveStats()
+    [MenuItem("Tools/Save Stats")]
+    public static void SaveStats()
     {
-        statSaver.SaveStatLevels(stats.GetAllLevels());
+        Instance.statSaver.SaveStatLevels(Instance.stats.GetAllLevels());
     }
 
-    [ContextMenu("Ω∫≈» ∫“∑Øø¿±‚")]
-    public void LoadStats()
+    [MenuItem("Tools/Load Stats")]
+    public static void LoadStats()
     {
-        statSaver.LoadStatLevels(stats.SetAllLevels);
+        Instance.statSaver.LoadStatLevels(Instance.stats.SetAllLevels);
     }
-
-    #endregion
+#endif
 }
+
+
