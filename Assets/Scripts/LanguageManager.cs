@@ -11,6 +11,7 @@ public static class LanguageManager
         if (CurrentLanguage == newLanguage) { return; }
 
         CurrentLanguage = newLanguage;
+        LocalSetting.SaveLanguage(newLanguage.ToString());
         OnLanguageChanged?.Invoke();
     }
 }

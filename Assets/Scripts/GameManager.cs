@@ -30,6 +30,8 @@ public class GameManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
+        LanguageManager.SetLanguage(System.Enum.Parse<LanguageType>(LocalSetting.LoadLanguage()));
+
         FindComponent();
     }
 
@@ -85,6 +87,11 @@ public class GameManager : MonoBehaviour
         //불러오기 실행
         statSaver.LoadStatLevels(stats.SetAllLevels);
         Debug.Log("[GameManager] 스탯 불러오기 실행됨");
+
+        stats.OnStatChanged += () =>
+        {
+            statSaver.RequestSave(stats.GetAllLevels());
+        };
     }
 
     private bool CheckReadyForLoad()

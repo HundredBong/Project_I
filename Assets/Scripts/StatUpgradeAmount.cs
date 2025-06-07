@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class StatUpgradeAmount
 {
-    public static int statSlotAmount = 1;
+    public static int statSlotAmount = LocalSetting.LoadUpgradeAmount();
 
     private static List<StatUpgradeAmountSelector> selectors = new List<StatUpgradeAmountSelector>();
 

@@ -1,16 +1,17 @@
 using Firebase.Database;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Firebase;
-using System.Threading.Tasks;
 using System;
 using Cysharp.Threading.Tasks;
+using System.Threading;
 
 public class FirebaseStatSaver : MonoBehaviour
 {
     //파이어베이스 실시간 데이터베이스에서 최상위 경로
     private DatabaseReference dbRef;
+
+    //취소 신호를 만들어주는 컨트롤러 객체, async작업을 중간에 취소할 수 있게 해줌. 
+    private CancellationTokenSource saveCts;
 
     private async void Start()
     {
@@ -18,6 +19,34 @@ public class FirebaseStatSaver : MonoBehaviour
 
         dbRef = FirebaseDatabase.DefaultInstance.RootReference;
         Debug.Log("[FirebaseStatSaver] 파이어베이스 초기화 됨");
+    }
+
+    public void RequestSave(Dictionary<StatType, int> statLevels)
+    {
+        if (saveCts != null)
+        {
+            saveCts.Cancel();
+        }
+        saveCts = new CancellationTokenSource();
+
+        //비동기 함수를 기다릴 필요 없으니 Forget선언
+        DelayAndSave(statLevels, saveCts.Token).Forget();
+    }
+
+    private async UniTaskVoid DelayAndSave(Dictionary<StatType, int> statLevels, CancellationToken token)
+    {
+        //CancellationToken은 이 작업이 취소되었는지를 체크하는 신호장치
+        try
+        {
+            //2초간 대기하다가 token에서 취소 신호가 오면 중단
+            await UniTask.Delay(TimeSpan.FromSeconds(2), cancellationToken: token);
+            SaveStatLevels(statLevels);
+        }
+        catch (OperationCanceledException)
+        {
+            //중간에 저장 요청이 또 들어오면 무시하기
+            Debug.Log("[FirebaseStatSaver] 저장 취소됨");
+        }
     }
 
     public void SaveStatLevels(Dictionary<StatType, int> statLevels)

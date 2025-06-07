@@ -32,10 +32,20 @@ public class StatUpgradeAmountSelector : MonoBehaviour
         button.onClick.RemoveListener(OnClick);
     }
 
+    private void Start()
+    {
+        if (amountValue == LocalSetting.LoadUpgradeAmount())
+        {
+            StatUpgradeAmount.statSlotAmount = amountValue;
+            StatUpgradeAmount.NotifyChange();
+        }
+    }
+
     public void OnClick()
     {
         StatUpgradeAmount.statSlotAmount = amountValue;
         StatUpgradeAmount.NotifyChange();
+        LocalSetting.SaveUpgradeAmount(amountValue);
     }
 
     public void UpdateColor()
