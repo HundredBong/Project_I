@@ -55,6 +55,7 @@ public class StatsSlotUI : MonoBehaviour
         }
         catch (System.Exception e)
         {
+            //비동기에서 돌리니까 에러났음, 스탯세이버에서 원래 스레드로 돌아온 뒤 실행하도록 해서 해결함
             Debug.LogError($"[StatSlotUI] Refresh중 예외 발생함, {e.Message}");
         }
     }

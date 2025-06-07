@@ -10,10 +10,14 @@ public class GameManager : MonoBehaviour
 
     public Player player;
     public PlayerStats stats;
+    public FirebaseInit firebaseInit;
     public FirebaseStatSaver statSaver;
 
     [Space(20)]
     public List<Enemy> enemyList = new List<Enemy>();
+
+    [Space(20)]
+    public bool firebaseReady = false;
 
     private void Awake()
     {
@@ -26,8 +30,11 @@ public class GameManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        //------------------------------------------------------------
+        FindComponent();
+    }
 
+    private void FindComponent()
+    {
         if (player == null)
         {
             player = FindObjectOfType<Player>();
@@ -54,21 +61,35 @@ public class GameManager : MonoBehaviour
                 Debug.LogError("[GameManager] FirebaseStatSaver 참조 설정 확인");
             }
         }
+
+        if (firebaseInit == null)
+        {
+            firebaseInit = FindObjectOfType<FirebaseInit>();
+            if (firebaseInit == null)
+            {
+                Debug.LogError("[GameManager] FirebaseInit 참조 설정 확인");
+            }
+        }
     }
 
     private async void Start()
     {
-        //statSaver, stats가 null인동안 대기함
-        await UniTask.WaitUntil(() => statSaver != null && stats != null && statSaver.gameObject.activeInHierarchy);
+        //각종 컴포넌트가 있는지 검사 및 대기
+        await UniTask.WaitUntil(() => CheckReadyForLoad());
         Debug.Log("[GameManager] FirebaseStatSaver, PlayerStats 초기화 됨");
 
-        //statSaver 초기화 완료까지 대기함
-        await UniTask.WaitUntil(() => statSaver.isReady);
+        //FirebaseInit에서 초기화 완료까지 대기함
+        await UniTask.WaitUntil(() => firebaseReady);
         Debug.Log("[GameManager] FirebaseStatSaver가 파이어베이스에 연결됨");
 
         //불러오기 실행
         statSaver.LoadStatLevels(stats.SetAllLevels);
         Debug.Log("[GameManager] 스탯 불러오기 실행됨");
+    }
+
+    private bool CheckReadyForLoad()
+    {
+        return statSaver != null && stats != null && firebaseInit != null && statSaver.gameObject.activeInHierarchy;
     }
 
     #region ContextMenu

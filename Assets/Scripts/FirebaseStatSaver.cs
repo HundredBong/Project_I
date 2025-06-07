@@ -5,29 +5,19 @@ using UnityEngine;
 using Firebase;
 using System.Threading.Tasks;
 using System;
+using Cysharp.Threading.Tasks;
 
 public class FirebaseStatSaver : MonoBehaviour
 {
     //파이어베이스 실시간 데이터베이스에서 최상위 경로
     private DatabaseReference dbRef;
-    [HideInInspector] public bool isReady = false;
 
-    private void Start()
+    private async void Start()
     {
-        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
-        {
-            if (task.Result == DependencyStatus.Available)
-            {
-                //현재 프로젝트와 연결된 기본 파이어베이스 인스턴스의 최상위 경로
-                dbRef = FirebaseDatabase.DefaultInstance.RootReference;
-                isReady = true;
-                Debug.Log("[FirebaseStatSaver] 파이어베이스 초기화 됨");
-            }
-            else
-            {
-                Debug.Log("[FirebaseStatSaver] 파이어베이스 초기화 실패");
-            }
-        });
+        await UniTask.WaitUntil(() => GameManager.Instance.firebaseReady);
+
+        dbRef = FirebaseDatabase.DefaultInstance.RootReference;
+        Debug.Log("[FirebaseStatSaver] 파이어베이스 초기화 됨");
     }
 
     public void SaveStatLevels(Dictionary<StatType, int> statLevels)
@@ -55,7 +45,7 @@ public class FirebaseStatSaver : MonoBehaviour
         }
     }
 
-    public void LoadStatLevels(System.Action<Dictionary<StatType, int>> onLoaded)
+    public void LoadStatLevels(Action<Dictionary<StatType, int>> onLoaded)
     {
         string userId = "test_user";
         string path = $"users/{userId}/stats";

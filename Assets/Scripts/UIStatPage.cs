@@ -1,19 +1,36 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class StatsPanelUI : MonoBehaviour
+public class UIStatPage : UIPage
 {
-    public PlayerStats playerStats;
-    public GameObject statSlotPrefab;
-    public Transform contentRoot;
+    [SerializeField] private Button openButton;
+    [SerializeField] private PlayerStats playerStats;
+    [SerializeField] private GameObject statSlotPrefab;
+    [SerializeField] private Transform contentRoot;
 
-    public TextMeshProUGUI levelText;
-    public TextMeshProUGUI statPointText;
+    [SerializeField] private TextMeshProUGUI levelText;
+    [SerializeField] private TextMeshProUGUI statPointText;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        if (openButton != null)
+        {
+            openButton.onClick.AddListener(() =>
+            {
+                UIManager.Instance.PageOpen<UIStatPage>();
+            });
+        }
+
+    }
 
     private void Start()
     {
+        //시작하면 타입에 맞게 패널 UI 알아서 생성해줌
         foreach (StatType type in System.Enum.GetValues(typeof(StatType)))
         {
             GameObject obj = Instantiate(statSlotPrefab, contentRoot);
