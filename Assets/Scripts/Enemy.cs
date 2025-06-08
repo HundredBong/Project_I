@@ -4,16 +4,18 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    [Header("기본 데이터")] 
+    [Header("기본 데이터")]
     public EnemyData data;
 
     [Header("전투 정보")]
-    public float health ;
-    public float maxHealth ;
+    public float health;
+    public float maxHealth;
     public bool isDead = false;
 
     [Header("보상")]
     public float expValue = 1f;
+
+    //[HideInInspector] public Enemy prefabReference;
 
     private void OnEnable()
     {
@@ -37,7 +39,7 @@ public class Enemy : MonoBehaviour
         health = maxHealth;
         isDead = false;
     }
-     
+
     private void Initialize()
     {
         maxHealth = data.maxHealth;

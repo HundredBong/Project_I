@@ -5,32 +5,41 @@ using UnityEngine;
 
 public class GenericPoolManager<T> : MonoBehaviour, IPoolManager<T> where T : Component
 {
-    private Dictionary<T, Stack<T>> pool = new Dictionary<T, Stack<T>>();
+    private Dictionary<GameObject, Stack<T>> pool = new Dictionary<GameObject, Stack<T>>();
 
-    public void Preload(T prefab, int count)
+    public void Preload(GameObject prefab, int count)
+    {
+        GameObject key = prefab.gameObject;
+
+        if (pool.ContainsKey(key) == false)
+        {
+            pool[key] = new Stack<T>();
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            GameObject obj = Instantiate(prefab, transform);
+            obj.SetActive(false);
+            T comp = obj.GetComponent<T>();
+            pool[prefab].Push(comp);
+        }
+    }
+
+    public T Get(GameObject prefab)
     {
         if (pool.ContainsKey(prefab) == false)
         {
             pool[prefab] = new Stack<T>();
         }
 
-        for (int i = 0; i < count; i++)
+        if (pool[prefab].Count > 0)
         {
-            T instance = Instantiate(prefab, transform);
-            instance.gameObject.SetActive(false);
-            pool[prefab].Push(instance);
-        }
-    }
-
-    public T Get(T prefab)
-    {
-        if (pool.TryGetValue(prefab, out var stack) && stack.Count > 0)
-        {
-            return Activate(stack.Pop());
+            return Activate(pool[prefab].Pop());
         }
 
-        T instance = Instantiate(prefab, transform);
-        return Activate(instance);
+        GameObject obj = Instantiate(prefab, transform);
+        T comp = obj.GetComponent<T>();
+        return Activate(comp);
     }
 
     private T Activate(T instance)
@@ -45,14 +54,17 @@ public class GenericPoolManager<T> : MonoBehaviour, IPoolManager<T> where T : Co
 
         foreach (var kvp in pool)
         {
-            if (instance.name.Contains(kvp.Key.name))
+            string prefabName = kvp.Key.name;
+            string instanceName = instance.gameObject.name.Replace("(Clone)", "").Trim();
+
+            if (instanceName == prefabName)
             {
                 kvp.Value.Push(instance);
                 return;
             }
         }
 
-        Debug.LogWarning($"[GenericPoolManage] 반환 실패함, {instance.name}");
+        Debug.LogWarning($"[GenericPoolManager] 반환 실패함, {instance.name}");
     }
 
     public void Return(T instance, float t)
