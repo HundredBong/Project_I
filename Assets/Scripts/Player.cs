@@ -7,11 +7,11 @@ public class Player : MonoBehaviour
     //이 클래스는 변수에 따라 행동만 하도록, 변수는 다른곳에서 불러서 쓰기
 
     //Private Field, 원활한 디버그를 위해 public으로 해놓고 추후 전부 private으로 바꿀거임
-    public Enemy targetEnemy;
-    public float distanceToTarget;
-    public Animator anim;
-    public bool isAttacking;
-    public bool isFlip;
+    private Enemy targetEnemy;
+    private float distanceToTarget;
+    private Animator anim;
+    private bool isAttacking;
+    private bool isFlip;
 
     private PlayerStats stats;
     private Vector3 originScale;
