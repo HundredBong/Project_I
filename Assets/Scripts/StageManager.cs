@@ -12,7 +12,7 @@ public class StageManager : MonoBehaviour
     [SerializeField] private int killCount = 0; //현재 킬 카운트
     [SerializeField] private int totalKillsRequired = 100; //스테이지 클리어에 필요한 킬 카운트
     [SerializeField] private int spawnBatchSize = 20; //재생성할 몬스터 수
-    [SerializeField] private int initalSpawnCount = 40; //초기 몬스터 수
+    [SerializeField] private int initalSpawnCount = 30; //초기 몬스터 수
 
     public bool isLoop; //현재 스테이지를 반복할 것인지에 대한 변수
 
@@ -44,7 +44,7 @@ public class StageManager : MonoBehaviour
     {
         killCount = 0;
 
-        SpawnManager.Instance.SpawnEnemiesForStage(GetStageType(currentStage), initalSpawnCount);
+         SpawnManager.Instance.SpawnEnemiesForStage(GetStageType(currentStage), initalSpawnCount);
     }
 
 
@@ -70,7 +70,7 @@ public class StageManager : MonoBehaviour
 
     private void OnStageClear()
     {
-        Debug.Log($"[StageManager] {currentStage}클리어 함");
+        Debug.Log($"[StageManager] {currentStage}스테이지 클리어");
 
         if (isLoop == false)
         {
@@ -93,7 +93,7 @@ public class StageManager : MonoBehaviour
         killCount = 0;
 
         GameManager.Instance.player.transform.position = Vector3.zero;
-
+        ObjectPoolManager.Instance.enemyPool.ReturnAllEnemies();
         SpawnManager.Instance.SpawnEnemiesForStage(GetStageType(currentStage), initalSpawnCount);
     }
 

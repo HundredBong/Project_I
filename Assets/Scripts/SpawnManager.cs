@@ -68,7 +68,7 @@ public class SpawnManager : MonoBehaviour
                 if (preloadedPrefabs.Contains(prefab) == false)
                 {
                     //풀에서 로드하고 HashSet에 넣어서 프리로드 중복 방지
-                    ObjectPoolManager.Instance.enemyPool.Preload(prefab, 20);
+                    ObjectPoolManager.Instance.enemyPool.Preload(prefab, 30);
                     preloadedPrefabs.Add(prefab); //어차피 해쉬셋은 중복 안들어감
                 }
             }

@@ -65,6 +65,6 @@ public class Enemy : MonoBehaviour
         StageManager.Instance.NotifyKill();
 
         isDead = true;
-        gameObject.SetActive(false);
+        ObjectPoolManager.Instance.enemyPool.Return(this);
     }
 }
