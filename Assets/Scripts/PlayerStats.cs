@@ -29,12 +29,12 @@ public class PlayerStats : MonoBehaviour
     [Header("재화")]
     public int statPoint = 0;
 
-    //스탯 레벨
     private Dictionary<StatType, int> statLevels = new Dictionary<StatType, int>();
+    private Dictionary<PlayerProgressStat, float> playerProgress = new Dictionary<PlayerProgressStat, float>();
 
     //StatPanelUI 업데이트용 액션
     public event Action OnStatChanged;
-    public List<StatsSlotUI> slotUIs = new List<StatsSlotUI>();
+    [HideInInspector] public List<StatsSlotUI> slotUIs = new List<StatsSlotUI>();
 
     private void Awake()
     {
@@ -113,6 +113,7 @@ public class PlayerStats : MonoBehaviour
         statLevels[statType] += possibleAmount;
 
         RecalculateStats();
+        GameManager.Instance.statSaver.RequestSave(GetAllLevels());
         OnStatChanged?.Invoke();
     }
 
@@ -144,9 +145,6 @@ public class PlayerStats : MonoBehaviour
             _ => 0
         };
     }
-
-
-
 
     public void RecalculateStats()
     {
@@ -184,7 +182,7 @@ public class PlayerStats : MonoBehaviour
         foreach (StatsSlotUI ui in slotUIs)
         {
             Debug.Log("foreach");
-            ui.Refresh ();
+            ui.Refresh();
             Debug.Log($"[PlayerStats] 새로고침한 UI : {ui.name}");
         }
     }

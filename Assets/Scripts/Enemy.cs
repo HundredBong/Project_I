@@ -4,15 +4,27 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    public EnemyType type;
+    [Header("기본 데이터")] 
+    public EnemyData data;
 
-    public float health = 3;
-    public float maxHealth = 3;
+    [Header("전투 정보")]
+    public float health ;
+    public float maxHealth ;
     public bool isDead = false;
+
+    [Header("보상")]
     public float expValue = 1f;
 
     private void OnEnable()
     {
+        if (data == null)
+        {
+            Debug.LogError("[Enemy] EnemyData가 연결되지 않음");
+            return;
+        }
+
+        Initialize();
+
         if (GameManager.Instance != null)
         {
             GameManager.Instance.enemyList.Add(this);
@@ -25,10 +37,17 @@ public class Enemy : MonoBehaviour
         health = maxHealth;
         isDead = false;
     }
+     
+    private void Initialize()
+    {
+        maxHealth = data.maxHealth;
+        health = maxHealth;
+        isDead = false;
+        expValue = data.expValue;
+    }
 
     public void TakeDamage(float damage)
     {
-        
         health -= damage;
 
         if (health <= 0)
@@ -40,9 +59,9 @@ public class Enemy : MonoBehaviour
     private void Die()
     {
         GameManager.Instance.player.GetExp(expValue);
-
-        gameObject.SetActive(false);
         GameManager.Instance.enemyList.Remove(this);
+
         isDead = true;
+        gameObject.SetActive(false);
     }
 }
