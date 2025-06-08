@@ -8,3 +8,5 @@ public enum HUDType { Shop, Stat, Skill, Inventory, Menu }
 
 public enum LanguageType { KR, EN }
 
+public enum StageType { Forest, }
+

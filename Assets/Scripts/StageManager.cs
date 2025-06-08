@@ -42,12 +42,12 @@ public class StageManager : MonoBehaviour
     private void StartStage()
     {
         killCount = 0;
-        SpawnEnemies(initalSpawnCount);
+        SpawnManager.Instance.SpawnEnemiesForStage(currentStage, initalSpawnCount);
     }
 
     private void SpawnEnemies(int count)
     {
-        //count만큼 몬스터 랜덤한 위치에 배치
+        SpawnManager.Instance.SpawnEnemiesForStage(currentStage, initalSpawnCount);
     }
 
     public void NotifyKill()
@@ -90,6 +90,8 @@ public class StageManager : MonoBehaviour
     {
         //플레이어 위치 초기화, 기존 몬스터 제거
         killCount = 0;
+        GameManager.Instance.player.transform.position = Vector3.zero;
+
         SpawnEnemies(initalSpawnCount);
     }
 
