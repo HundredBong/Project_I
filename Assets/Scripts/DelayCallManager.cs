@@ -26,6 +26,7 @@ public class DelayCallManager : MonoBehaviour
             return;
         }
         Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Update()

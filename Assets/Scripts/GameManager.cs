@@ -99,33 +99,6 @@ public class GameManager : MonoBehaviour
         return statSaver != null && stats != null && firebaseInit != null && statSaver.gameObject.activeInHierarchy;
     }
 
-    #region ContextMenu
-    //[ContextMenu("KR")]
-    //public void TestKR()
-    //{
-    //    LanguageManager.SetLanguage(LanguageType.KR);
-    //}
-
-    //[ContextMenu("EN")]
-    //public void TestEN()
-    //{
-    //    LanguageManager.SetLanguage(LanguageType.EN);
-    //}
-
-    //[ContextMenu("Ω∫≈» ¿˙¿Â")]
-    //public void SaveStats()
-    //{
-    //    statSaver.SaveStatLevels(stats.GetAllLevels());
-    //}
-
-    //[ContextMenu("Ω∫≈» ∫“∑Øø¿±‚")]
-    //public void LoadStats()
-    //{
-    //    statSaver.LoadStatLevels(stats.SetAllLevels);
-    //}
-
-    #endregion
-
 #if UNITY_EDITOR
     [MenuItem("Tools/Set Language KR")]
     public static void SetLanguageKR()

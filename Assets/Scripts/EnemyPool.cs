@@ -18,4 +18,16 @@ public class EnemyPool : GenericPoolManager<Enemy>
             }
         }
     }
+
+    public void ReturnAllEnemies()
+    {
+        //ToArray() : foreach중에 enemyList.Remove()호출되면 오류날 수 있으니 안전하게 복사본 돌림
+        foreach (Enemy enemy in GameManager.Instance.enemyList.ToArray())
+        {
+            if (enemy != null && enemy.gameObject.activeInHierarchy)
+            {
+                Return(enemy);
+            }
+        }
+    }
 }

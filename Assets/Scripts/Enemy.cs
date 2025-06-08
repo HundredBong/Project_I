@@ -62,6 +62,7 @@ public class Enemy : MonoBehaviour
     {
         GameManager.Instance.player.GetExp(expValue);
         GameManager.Instance.enemyList.Remove(this);
+        StageManager.Instance.NotifyKill();
 
         isDead = true;
         gameObject.SetActive(false);

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
@@ -10,7 +11,7 @@ public class StageManager : MonoBehaviour
     [SerializeField] private int currentStage = 1; //현재 스테이지
     [SerializeField] private int killCount = 0; //현재 킬 카운트
     [SerializeField] private int totalKillsRequired = 100; //스테이지 클리어에 필요한 킬 카운트
-    [SerializeField] private int spawnBatchSize = 20; //생성할 몬스터 수
+    [SerializeField] private int spawnBatchSize = 20; //재생성할 몬스터 수
     [SerializeField] private int initalSpawnCount = 40; //초기 몬스터 수
 
     public bool isLoop; //현재 스테이지를 반복할 것인지에 대한 변수
@@ -42,23 +43,22 @@ public class StageManager : MonoBehaviour
     private void StartStage()
     {
         killCount = 0;
-        SpawnManager.Instance.SpawnEnemiesForStage(currentStage, initalSpawnCount);
+
+        SpawnManager.Instance.SpawnEnemiesForStage(GetStageType(currentStage), initalSpawnCount);
     }
 
-    private void SpawnEnemies(int count)
-    {
-        SpawnManager.Instance.SpawnEnemiesForStage(currentStage, initalSpawnCount);
-    }
 
     public void NotifyKill()
     {
         killCount++;
 
         //다음 스테이지로 넘어가기위한 최대 킬 수에 도달하지 않고, 현재 킬 카운트와 사이즈 연산 값이 0이면 
+        //20 < 100 && 20 % 20 == 0 
         if (killCount < totalKillsRequired && killCount % spawnBatchSize == 0)
         {
             //사이즈만큼 몬스터 다시 생성
-            SpawnEnemies(spawnBatchSize);
+            Debug.Log("[StageManager] 몬스터 재생성");
+            SpawnManager.Instance.SpawnEnemiesForStage(GetStageType(currentStage), spawnBatchSize);
         }
 
         //현재 킬 카운트가 스테이지 클리어에 필요한만큼 도달하면
@@ -88,15 +88,27 @@ public class StageManager : MonoBehaviour
 
     private void ResetStage()
     {
+        Debug.Log($"[SpawnManager] 스테이지 리셋");
         //플레이어 위치 초기화, 기존 몬스터 제거
         killCount = 0;
+
         GameManager.Instance.player.transform.position = Vector3.zero;
 
-        SpawnEnemies(initalSpawnCount);
+        SpawnManager.Instance.SpawnEnemiesForStage(GetStageType(currentStage), initalSpawnCount);
     }
 
-    public int GetCurrentStage()
+    private StageType GetStageType(int stageNumber)
     {
-        return currentStage;
+        //1 ~ 100 넣으면 0 -> Forest 반환
+        //101~200 넣으면 1 -> 다른 스테이지 반환
+        //잠깐 이거 스테이지 10개 만들어야 이 연산 맞는건가 머리가 안도네 아
+        //881 넣으면 880 / (100 % 2) => 880 / 0 = 0
+        //151 넣으면 150 / 100 % 2 => 200 / 0 = 0
+        //다 0이 뜨지 않나
+        //아니 서순 
+        //880 / 100 % 2 => 8 % 2 = 0 ??
+        //150 / 100 % 2 => 1 % 2 = 1 오
+
+        return (StageType)(((stageNumber - 1) / 100) % Enum.GetValues(typeof(StageType)).Length);
     }
 }
