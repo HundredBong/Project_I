@@ -44,7 +44,7 @@ public class StageManager : MonoBehaviour
     {
         killCount = 0;
 
-         SpawnManager.Instance.SpawnEnemiesForStage(GetStageType(currentStage), initalSpawnCount);
+        SpawnManager.Instance.SpawnEnemiesForStage(GetStageType(currentStage), initalSpawnCount);
     }
 
 

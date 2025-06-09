@@ -181,7 +181,6 @@ public class PlayerStats : MonoBehaviour
 
         foreach (StatsSlotUI ui in slotUIs)
         {
-            Debug.Log("foreach");
             ui.Refresh();
             Debug.Log($"[PlayerStats] 새로고침한 UI : {ui.name}");
         }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviour, IPooledObject
 {
     [Header("기본 데이터")]
     public EnemyData data;
@@ -14,6 +14,8 @@ public class Enemy : MonoBehaviour
 
     [Header("보상")]
     public float expValue = 1f;
+
+    public GameObject prefabReference { get; set; }
 
     //[HideInInspector] public Enemy prefabReference;
 
@@ -33,7 +35,7 @@ public class Enemy : MonoBehaviour
         }
         else
         {
-            Debug.LogError("GameManager 가 Null임");
+            Debug.LogError("[Enemy] GameManager 가 Null임");
         }
 
         health = maxHealth;
