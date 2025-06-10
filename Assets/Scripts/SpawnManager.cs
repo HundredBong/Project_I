@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using UnityEditor.Presets;
 using UnityEngine;
 using static Cinemachine.Editor.CinemachineLensPresets;

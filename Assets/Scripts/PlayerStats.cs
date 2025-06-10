@@ -48,6 +48,8 @@ public class PlayerStats : MonoBehaviour
     {
         currentExp += exp;
         //Debug.Log($"{exp} 경험치 획득함, {currentExp} / {maxExp}");
+
+        //방치했을 때 한 번에 많은 경험치가 들어올 수 있음
         while (currentExp >= maxExp)
         {
             currentExp -= maxExp;
@@ -58,9 +60,9 @@ public class PlayerStats : MonoBehaviour
     private void LevelUp()
     {
         level++;
-        maxExp *= 1.2f;
+        maxExp = DataManager.Instance.GetExpData(level);
 
-        Debug.Log($"레벨 상승함, 현재 레벨 : {level}");
+        Debug.Log($"레벨 상승함, 현재 레벨 : {level}, 다음 경험치 요구량 : {maxExp}");
 
         statPoint++;
     }

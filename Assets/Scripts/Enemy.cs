@@ -5,15 +5,21 @@ using UnityEngine;
 public class Enemy : MonoBehaviour, IPooledObject
 {
     [Header("기본 데이터")]
-    public EnemyData data;
+    [SerializeField] private EnemyId enemyId;
+    [HideInInspector] public bool isDead = false;
 
-    [Header("전투 정보")]
+    //private필드, 원활한 디버깅을 위해 public으로 함
+    //TODO : private으로 변경
+    public EnemyType enemyType;
     public float health;
     public float maxHealth;
-    public bool isDead = false;
-
-    [Header("보상")]
+    public float damage;
+    public float defend;
+    public float moveSpeed;
+    public float attackRange;
+    public float attackInterval;
     public float expValue = 1f;
+
 
     public GameObject prefabReference { get; set; }
 
@@ -21,12 +27,6 @@ public class Enemy : MonoBehaviour, IPooledObject
 
     private void OnEnable()
     {
-        if (data == null)
-        {
-            Debug.LogError("[Enemy] EnemyData가 연결되지 않음");
-            return;
-        }
-
         Initialize();
 
         if (GameManager.Instance != null)
@@ -44,10 +44,25 @@ public class Enemy : MonoBehaviour, IPooledObject
 
     private void Initialize()
     {
-        maxHealth = data.maxHealth;
+        EnemyData data = DataManager.Instance.GetEnemyData(enemyId);
+
+        if (data == null)
+        {
+            Debug.LogWarning($"[Enemy] {enemyId}에 대한 EnemyData가 존재하지 않음");
+            return;
+        }
+
+        //TODO : StageData의 Rate값이랑 연동하기
+        maxHealth = data.HP;
         health = maxHealth;
+        damage = data.ATK;
+        defend = data.DEF;
+        moveSpeed = data.SPD;
+        attackRange = data.Range;
+        attackInterval = data.AttackInterval;
+        expValue = data.EXP;
         isDead = false;
-        expValue = data.expValue;
+        expValue = 1f;
     }
 
     public void TakeDamage(float damage)
