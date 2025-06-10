@@ -12,7 +12,6 @@ public class StageManager : MonoBehaviour
     [SerializeField] private int killCount = 0; //현재 킬 카운트
     [SerializeField] private int totalKillsRequired = 100; //스테이지 클리어에 필요한 킬 카운트
     [SerializeField] private int spawnBatchSize = 20; //재생성할 몬스터 수
-    [SerializeField] private int initalSpawnCount = 30; //초기 몬스터 수
 
     public bool isLoop; //현재 스테이지를 반복할 것인지에 대한 변수
 
@@ -29,7 +28,7 @@ public class StageManager : MonoBehaviour
 
     private void Start()
     {
-        LoadStageData();
+        //LoadStageData();
         StartStage();
     }
 
@@ -44,7 +43,7 @@ public class StageManager : MonoBehaviour
     {
         killCount = 0;
 
-        SpawnManager.Instance.SpawnEnemiesForStage(GetStageType(currentStage), initalSpawnCount);
+        SpawnManager.Instance.SpawnEnemiesForCurrentStage(spawnBatchSize);
     }
 
 
@@ -58,7 +57,7 @@ public class StageManager : MonoBehaviour
         {
             //사이즈만큼 몬스터 다시 생성
             Debug.Log("[StageManager] 몬스터 재생성");
-            SpawnManager.Instance.SpawnEnemiesForStage(GetStageType(currentStage), spawnBatchSize);
+            SpawnManager.Instance.SpawnEnemiesForCurrentStage(spawnBatchSize);
         }
 
         //현재 킬 카운트가 스테이지 클리어에 필요한만큼 도달하면
@@ -94,10 +93,10 @@ public class StageManager : MonoBehaviour
 
         GameManager.Instance.player.transform.position = Vector3.zero;
         ObjectPoolManager.Instance.enemyPool.ReturnAllEnemies();
-        SpawnManager.Instance.SpawnEnemiesForStage(GetStageType(currentStage), initalSpawnCount);
+        SpawnManager.Instance.SpawnEnemiesForCurrentStage(spawnBatchSize);
     }
 
-    private StageType GetStageType(int stageNumber)
+    public StageType GetStageType(int stageNumber)
     {
         //1 ~ 100 넣으면 0 -> Forest 반환
         //101~200 넣으면 1 -> 다른 스테이지 반환
@@ -110,5 +109,10 @@ public class StageManager : MonoBehaviour
         //150 / 100 % 2 => 1 % 2 = 1 오
 
         return (StageType)(((stageNumber - 1) / 100) % Enum.GetValues(typeof(StageType)).Length);
+    }
+
+    public int GetCurrentStage()
+    {
+        return currentStage;
     }
 }

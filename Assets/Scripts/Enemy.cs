@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 
 public class Enemy : MonoBehaviour, IPooledObject
 {
     [Header("기본 데이터")]
     [SerializeField] private EnemyId enemyId;
-    [HideInInspector] public bool isDead = false;
+     public bool isDead = true;
 
     //private필드, 원활한 디버깅을 위해 public으로 함
     //TODO : private으로 변경
@@ -23,10 +24,11 @@ public class Enemy : MonoBehaviour, IPooledObject
 
     public GameObject prefabReference { get; set; }
 
-    //[HideInInspector] public Enemy prefabReference;
-
     private void OnEnable()
     {
+        //유니태스크 쓰니 OnDisable 순서문제인지는 몰라도 isDead를 Init안에서 하니 안먹음, 위치 옮김
+        isDead = false;
+
         Initialize();
 
         if (GameManager.Instance != null)
@@ -37,32 +39,47 @@ public class Enemy : MonoBehaviour, IPooledObject
         {
             Debug.LogError("[Enemy] GameManager 가 Null임");
         }
-
-        health = maxHealth;
-        isDead = false;
     }
 
-    private void Initialize()
+    private void OnDisable()
     {
-        EnemyData data = DataManager.Instance.GetEnemyData(enemyId);
+        //이거 없으니 풀에서 나온 비활성화된 오브젝트가 공격당함
+        //근데 플레이어에서 activeInHierarchy == false일 때 공격 안하면 되지 않나
+        //아니지, 나중에 Die 애니메이션 작업할 때 필요함
+        isDead = true;
+    }
 
-        if (data == null)
+    private async void Initialize()
+    {
+        await UniTask.WaitUntil(() => StageManager.Instance != null);
+
+        EnemyData enemyData = DataManager.Instance.GetEnemyData(enemyId);
+
+        if (enemyData == null)
         {
             Debug.LogWarning($"[Enemy] {enemyId}에 대한 EnemyData가 존재하지 않음");
             return;
         }
 
+        int stageId = StageManager.Instance.GetCurrentStage();
+        StageData stageData = DataManager.Instance.stageDataTable[stageId];
+
+        if (stageData == null)
+        {
+            Debug.LogWarning($"[Enemy] {stageId}에 대한 stageData가 존재하지 않음");
+            return;
+        }
+
         //TODO : StageData의 Rate값이랑 연동하기
-        maxHealth = data.HP;
+        maxHealth = enemyData.HP * stageData.HPRate;
         health = maxHealth;
-        damage = data.ATK;
-        defend = data.DEF;
-        moveSpeed = data.SPD;
-        attackRange = data.Range;
-        attackInterval = data.AttackInterval;
-        expValue = data.EXP;
-        isDead = false;
-        expValue = 1f;
+        damage = enemyData.ATK * stageData.ATKRate;
+        defend = enemyData.DEF * stageData.DEFRate;
+        moveSpeed = enemyData.SPD;
+        attackRange = enemyData.Range;
+        attackInterval = enemyData.AttackInterval;
+        expValue = enemyData.EXP * stageData.RewardRate;
+
     }
 
     public void TakeDamage(float damage)

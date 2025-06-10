@@ -13,6 +13,7 @@ public class DataManager : MonoBehaviour
     public Dictionary<HUDType, HudNameData> HudNames = new Dictionary<HUDType, HudNameData>();
     public Dictionary<int, float> expTable = new Dictionary<int, float>();
     public Dictionary<EnemyId, EnemyData> enemyDataTable = new Dictionary<EnemyId, EnemyData>();
+    public Dictionary<int, StageData> stageDataTable = new Dictionary<int, StageData>();
 
     private void Awake()
     {
@@ -30,6 +31,7 @@ public class DataManager : MonoBehaviour
         LoadHUDName();
         LoadExpData();
         LoadEnemyData();
+        LoadStageData();
     }
 
     private void LoadStatName()
@@ -147,6 +149,7 @@ public class DataManager : MonoBehaviour
         }
         Debug.Log($"[DataManager] enemyDataTable : {enemyDataTable.Count}개의 데이터를 로드함");
     }
+
     public EnemyData GetEnemyData(EnemyId id)
     {
         if (enemyDataTable.TryGetValue(id, out var data) == true)
@@ -156,6 +159,45 @@ public class DataManager : MonoBehaviour
 
         Debug.LogWarning($"[DataManager] EnemyId {id}에 해당하는 데이터가 없음");
         return null;
+    }
+
+    private void LoadStageData()
+    {
+        TextAsset stageText = Resources.Load<TextAsset>("CSV/StageData");
+        string[] lines = stageText.text.Split('\n');
+
+        for (int i = 1; i < lines.Length; i++)
+        {
+            if (string.IsNullOrEmpty(lines[i])) { continue; }
+
+            string[] tokens = lines[i].Split(',');
+
+            int stageId = int.Parse(tokens[0]);
+
+            string[] enemyIds = tokens[3].Trim().Split(';');
+            List<EnemyId> enemyIdList = new List<EnemyId>();
+            for (int h = 0; h < enemyIds.Length; h++)
+            {
+                enemyIdList.Add(Enum.Parse<EnemyId>(enemyIds[h].Trim()));
+            }
+
+            StageData data = new StageData()
+            {
+                StageId = stageId,
+                StageType = Enum.Parse<StageType>(tokens[1].Trim()),
+                BGM = tokens[2].Trim(),
+                Enemies = enemyIdList,
+                HPRate = float.Parse(tokens[4]),
+                ATKRate = float.Parse(tokens[5]),
+                DEFRate = float.Parse(tokens[6]),
+                RewardRate = float.Parse(tokens[7]),
+                InitCount = int.Parse(tokens[8]),
+                AddCount = int.Parse(tokens[9])
+            };
+
+            stageDataTable[stageId] = data;
+        }
+        Debug.Log($"[DataManager] stageDataTable : {stageDataTable.Count}개의 데이터를 로드함");
     }
 }
 
@@ -205,4 +247,19 @@ public class EnemyData
     public float Range;
     public float AttackInterval;
     public float EXP;
+}
+
+[System.Serializable]
+public class StageData
+{
+    public int StageId;
+    public StageType StageType;
+    public string BGM;
+    public List<EnemyId> Enemies;
+    public float HPRate;
+    public float ATKRate;
+    public float DEFRate;
+    public float RewardRate;
+    public int InitCount;
+    public int AddCount;
 }

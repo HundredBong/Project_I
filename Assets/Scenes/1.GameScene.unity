@@ -9342,7 +9342,6 @@ MonoBehaviour:
   killCount: 0
   totalKillsRequired: 100
   spawnBatchSize: 20
-  initalSpawnCount: 30
   isLoop: 0
 --- !u!4 &1357589085
 Transform:
@@ -12739,10 +12738,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98d67bf89287eac478fb9cc294ce8533, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemySettings:
-  - type: 0
-    enemyPrefabs:
-    - {fileID: 4226252806443906045, guid: cb4b87fc6b5645c48a273b3205420324, type: 3}
 --- !u!4 &1799514478
 Transform:
   m_ObjectHideFlags: 0
