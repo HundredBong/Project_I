@@ -1,0 +1,2 @@
+SkillId,NameKey,DescKey,SkillIcon,Grade,SkillType,Cooldown,BaseValue,BuffDuration,PassiveEffect,MaxLevel,UpgradeCostBase,UpgradeCostPerLevel,AwakenRequiredCount,StatusEffect,StatusChance,HitCount,TargetCount
+Lightning,SKILL_LIGHTNING_NAME,SKILL_LIGHTNING_DESC,Skill_Lightning_Icon,Common,Active,13,,0,Gold,99,10,1,5;10;15;25,ElectricShork,90,3,1

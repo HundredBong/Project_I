@@ -12,3 +12,15 @@ public enum LanguageType { KR, EN }
 
 public enum StageType { Forest, Cave }
 
+public enum SkillId
+{
+    Lightning,
+}
+
+public enum GradeType { Common, Uncommon, Rare, Epic, Legendary, Mythical }
+
+public enum SkillType { Active, Buff, Passive }
+
+public enum SkillEffectType { GoldBonus, ExpBonus }
+
+public enum StatusEffectType { ElectricShock }

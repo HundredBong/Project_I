@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml.Linq;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 public class DataManager : MonoBehaviour
@@ -14,6 +16,7 @@ public class DataManager : MonoBehaviour
     public Dictionary<int, float> expTable = new Dictionary<int, float>();
     public Dictionary<EnemyId, EnemyData> enemyDataTable = new Dictionary<EnemyId, EnemyData>();
     public Dictionary<int, StageData> stageDataTable = new Dictionary<int, StageData>();
+    public Dictionary<SkillId, SkillData> skillDataTable = new Dictionary<SkillId, SkillData>();
 
     private void Awake()
     {
@@ -32,6 +35,7 @@ public class DataManager : MonoBehaviour
         LoadExpData();
         LoadEnemyData();
         LoadStageData();
+        LoadSkillData();
     }
 
     private void LoadStatName()
@@ -199,67 +203,133 @@ public class DataManager : MonoBehaviour
         }
         Debug.Log($"[DataManager] stageDataTable : {stageDataTable.Count}개의 데이터를 로드함");
     }
-}
 
-[System.Serializable]
-public class StatNameData
-{
-    public string KR;
-    public string EN;
-
-    public string GetLocalizedText()
+    private void LoadSkillData()
     {
-        return LanguageManager.CurrentLanguage switch
+        TextAsset skillText = Resources.Load<TextAsset>("CSV/SkillData");
+        string[] lines = skillText.text.Split('\n');
+
+        for (int i = 1; i < lines.Length; i++)
         {
-            LanguageType.KR => KR,
-            LanguageType.EN => EN,
-            _ => KR
-        };
+            if (string.IsNullOrEmpty(lines[i])) { continue; }
+
+            string[] tokens = lines[i].Split(',');
+
+            SkillData data = new SkillData()
+            {
+                SkillId = Enum.Parse<SkillId>(tokens[0].Trim()),
+                NameKey = tokens[1].Trim(),
+                DescKey = tokens[2].Trim(),
+                SkillIcon = tokens[3].Trim(),
+                Grade = Enum.Parse<GradeType>(tokens[4].Trim()),
+                Type = Enum.Parse<SkillType>(tokens[5].Trim()),
+                Cooldown = float.Parse(tokens[6]),
+                BaseValue = float.Parse(tokens[7]),
+                BaseValueIncrease = float.Parse(tokens[8]),
+                BufferDuration = float.Parse(tokens[9]),
+                EffectType = Enum.Parse<SkillEffectType>(tokens[10].Trim()),
+                PassiveValue = 0f, // CSV에 없으면 기본값
+                PassiveEffectIncrease = 0f, // 마찬가지
+                MaxLevel = int.Parse(tokens[11]),
+                UpgradeCost = int.Parse(tokens[12]),
+                UpgradeCostPerLevel = int.Parse(tokens[13]),
+                AwakenRequiredCount = tokens[14].Trim().Split(';').Select(int.Parse).ToArray(),
+                StatusEffect = Enum.Parse<StatusEffectType>(tokens[15].Trim()),
+                StatucChance = float.Parse(tokens[16]),
+                HitCount = int.Parse(tokens[17]),
+                TargetCount = int.Parse(tokens[18])
+            };
+            skillDataTable[data.SkillId] = data;
+        }
+        Debug.Log($"[DataManager] skillDataTable : {skillDataTable.Count}개의 데이터를 로드함");
     }
 }
 
-[System.Serializable]
-public class HudNameData
-{
-    public string KR;
-    public string EN;
-
-    public string GetLocalizedText()
+    [System.Serializable]
+    public class StatNameData
     {
-        return LanguageManager.CurrentLanguage switch
+        public string KR;
+        public string EN;
+
+        public string GetLocalizedText()
         {
-            LanguageType.KR => KR,
-            LanguageType.EN => EN,
-            _ => KR
-        };
+            return LanguageManager.CurrentLanguage switch
+            {
+                LanguageType.KR => KR,
+                LanguageType.EN => EN,
+                _ => KR
+            };
+        }
     }
-}
 
-[System.Serializable]
-public class EnemyData
-{
-    public EnemyId Id;
-    public EnemyType Type;
-    public float HP;
-    public float ATK;
-    public float DEF;
-    public float SPD;
-    public float Range;
-    public float AttackInterval;
-    public float EXP;
-}
+    [System.Serializable]
+    public class HudNameData
+    {
+        public string KR;
+        public string EN;
 
-[System.Serializable]
-public class StageData
-{
-    public int StageId;
-    public StageType StageType;
-    public string BGM;
-    public List<EnemyId> Enemies;
-    public float HPRate;
-    public float ATKRate;
-    public float DEFRate;
-    public float RewardRate;
-    public int InitCount;
-    public int AddCount;
-}
+        public string GetLocalizedText()
+        {
+            return LanguageManager.CurrentLanguage switch
+            {
+                LanguageType.KR => KR,
+                LanguageType.EN => EN,
+                _ => KR
+            };
+        }
+    }
+
+    [System.Serializable]
+    public class EnemyData
+    {
+        public EnemyId Id;
+        public EnemyType Type;
+        public float HP;
+        public float ATK;
+        public float DEF;
+        public float SPD;
+        public float Range;
+        public float AttackInterval;
+        public float EXP;
+    }
+
+    [System.Serializable]
+    public class StageData
+    {
+        public int StageId;
+        public StageType StageType;
+        public string BGM;
+        public List<EnemyId> Enemies;
+        public float HPRate;
+        public float ATKRate;
+        public float DEFRate;
+        public float RewardRate;
+        public int InitCount;
+        public int AddCount;
+    }
+
+    [System.Serializable]
+    public class SkillData
+    {
+        public SkillId SkillId;
+        public string NameKey; //string, string 딕셔너리 만들어서 불러오는 용도
+        public string DescKey; //string, string 딕셔너리 만들어서 불러오는 용도
+        public string SkillIcon; //추후 DataManager에서 SpriteDictionary로 관리할 예정
+        public GradeType Grade; //등급, Common, Uncommon, Rare, Epic, Legendary, Mythical
+        public SkillType Type; //Active, Buff, Passive
+        public float Cooldown;//스킬 쿨타임, 초 단위
+        public float BaseValue;//스킬의 기본 값, 예를 들어 공격력 증가, 체력 회복 등
+        public float BaseValueIncrease; //레벨업 시 증가하는 기본 값
+        public float BufferDuration; //버프 지속 시간, 초 단위, 버프 스킬에만 적용
+        public SkillEffectType EffectType; //스킬 효과 타입, GoldBonus, ExpBonus 등
+        public float PassiveValue;
+        public float PassiveEffectIncrease;
+        public int MaxLevel; //스킬의 최대 레벨
+        public int UpgradeCost; //스킬 업그레이드 비용, 골드 등
+        public int UpgradeCostPerLevel; //레벨당 업그레이드 비용 증가량
+        public int[] AwakenRequiredCount;
+        public StatusEffectType StatusEffect;
+        public float StatucChance;
+        public int HitCount;
+        public int TargetCount;
+    }
