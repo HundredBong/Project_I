@@ -12,8 +12,12 @@ public class StageManager : MonoBehaviour
     [SerializeField] private int killCount = 0; //현재 킬 카운트
     [SerializeField] private int totalKillsRequired = 100; //스테이지 클리어에 필요한 킬 카운트
     [SerializeField] private int spawnBatchSize = 20; //재생성할 몬스터 수
+    [SerializeField] private int defaultSpawnCount = 30; //기본 몬스터 생성 수
+    [SerializeField]private int maxClearedStage = 1; //최대 클리어 스테이지
+    [SerializeField]private bool isLoop; //현재 스테이지를 반복할 것인지에 대한 변수
+    [SerializeField]private bool[] stageClearedFlags;
+    [SerializeField]private bool[] bossDefeated;
 
-    public bool isLoop; //현재 스테이지를 반복할 것인지에 대한 변수
 
     private void Awake()
     {
@@ -24,26 +28,43 @@ public class StageManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
+        //---------------------------------------------
+
+        if (stageClearedFlags == null || stageClearedFlags.Length == 0)
+        {
+            stageClearedFlags = new bool[DataManager.Instance.stageDataTable.Count];
+        }
+
+        if (bossDefeated == null || bossDefeated.Length == 0)
+        {
+            bossDefeated = new bool[DataManager.Instance.stageDataTable.Count];
+        }
     }
 
-    private void Start()
+    public void SetStageData(StageSaveData data)
     {
-        //LoadStageData();
-        StartStage();
+        if (data == null)
+        {
+            Debug.LogWarning("[StageManager] 로드된 데이터가 null임");
+            return;
+        }
+
+        currentStage = data.CurrentStageId;
+        maxClearedStage = data.MaxClearedStageId;
+        stageClearedFlags = data.StageClearedFlags ?? new bool[DataManager.Instance.stageDataTable.Count];
+        bossDefeated = data.BossDefeated ?? new bool[DataManager.Instance.stageDataTable.Count];
+        isLoop = data.IsLoop;
+
+        Debug.Log("[StageManager] 스테이지 데이터 불러오기 완료");
     }
 
-    private void LoadStageData()
+    public void StartStage()
     {
-        //일단 대충하고 추후 파이어베이스에서 불러오기
-        currentStage = 1;
+        Debug.Log($"[StageManager] {currentStage}스테이지 시작");
         killCount = 0;
-    }
 
-    private void StartStage()
-    {
-        killCount = 0;
-
-        SpawnManager.Instance.SpawnEnemiesForCurrentStage(spawnBatchSize);
+        SpawnManager.Instance.SpawnEnemiesForCurrentStage(defaultSpawnCount);
     }
 
 
@@ -69,11 +90,19 @@ public class StageManager : MonoBehaviour
 
     private void OnStageClear()
     {
+        //1. 스테이지를 클리어 했고 보스를 잡은 상태가 아니라면
+        //1-1. 스테이지를 클리어했으나 도전중이 아니라면 반복
+        //1-2. 스테이지를 클리어했고, 도전중이라면 보스로 넘어감
+        //2. 스테이지를 클리어 했고 보스를 잡은 상태라면
+        //2-1. 반복중이라면 다음 스테이지로 넘어감
         Debug.Log($"[StageManager] {currentStage}스테이지 클리어");
 
         if (isLoop == false)
         {
             currentStage++;
+
+            maxClearedStage = Mathf.Max(maxClearedStage, currentStage); //최대 클리어 스테이지 업데이트, if문 안써도 됨 
+            stageClearedFlags[currentStage - 1] = true;
         }
 
         SaveStageData();
@@ -82,7 +111,17 @@ public class StageManager : MonoBehaviour
 
     private void SaveStageData()
     {
-        //파이어베이스와 연동해야함
+        StageSaveData data = new StageSaveData
+        {
+            CurrentStageId = this.currentStage,
+            MaxClearedStageId = this.maxClearedStage,
+            StageClearedFlags = this.stageClearedFlags,
+            BossDefeated = this.bossDefeated,
+            IsLoop = this.isLoop
+        };
+
+        Debug.Log($"[StageManager] 스테이지 데이터 저장 요청, 현재 스테이지 {data.CurrentStageId}, 최대 클리어 스테이지 {data.MaxClearedStageId}");
+        GameManager.Instance.statSaver.SaveStageData(data);
     }
 
     private void ResetStage()
@@ -93,7 +132,7 @@ public class StageManager : MonoBehaviour
 
         GameManager.Instance.player.transform.position = Vector3.zero;
         ObjectPoolManager.Instance.enemyPool.ReturnAllEnemies();
-        SpawnManager.Instance.SpawnEnemiesForCurrentStage(spawnBatchSize);
+        SpawnManager.Instance.SpawnEnemiesForCurrentStage(30);
     }
 
     public StageType GetStageType(int stageNumber)

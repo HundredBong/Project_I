@@ -51,6 +51,8 @@ public class FirebaseStatSaver : MonoBehaviour
 
     public void SaveStatLevels(Dictionary<StatType, int> statLevels)
     {
+        //스탯은 enum 기반이므로 반복해서 저장 가능함,
+
         string userId = "test_user"; //추후 Firebase Auth로 대체하기
         string path = $"users/{userId}/stats"; //저장경로
 
@@ -117,4 +119,60 @@ public class FirebaseStatSaver : MonoBehaviour
         await Cysharp.Threading.Tasks.UniTask.SwitchToMainThread();
         onLoaded?.Invoke(loadedStats);
     }
+
+    public void SaveStageData(StageSaveData data)
+    {
+        string json = JsonUtility.ToJson(data);
+
+        string userId = "test_user";
+        string path = $"users/{userId}/stage";
+
+        dbRef.Child(path).Child("StageData").SetRawJsonValueAsync(json).ContinueWith(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                Debug.Log("[FirebaseStatSaver] 스테이지 데이터 저장 성공");
+            }
+            else
+            {
+                Debug.LogError($"[FirebaseStatSaver] 스테이지 데이터 저장 실패, {task.Exception}");
+            }
+        });
+    }
+
+    public void LoadStageData(Action<StageSaveData> onLoaded)
+    {
+        string userId = "test_user";
+        string path = $"users/{userId}/stage/StageData";
+
+        dbRef.Child(path).GetValueAsync().ContinueWith(task =>
+        {
+            if (task.IsCompletedSuccessfully) 
+            {
+                string json = task.Result.GetRawJsonValue();
+                StageSaveData data = JsonUtility.FromJson<StageSaveData>(json);
+                MainThreadDispatcher(data, onLoaded);
+            }
+            else
+            {
+                Debug.LogError($"[FirebaseStatSaver] 스테이지 데이터 불러오기 실패, {task.Exception}");
+            }
+        });
+    }
+
+    private async void MainThreadDispatcher(StageSaveData data, Action<StageSaveData> onLoaded)
+    {
+        await Cysharp.Threading.Tasks.UniTask.SwitchToMainThread();
+        onLoaded?.Invoke(data);
+    }
+}
+
+[System.Serializable]
+public class StageSaveData
+{
+    public int CurrentStageId;
+    public int MaxClearedStageId;
+    public bool IsLoop;
+    public bool[] BossDefeated;
+    public bool[] StageClearedFlags;
 }

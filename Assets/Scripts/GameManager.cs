@@ -88,6 +88,13 @@ public class GameManager : MonoBehaviour
         statSaver.LoadStatLevels(stats.SetAllLevels);
         Debug.Log("[GameManager] ½ºÅÈ ºÒ·¯¿À±â ½ÇÇàµÊ");
 
+        statSaver.LoadStageData(data =>
+        {
+            Debug.Log($"{data.CurrentStageId}");
+            StageManager.Instance.SetStageData(data);
+            StageManager.Instance.StartStage();
+        });
+
         stats.OnStatChanged += () =>
         {
             statSaver.RequestSave(stats.GetAllLevels());
@@ -123,6 +130,7 @@ public class GameManager : MonoBehaviour
     {
         Instance.statSaver.LoadStatLevels(Instance.stats.SetAllLevels);
     }
+
 #endif
 }
 

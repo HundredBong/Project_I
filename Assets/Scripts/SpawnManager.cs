@@ -35,17 +35,17 @@ public class SpawnManager : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             EnemyId enemyId = stage.Enemies[Random.Range(0, stage.Enemies.Count)];
-            GameObject prefab = Resources.Load<GameObject>($"Prefabs/Enemies/{enemyId}");
-
+            //GameObject prefab = Resources.Load<GameObject>($"Prefabs/Enemies/{enemyId}");
+            GameObject prefab = ObjectPoolManager.Instance.enemyPool.GetPrefab(enemyId);
 
             if (prefab == null)
             {
                 Debug.LogError($"[SpawnManager] 프리팹 로드 실패: Prefabs/Enemies/{enemyId}");
-                continue; // null이면 생성하지 않고 다음 반복 진행
+                continue; //null이면 생성하지 않고 다음 반복 진행
             }
 
             Enemy enemy = ObjectPoolManager.Instance.enemyPool.Get(prefab);
-            enemy.transform.position = GetRandomPos(); // 이 함수는 기존 SpawnManager에 있음
+            enemy.transform.position = GetRandomPos();
             enemy.transform.rotation = Quaternion.identity;
         }
     }

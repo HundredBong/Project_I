@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class EnemyPool : GenericPoolManager<Enemy>
 {
-    HashSet<EnemyId> loadedEnemyIds = new HashSet<EnemyId>();
+    private HashSet<EnemyId> loadedEnemyIds = new HashSet<EnemyId>();
+    private Dictionary<EnemyId, GameObject> prefabCache = new Dictionary<EnemyId, GameObject>();  
 
     private void Awake()
     {
@@ -15,9 +16,7 @@ public class EnemyPool : GenericPoolManager<Enemy>
     {
         base.Preload(prefab, count);
 
-        Stack<Enemy> stack;
-
-        if (pool.TryGetValue(prefab, out stack))
+        if (pool.TryGetValue(prefab, out Stack<Enemy> stack))
         {
             foreach (var enemy in stack)
             {
@@ -41,12 +40,12 @@ public class EnemyPool : GenericPoolManager<Enemy>
     public void InitializePool(int preloadCount = 30)
     {
         //데이터매니저의 스테이지 정보에 있는 Enemy만 추적
-        foreach (var stageEntry in DataManager.Instance.stageDataTable)
+        foreach (KeyValuePair<int,StageData> stageEntry in DataManager.Instance.stageDataTable)
         {
             StageData stageData = stageEntry.Value;
             
             //StageData내부의 EnemyId리스트 순회
-            foreach (var enemyId in stageData.Enemies)
+            foreach (EnemyId enemyId in stageData.Enemies)
             {
                 //중복된 EnemyId는 무시
                 if (loadedEnemyIds.Contains(enemyId)) { continue; }
@@ -61,6 +60,8 @@ public class EnemyPool : GenericPoolManager<Enemy>
                     continue;
                 }
 
+                prefabCache[enemyId] = enemyPrefab; //프리팹 캐시에 저장, SpawnManager에서 사용 가능
+
                 //preloadCount만큼 미리 프리로드
                 Preload(enemyPrefab, preloadCount);
 
@@ -69,5 +70,18 @@ public class EnemyPool : GenericPoolManager<Enemy>
             }
         }
         Debug.Log($"[EnemyPool] Enemy 풀 초기화 됨, {loadedEnemyIds.Count}종류");
+    }
+
+    public GameObject GetPrefab(EnemyId enemyId)
+    {
+        if (prefabCache.TryGetValue(enemyId, out GameObject prefab))
+        {
+            return prefab;
+        }
+        else
+        {
+            Debug.LogError($"[EnemyPool] 프리팹 캐시에 {enemyId}가 없음");
+            return null;
+        }
     }
 }
