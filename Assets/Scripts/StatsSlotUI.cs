@@ -27,11 +27,12 @@ public class StatsSlotUI : MonoBehaviour
     {
         LanguageManager.OnLanguageChanged -= Refresh;
     }
-
+    
+    //UIStatPage가 실행시켜 줌
     public void Init(PlayerStats stats, StatType type)
     {
         this.stats = stats;
-        stats.slotUIs.Add(this);
+
         this.statType = type;
 
         Refresh();
@@ -49,7 +50,7 @@ public class StatsSlotUI : MonoBehaviour
         ////현재는 전부 25000으로 해놓았지만, 추후 switch expression으로 리팩토링 필요함.
         try
         {
-            statNameText.text = DataManager.Instance.statNames[statType].GetLocalizedText();
+            statNameText.text = DataManager.Instance.GetLocalizedText($"Stat_{statType}");
             statValueText.text = $"Lv. {stats.GetStat(statType)}";
             statMaxText.text = $"Max Lv. {stats.GetMaxStat(statType)}";
         }

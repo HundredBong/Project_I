@@ -7,27 +7,15 @@ using UnityEngine.UI;
 
 public class UIStatPage : UIPage
 {
-    [SerializeField] private Button openButton;
     [SerializeField] private PlayerStats playerStats;
     [SerializeField] private GameObject statSlotPrefab;
     [SerializeField] private Transform contentRoot;
 
+    [Header("업데이트할 텍스트")]
     [SerializeField] private TextMeshProUGUI levelText;
     [SerializeField] private TextMeshProUGUI statPointText;
 
-    protected override void Awake()
-    {
-        base.Awake();
-        if (openButton != null)
-        {
-            openButton.onClick.AddListener(() =>
-            {
-                UIManager.Instance.PageOpen<UIStatPage>();
-            });
-        }
-
-    }
-
+    [HideInInspector] public List<StatsSlotUI> slotUIs = new List<StatsSlotUI>();
     private void Start()
     {
         //시작하면 타입에 맞게 패널 UI 알아서 생성해줌
@@ -36,6 +24,7 @@ public class UIStatPage : UIPage
             GameObject obj = Instantiate(statSlotPrefab, contentRoot);
             StatsSlotUI slot = obj.GetComponent<StatsSlotUI>();
             slot.Init(playerStats, type);
+            slotUIs.Add(slot);
         }
     }
 
@@ -54,5 +43,13 @@ public class UIStatPage : UIPage
     {
         levelText.text = $"내 레벨 : Lv.{playerStats.level}";
         statPointText.text = $"스탯포인트 {playerStats.statPoint}/{playerStats.level}";
+
+        Debug.Log($"[PlayerStats] RefreshAllStatUIs 실행됨, UI개수 : {slotUIs.Count}");
+
+        foreach (StatsSlotUI ui in slotUIs)
+        {
+            ui.Refresh();
+            Debug.Log($"[PlayerStats] 새로고침한 UI : {ui.name}");
+        }
     }
 }

@@ -45,11 +45,16 @@ public class UIHUDMenu : MonoBehaviour
 
     public void RefreshLanguage()
     {
-        shopText.text = DataManager.Instance.HudNames[HUDType.Shop].GetLocalizedText();
-        statText.text = DataManager.Instance.HudNames[HUDType.Stat].GetLocalizedText();
-        skillText.text = DataManager.Instance.HudNames[HUDType.Skill].GetLocalizedText();
-        inventoryText.text = DataManager.Instance.HudNames[HUDType.Inventory].GetLocalizedText(); 
-        menuText.text = DataManager.Instance.HudNames[HUDType.Menu].GetLocalizedText();
+        //shopText.text = DataManager.Instance.HudNames[HUDType.Shop].GetLocalizedText();
+        //statText.text = DataManager.Instance.HudNames[HUDType.Stat].GetLocalizedText();
+        //skillText.text = DataManager.Instance.HudNames[HUDType.Skill].GetLocalizedText();
+        //inventoryText.text = DataManager.Instance.HudNames[HUDType.Inventory].GetLocalizedText(); 
+        //menuText.text = DataManager.Instance.HudNames[HUDType.Menu].GetLocalizedText();
+        shopText.text = DataManager.Instance.GetLocalizedText("HUD_Shop");
+        statText.text = DataManager.Instance.GetLocalizedText("HUD_Stat");
+        skillText.text = DataManager.Instance.GetLocalizedText("HUD_Skill");
+        inventoryText.text = DataManager.Instance.GetLocalizedText("HUD_Inventory");
+        menuText.text = DataManager.Instance.GetLocalizedText("HUD_Menu");
     }
 }
 

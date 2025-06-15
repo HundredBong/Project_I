@@ -34,7 +34,6 @@ public class PlayerStats : MonoBehaviour
 
     //StatPanelUI 업데이트용 액션
     public event Action OnStatChanged;
-    [HideInInspector] public List<StatsSlotUI> slotUIs = new List<StatsSlotUI>();
 
     private void Awake()
     {
@@ -85,32 +84,6 @@ public class PlayerStats : MonoBehaviour
             return;
         }
 
-        ////올리려는 레벨이 현재 스탯포인트보다 크면 리턴
-        //if (statPoint < amount) { return; }
-        ////현재 스탯이 최대 스탯을 넘은 상태라면 리턴
-        //if (GetMaxStat(statType) <= GetStat(statType)) { Debug.Log("최대 레벨에 도달함"); return; }
-        ////현재 레벨이 290, 맥스 레벨이 300인 상황에서 amont로 100이 들어왔을 경우 예외처리 필요함.
-        //statPoint -= amount;
-
-        //switch (statType)
-        //{
-        //    case StatType.Attack:
-        //        damageLevel += amount;
-        //        break;
-        //    case StatType.Health:
-        //        maxHealthLevel += amount;
-        //        break;
-        //    case StatType.Critical:
-        //        criticalLevel += amount;
-        //        break;
-        //    case StatType.AttackSpeed:
-        //        attackSpeedLevel += amount;
-        //        break;
-        //    case StatType.MoveSpeed:
-        //        moveSpeedLevel += amount;
-        //        break;
-        //}
-
         statPoint -= possibleAmount;
         statLevels[statType] += possibleAmount;
 
@@ -121,17 +94,6 @@ public class PlayerStats : MonoBehaviour
 
     public int GetStat(StatType statType)
     {
-        //return statType switch
-        //{
-        //    StatType.Attack => damageLevel,
-        //    StatType.Health => maxHealthLevel,
-        //    StatType.Critical => criticalLevel,
-        //    StatType.AttackSpeed => attackSpeedLevel,
-        //    StatType.MoveSpeed => moveSpeedLevel,
-        //    _ => 0
-        //};
-
-        //return statLevels[statType];
         return statLevels.TryGetValue(statType, out int level) ? level : 0;
     }
 
@@ -150,12 +112,6 @@ public class PlayerStats : MonoBehaviour
 
     public void RecalculateStats()
     {
-        //damage = 5 + damageLevel * 3; //기본 공격력 5 + 레벨당 3씩 추가
-        //maxHealth = 50 + maxHealthLevel * 10; //기본체력 50 + 레벨당 10씩 추가
-        //critical = criticalLevel * 0.01f; //레벨당 크리확률 0.1% 증가
-        //attackSpeed = 1 + attackSpeedLevel * 0.01f; //레벨당 0.1% 증가
-        //moveSpeed = 5 + moveSpeedLevel * 0.01f; //레벨당 0.1% 증가
-
         damage = 5 + GetStat(StatType.Attack) * 3;
         maxHealth = 50 + GetStat(StatType.Health) * 10;
         critical = GetStat(StatType.Critical) * 0.01f;
@@ -179,12 +135,6 @@ public class PlayerStats : MonoBehaviour
 
     private void RefreshAllStatUIs()
     {
-        Debug.Log($"[PlayerStats] RefreshAllStatUIs 실행됨, UI개수 : {slotUIs.Count}");
 
-        foreach (StatsSlotUI ui in slotUIs)
-        {
-            ui.Refresh();
-            Debug.Log($"[PlayerStats] 새로고침한 UI : {ui.name}");
-        }
     }
 }
