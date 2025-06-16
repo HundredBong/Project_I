@@ -281,16 +281,16 @@ public class DataManager : MonoBehaviour
                 BaseValueIncrease = float.Parse(tokens[8]),
                 BufferDuration = float.Parse(tokens[9]),
                 EffectType = Enum.Parse<SkillEffectType>(tokens[10].Trim()),
-                PassiveValue = 0f, // CSV에 없으면 기본값
-                PassiveEffectIncrease = 0f, // 마찬가지
-                MaxLevel = int.Parse(tokens[11]),
-                UpgradeCost = int.Parse(tokens[12]),
-                UpgradeCostPerLevel = int.Parse(tokens[13]),
-                AwakenRequiredCount = tokens[14].Trim().Split(';').Select(int.Parse).ToArray(),
-                StatusEffect = Enum.Parse<StatusEffectType>(tokens[15].Trim()),
-                StatucChance = float.Parse(tokens[16]),
-                HitCount = int.Parse(tokens[17]),
-                TargetCount = int.Parse(tokens[18])
+                PassiveValue = float.Parse(tokens[11]),
+                PassiveEffectIncrease = float.Parse(tokens[12]),
+                MaxLevel = int.Parse(tokens[13]),
+                UpgradeCost = int.Parse(tokens[14]),
+                UpgradeCostPerLevel = int.Parse(tokens[15]),
+                AwakenRequiredCount = tokens[16].Trim().Split(';').Select(int.Parse).ToArray(),
+                StatusEffect = Enum.Parse<StatusEffectType>(tokens[17].Trim()),
+                StatucChance = float.Parse(tokens[18]),
+                HitCount = int.Parse(tokens[19]),
+                TargetCount = int.Parse(tokens[20])
             };
             skillDataTable[data.SkillId] = data;
         }
@@ -375,8 +375,8 @@ public class SkillData
     public float BaseValueIncrease; //레벨업 시 증가하는 기본 값
     public float BufferDuration; //버프 지속 시간, 초 단위, 버프 스킬에만 적용
     public SkillEffectType EffectType; //스킬 효과 타입, GoldBonus, ExpBonus 등
-    public float PassiveValue;
-    public float PassiveEffectIncrease;
+    public float PassiveValue; //보유 효과
+    public float PassiveEffectIncrease; //보유 효과 증가량
     public int MaxLevel; //스킬의 최대 레벨
     public int UpgradeCost; //스킬 업그레이드 비용, 골드 등
     public int UpgradeCostPerLevel; //레벨당 업그레이드 비용 증가량

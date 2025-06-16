@@ -33,7 +33,6 @@ public class SkillSlotUI : MonoBehaviour
 
     private void OnClick()
     {
-        //var popup = UIManager.Instance.PopupOpen<UISkillInfoPopup>();
-        //popup.SetSkill(data);sk
+        UIManager.Instance.PopupOpen<UISkillInfoPopup>().Init(skillData);
     }
 }

@@ -10,4 +10,8 @@ HUD_Skill,스킬,Skill
 HUD_Inventory,인벤토리,Inventory
 HUD_Menu,메뉴,Menu
 Skill_Lightning_Name,라이트닝,Lightning
-Skill_Lightning_Desc,"“적 위치에 번개를 내리치며, 타격받은 적은 <color=white>{0}%</color> 대미지로 {1}번 피해를 입습니다. 타격받은 적은 <color=cyan>{2}%</color>확률로 감전상태가 됩니다. <color=yellow>(쿨타임 {3}초)</color>”",“Calls lightning on enemy position. Deals <color=white>{0}%</color> damage {1} times. Has <color=cyan>{2}%</color> chance to shock. <color=yellow>(Cooldown: {3}s)</color>”
+Skill_Lightning_Desc,적 위치에 번개를 내리치며 타격받은 적은 <color=white>{0}%</color> 대미지로 {1}번 피해를 입습니다. 타격받은 적은 <color=blue>{2}%</color>확률로 감전상태가 됩니다. <color=yellow>(쿨타임 {3}초)</color>,Calls lightning on enemy position. Deals <color=white>{0}%</color> damage {1} times. Has <color=cyan>{2}%</color> chance to shock. <color=yellow>(Cooldown: {3}s)</color>
+Skill_Count,보유 수량,Skills owned
+Skill_Effect,보유 효과,Passive Effect 
+Skill_Effect_GoldBonus,골드 획득량 증가,Increased Gold Gain
+Grade_Common,일반,Common

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UISkillPage : UIPage
 {
@@ -10,21 +11,59 @@ public class UISkillPage : UIPage
     //스킬 레벨에 변동이 있을 때마다 업데이트
 
     [SerializeField] private GameObject skillSlotPrefab;
-    [SerializeField] private Transform contentRoot;
+    [SerializeField] private Transform activeContentRoot;
+    [SerializeField] private Transform passiveContentRoot;
+    [SerializeField] private GameObject activeSkillScroll;
+    [SerializeField] private GameObject passiveSkillScroll;
+    [SerializeField] private Button activeSkillButton;
+    [SerializeField] private Button passiveSkillButton;
+    [SerializeField] private Color selectedColor;
+    [SerializeField]private Color unselectedColor;
+
 
     private List<SkillSlotUI> slotUIs = new List<SkillSlotUI>();
+
+    private void OnEnable()
+    {
+        activeSkillButton.onClick.AddListener(ShowActiveSkills);
+        passiveSkillButton.onClick.AddListener(ShowPassiveSkills);
+    }
+
+    private void OnDisable()
+    {
+        activeSkillButton.onClick.RemoveListener(ShowActiveSkills);
+        passiveSkillButton.onClick.RemoveListener(ShowActiveSkills);
+    }
+
+    private void ShowActiveSkills()
+    {
+        activeSkillButton.image.color = selectedColor;
+        passiveSkillButton.image.color = unselectedColor;
+        activeSkillScroll.SetActive(true);
+        passiveSkillScroll.SetActive(false);
+    }
+
+    private void ShowPassiveSkills()
+    {
+        activeSkillButton.image.color = unselectedColor;
+        passiveSkillButton.image.color = selectedColor;
+        activeSkillScroll.SetActive(false);
+        passiveSkillScroll.SetActive(true);
+    }
 
     private void Start()
     {
         foreach (KeyValuePair<SkillId, SkillData> kvp in DataManager.Instance.skillDataTable)
         {
-            GameObject obj = Instantiate(skillSlotPrefab, contentRoot);
+            GameObject obj = Instantiate(skillSlotPrefab, kvp.Value.Type == SkillType.Active ? activeContentRoot : passiveContentRoot);
             SkillSlotUI ui = obj.GetComponent<SkillSlotUI>();
             ui.Init(kvp.Value);
             slotUIs.Add(ui);
         }
 
         Debug.Log("[UISkillPage] 스킬 슬롯 초기화됨");
+
+        ShowActiveSkills(); 
     }
 
     public void Refresh()
