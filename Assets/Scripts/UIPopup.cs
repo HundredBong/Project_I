@@ -18,7 +18,7 @@ public abstract class UIPopup : MonoBehaviour
         }
     }
 
-    public void Open()
+    public virtual void Open()
     {
         gameObject.SetActive(true);
     }

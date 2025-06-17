@@ -296,6 +296,18 @@ public class DataManager : MonoBehaviour
         }
         Debug.Log($"[DataManager] skillDataTable : {skillDataTable.Count}개의 데이터를 로드함");
     }
+
+    public List<SkillData> GetAllSkillData()
+    {
+        List<SkillData> skillList = new List<SkillData>();
+
+        foreach (KeyValuePair<SkillId,SkillData> kvp in skillDataTable)
+        {
+            skillList.Add(kvp.Value);
+        }
+
+        return skillList;
+    }
 }
 
 [System.Serializable]

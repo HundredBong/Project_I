@@ -19,7 +19,7 @@ public class UISkillPage : UIPage
     [SerializeField] private Button passiveSkillButton;
     [SerializeField] private Color selectedColor;
     [SerializeField]private Color unselectedColor;
-
+    [SerializeField] private Button popupOpenButton;
 
     private List<SkillSlotUI> slotUIs = new List<SkillSlotUI>();
 
@@ -27,6 +27,7 @@ public class UISkillPage : UIPage
     {
         activeSkillButton.onClick.AddListener(ShowActiveSkills);
         passiveSkillButton.onClick.AddListener(ShowPassiveSkills);
+        popupOpenButton.onClick.AddListener(()=>UIManager.Instance.PopupOpen<SkillEquipPopup>());
     }
 
     private void OnDisable()
