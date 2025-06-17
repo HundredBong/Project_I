@@ -29,4 +29,12 @@ public abstract class UIPage : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            UIManager.Instance.HandleBack();
+        }
+    }
 }

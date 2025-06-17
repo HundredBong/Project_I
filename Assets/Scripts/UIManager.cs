@@ -93,6 +93,11 @@ public class UIManager : MonoBehaviour
 
     public void PageClose()
     {
+        while(openPopups.Count > 0)
+        {
+            PopupClose();
+        }
+
         if (currentPage != null)
         {
             currentPage.Close();
@@ -123,6 +128,20 @@ public class UIManager : MonoBehaviour
             //마지막에 켜진 팝업 순서대로 꺼짐
             UIPopup popup = openPopups.Pop();
             popup.Close();
+        }
+    }
+
+    public void HandleBack()
+    {
+        //팝업 큐에 남아있는 팝업이 있으면 팝업을 닫음.
+        if (openPopups.Count > 0) 
+        {
+            PopupClose();
+        }
+        //큐에 남아있지 않고, 현재 페이지가 있으면 페이지를 닫음.
+        else if (currentPage != null)
+        {
+            PageClose();
         }
     }
 }
