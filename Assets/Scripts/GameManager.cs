@@ -1,8 +1,9 @@
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEditor;
 using UnityEngine;
-using Cysharp.Threading.Tasks;
 
 public class GameManager : MonoBehaviour
 {
@@ -18,6 +19,8 @@ public class GameManager : MonoBehaviour
 
     [Space(20)]
     public bool firebaseReady = false;
+
+    public SkillId[] equippedSkills = new SkillId[6];
 
     private void Awake()
     {
@@ -99,6 +102,12 @@ public class GameManager : MonoBehaviour
         {
             statSaver.RequestSave(stats.GetAllLevels());
         };
+
+        statSaver.LoadSkillEquipData(data =>
+        {
+            Instance.equippedSkills = data.equippedSkills;
+            FindObjectOfType<ActiveSkillPanel>().Refresh(data.equippedSkills);
+        });
     }
 
     private bool CheckReadyForLoad()

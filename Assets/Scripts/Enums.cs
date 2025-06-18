@@ -14,7 +14,7 @@ public enum StageType { Forest, Cave }
 
 public enum SkillId
 {
-    None = -1, 
+    None, 
     Lightning,
 }
 

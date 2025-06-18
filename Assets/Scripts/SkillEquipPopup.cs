@@ -9,6 +9,7 @@ public class SkillEquipPopup : UIPopup
     [SerializeField] private GameObject slotPrefab; //슬롯 프리팹
     [SerializeField] private Transform listRoot; //보유 스킬 버튼들 부모 오브젝트
     [SerializeField] private GameObject skillSelectButtonPrefab; //보유 스킬 버튼 프리팹
+    [SerializeField] private ActiveSkillPanel activeSkillPanel; //업데이트할 패널
 
     private List<SkillEquipSlot> slots = new List<SkillEquipSlot>();
 
@@ -25,9 +26,8 @@ public class SkillEquipPopup : UIPopup
     public override void Close()
     {
         base.Close();
-        
-        SkillEquipSaveData saveData = BuildSkillEquipSaveData();
-        GameManager.Instance.statSaver.SaveSkillEquipData(saveData);
+       
+        SaveEquippedSkills();
     }
 
     private void ClearAllSlotsAndButtons()
@@ -71,6 +71,17 @@ public class SkillEquipPopup : UIPopup
 
     private void OnSkillButtonClicked(SkillData skill)
     {
+        //중복 체크
+        foreach(SkillEquipSlot slot in slots)
+        {
+            if (slot.GetEquippedSkill() == skill) //이미 장착된 스킬이면 아무것도 안함
+            {
+                Debug.LogWarning("[SkillEquipPopup] 이미 장착된 스킬입니다.");
+                return;
+            }
+        }
+
+        //빈 슬롯에 스킬 장착
         foreach (SkillEquipSlot slot in slots)
         {
             if (slot.CheckIsEmpty() == true)
@@ -108,5 +119,25 @@ public class SkillEquipPopup : UIPopup
                 slots[i].SetSkill(data);
             }
         }
+    }
+
+    private void SaveEquippedSkills()
+    {
+        //슬롯을 게임매니저에 저장
+        for (int i = 0; i < slots.Count; i++)
+        {
+            SkillData skill = slots[i].GetEquippedSkill();
+            GameManager.Instance.equippedSkills[i] = (skill != null) ? skill.SkillId : SkillId.None;
+        }
+
+        //게임매니저 -> 파이어베이스 저장
+        SkillEquipSaveData saveData = new SkillEquipSaveData();
+        for(int i = 0; i < GameManager.Instance.equippedSkills.Length; i++)
+        {
+            saveData.equippedSkills[i] = GameManager.Instance.equippedSkills[i];
+        }
+        GameManager.Instance.statSaver.SaveSkillEquipData(saveData);
+
+        activeSkillPanel.Refresh(GameManager.Instance.equippedSkills);
     }
 }
