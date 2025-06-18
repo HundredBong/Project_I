@@ -19,6 +19,15 @@ public class SkillEquipPopup : UIPopup
         ClearAllSlotsAndButtons(); //TODO : 추후 RefreshUI로 리팩토링 필요
         InitializeSlots();
         InitializeSkillButtons();
+        GameManager.Instance.statSaver.LoadSkillEquipData(LoadEquippedSkills); //저장된 스킬 장착 데이터 불러오기
+    }
+
+    public override void Close()
+    {
+        base.Close();
+        
+        SkillEquipSaveData saveData = BuildSkillEquipSaveData();
+        GameManager.Instance.statSaver.SaveSkillEquipData(saveData);
     }
 
     private void ClearAllSlotsAndButtons()
@@ -73,5 +82,31 @@ public class SkillEquipPopup : UIPopup
 
         //함수가 여기까지오면 모든 슬롯이 차있다는 의미
         Debug.LogWarning("[SkillEquipPopup] 모든 슬롯이 차있음");
+    }
+
+    private SkillEquipSaveData BuildSkillEquipSaveData()
+    {
+        SkillEquipSaveData saveData = new SkillEquipSaveData();
+
+        for (int i = 0; i < slots.Count; i++)
+        {
+            SkillData skill = slots[i].GetEquippedSkill();
+            saveData.equippedSkills[i] = (skill != null) ? skill.SkillId : SkillId.None; //슬롯이 비어있으면 None으로 설정
+        }
+
+        return saveData;
+    }
+
+    public void LoadEquippedSkills(SkillEquipSaveData saveData)
+    {
+        for (int i = 0; i < slots.Count; i++)
+        {
+            SkillId id = saveData.equippedSkills[i];
+
+            if (id != SkillId.None && DataManager.Instance.skillDataTable.TryGetValue(id, out SkillData data) == true)
+            {
+                slots[i].SetSkill(data);
+            }
+        }
     }
 }

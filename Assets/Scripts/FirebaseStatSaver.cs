@@ -116,7 +116,7 @@ public class FirebaseStatSaver : MonoBehaviour
 
     private async void MainThreadDispatcher(Dictionary<StatType, int> loadedStats, Action<Dictionary<StatType, int>> onLoaded)
     {
-        await Cysharp.Threading.Tasks.UniTask.SwitchToMainThread();
+        await UniTask.SwitchToMainThread();
         onLoaded?.Invoke(loadedStats);
     }
 
@@ -162,7 +162,52 @@ public class FirebaseStatSaver : MonoBehaviour
 
     private async void MainThreadDispatcher(StageSaveData data, Action<StageSaveData> onLoaded)
     {
-        await Cysharp.Threading.Tasks.UniTask.SwitchToMainThread();
+        await UniTask.SwitchToMainThread();
+        onLoaded?.Invoke(data);
+    }
+
+    public void SaveSkillEquipData(SkillEquipSaveData data)
+    {
+        string json = JsonUtility.ToJson(data);
+        string userId = "test_user";
+        string path = $"users/{userId}/skillEquip";
+
+        dbRef.Child(path).SetRawJsonValueAsync(json).ContinueWith (task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                Debug.Log("[FirebaseStatSaver] 스킬 장착 데이터 저장 성공");
+            }
+            else
+            {
+                Debug.LogError($"[FirebaseStatSaver] 스킬 장착 데이터 저장 실패, {task.Exception}");
+            }
+        });
+    }
+
+    public void LoadSkillEquipData(Action<SkillEquipSaveData> onLoaded)
+    {
+        string userId = "test_user";
+        string path = $"users/{userId}/skillEquip";
+
+        dbRef.Child(path).GetValueAsync().ContinueWith(task =>
+        {
+            if(task.IsCompletedSuccessfully)
+            {
+
+                string json = task.Result.GetRawJsonValue();
+                SkillEquipSaveData data = JsonUtility.FromJson<SkillEquipSaveData>(json);
+                MainThreadDispatcher(data, onLoaded);
+            }
+            else
+            {
+                Debug.LogError($"[FirebaseStatSaver] 스킬 장착 데이터 불러오기 실패, {task.Exception}");
+            }
+        });
+    }
+    private async void MainThreadDispatcher(SkillEquipSaveData data, Action<SkillEquipSaveData> onLoaded)
+    {
+        await UniTask.SwitchToMainThread();
         onLoaded?.Invoke(data);
     }
 }
@@ -175,4 +220,10 @@ public class StageSaveData
     public bool IsLoop;
     public bool[] BossDefeated;
     public bool[] StageClearedFlags;
+}
+
+[System.Serializable]
+public class SkillEquipSaveData
+{
+    public SkillId[] equippedSkills = new SkillId[6]; 
 }
