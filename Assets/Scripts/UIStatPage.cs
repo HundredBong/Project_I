@@ -41,6 +41,8 @@ public class UIStatPage : UIPage
 
     public void Refresh()
     {
+        //UI스탯 슬롯이 아니라 페이지를 새로고침하는거였네
+        //TODO : DataManager.Instance.GetLocalizedText()로 언어별로 가져와햐 함, LanguageManager.OnLanguageChanged 이벤트로 언어 변경시 새로고침도 해야함
         levelText.text = $"내 레벨 : Lv.{playerStats.level}";
         statPointText.text = $"스탯포인트 {playerStats.statPoint}/{playerStats.level}";
 

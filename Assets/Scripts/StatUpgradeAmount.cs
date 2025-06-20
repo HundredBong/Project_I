@@ -16,6 +16,11 @@ public static class StatUpgradeAmount
         }
     }
 
+    public static void Unregister(StatUpgradeAmountSelector selector)
+    {
+        selectors.Remove(selector);
+    }
+
     public static void NotifyChange()
     {
         foreach (var button in selectors)

@@ -91,6 +91,25 @@ public class DataManager : MonoBehaviour
         return key;
     }
 
+    public string GetSkillDesc(SkillData data, SkillId id)
+    {
+        //기존SkillInfoPopup에서 옮김
+
+        //모든 스킬이 동일한 형식을 가진게 아니다보니 함수로 빼서 따로 작성함
+        string rawText = DataManager.Instance.GetLocalizedText(data.DescKey);
+        string formattedText = "";
+        switch (id)
+        {
+            case SkillId.Lightning:
+                //한국어, 영어 모두 동일한 포맷이라면 가능하기는 한데, 포맷 방식이 다르다면 다 따로 만들어줘야 함.
+                //혹시 모르니 스위치 익스프레션이 아닌 일반 스위치문으로 작성
+                formattedText = string.Format(rawText, data.BaseValue, data.HitCount, data.StatucChance, data.Cooldown);
+                return formattedText;
+            default:
+                return rawText;
+        }
+    }
+
     private void LoadStatName()
     {
         TextAsset statNamaData = Resources.Load<TextAsset>("CSV/StatNameData");

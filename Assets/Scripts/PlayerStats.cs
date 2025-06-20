@@ -87,9 +87,9 @@ public class PlayerStats : MonoBehaviour
         statPoint -= possibleAmount;
         statLevels[statType] += possibleAmount;
 
-        RecalculateStats();
-        GameManager.Instance.statSaver.RequestSave(GetAllLevels());
-        OnStatChanged?.Invoke();
+        RecalculateStats(); //스탯 재계산
+        GameManager.Instance.statSaver.RequestSave(GetAllLevels()); //스탯 저장 요청
+        OnStatChanged?.Invoke(); //UI 새로고침
     }
 
     public int GetStat(StatType statType)
@@ -112,6 +112,11 @@ public class PlayerStats : MonoBehaviour
 
     public void RecalculateStats()
     {
+        //이거 제대로 하려면 CSV에서 읽어와야 함, 임시로 하드코딩함
+        //만약 한다면 StatType, BaseValue, GrowthPerLevel
+        //           Attack, 10, 2.5
+        //           Health, 100, 20
+        //만들어두면 damage = baseValue + GetStat(StatType.Attack) * growthPerLevel; 이런 식으로 계산 가능함
         damage = 5 + GetStat(StatType.Attack) * 3;
         maxHealth = 50 + GetStat(StatType.Health) * 10;
         critical = GetStat(StatType.Critical) * 0.01f;
@@ -135,6 +140,6 @@ public class PlayerStats : MonoBehaviour
 
     private void RefreshAllStatUIs()
     {
-
+        //어차피 스탯페이지는 열릴때마다 새로고침됨, 여기에 쓸 필요 없음
     }
 }

@@ -44,7 +44,7 @@ public class UISkillInfoPopup : UIPopup
         skillNameText.text = DataManager.Instance.GetLocalizedText(data.NameKey);
         skillCountText.text = $"{DataManager.Instance.GetLocalizedText("Skill_Count")}"; //TODO: DataManager에 추가, 추후 플레이어 스킬 개수로 변경 필요  
         skillLevelText.text = $"Lv.1/{data.MaxLevel}"; //TODO:추후 플레이어 스킬 레벨로 변경 필요
-        skillDescriptionText.text = GetSkillDesc(data, data.SkillId);
+        skillDescriptionText.text = DataManager.Instance.GetSkillDesc(data, data.SkillId);
         skillEffectName.text = DataManager.Instance.GetLocalizedText("Skill_Effect"); //DataManager에 추가 
         skillEffectDescText.text = DataManager.Instance.GetLocalizedText($"Skill_Effect_{data.EffectType.ToString()}"); //DataManager에 추가
         skillEffectValueText.text = $"{data.PassiveValue}%"; //TODO : 스킬 레벨별 Increase 공식 적용
@@ -57,22 +57,6 @@ public class UISkillInfoPopup : UIPopup
         ShowUpgradePanel();
     }
 
-    private string GetSkillDesc(SkillData data, SkillId id)
-    {
-        //모든 스킬이 동일한 형식을 가진게 아니다보니 함수로 빼서 따로 작성함
-        string rawText = DataManager.Instance.GetLocalizedText(data.DescKey);
-        string formattedText = "";
-        switch (id)
-        {
-            case SkillId.Lightning:
-                //한국어, 영어 모두 동일한 포맷이라면 가능하기는 한데, 포맷 방식이 다르다면 다 따로 만들어줘야 함.
-                //혹시 모르니 스위치 익스프레션이 아닌 일반 스위치문으로 작성
-                formattedText = string.Format(rawText, data.BaseValue, data.HitCount, data.StatucChance, data.Cooldown);
-                return formattedText;
-            default:
-                return rawText;
-        }
-    }
 
     private void ShowUpgradePanel()
     {

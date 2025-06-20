@@ -4,8 +4,14 @@ using UnityEngine;
 
 public class EnemyPool : GenericPoolManager<Enemy>
 {
-    private HashSet<EnemyId> loadedEnemyIds = new HashSet<EnemyId>();
-    private Dictionary<EnemyId, GameObject> prefabCache = new Dictionary<EnemyId, GameObject>();  
+    //Enemy 전용 풀링 시스템
+    //EnemyPool을 미리 초기화해두고 , EnemyId를 기반으로 프리팹을 로드하여 관리함
+
+    private HashSet<EnemyId> loadedEnemyIds = new HashSet<EnemyId>(); //로드된 EnemyId를 저장하여 중복 로드를 방지
+
+    //실제 프리팹 객체 매핑용 캐시, 없으면 SpawnManager에서 로드할 때마다 Resources.Load를 호출해야함
+    //EnemyId가 어떤 프리팹을 가리키는지 매핑하는 딕셔너리
+    private Dictionary<EnemyId, GameObject> prefabCache = new Dictionary<EnemyId, GameObject>();
 
     private void Awake()
     {
@@ -15,6 +21,23 @@ public class EnemyPool : GenericPoolManager<Enemy>
     public override void Preload(GameObject prefab, int count)
     {
         base.Preload(prefab, count);
+
+        #region base 원본 코드
+        //GameObject key = prefab.gameObject;
+
+        //if (pool.ContainsKey(key) == false)
+        //{
+        //    pool[key] = new Stack<T>();
+        //}
+
+        //for (int i = 0; i < count; i++)
+        //{
+        //    GameObject obj = Instantiate(prefab, transform);
+        //    obj.SetActive(false);
+        //    T comp = obj.GetComponent<T>();
+        //    pool[key].Push(comp);
+        //}
+        #endregion
 
         if (pool.TryGetValue(prefab, out Stack<Enemy> stack))
         {

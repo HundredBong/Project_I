@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class ActiveSkillSlot : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class ActiveSkillSlot : MonoBehaviour
     [SerializeField] private Button skillButton;
 
     private SkillBase equippedSkill;
+
 
     public void Init(SkillId id)
     {
@@ -35,12 +37,8 @@ public class ActiveSkillSlot : MonoBehaviour
             Debug.LogWarning("[ActiveSkillSlot] 장착된 스킬이 없습니다.");
             return;
         }
-
-
-        //if (GameManager.Instance.player.CanUseSkill()) 
-        //{
-        //    equippedSkill.Execute(GameManager.Instance.player.gameObject);
-        //    GameManager.Instance.player.TriggerGlobalCooldown(); 
-        //}
+        
+        equippedSkill.Execute(GameManager.Instance.player.gameObject);
     }
+
 }

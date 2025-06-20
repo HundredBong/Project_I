@@ -32,6 +32,11 @@ public class StatUpgradeAmountSelector : MonoBehaviour
         button.onClick.RemoveListener(OnClick);
     }
 
+    private void OnDestroy()
+    {
+        StatUpgradeAmount.Unregister(this);
+    }
+
     private void Start()
     {
         if (amountValue == LocalSetting.LoadUpgradeAmount())

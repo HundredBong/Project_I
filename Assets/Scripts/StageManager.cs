@@ -56,7 +56,7 @@ public class StageManager : MonoBehaviour
         bossDefeated = data.BossDefeated ?? new bool[DataManager.Instance.stageDataTable.Count];
         isLoop = data.IsLoop;
 
-        Debug.Log("[StageManager] 스테이지 데이터 불러오기 완료");
+        Debug.Log($"[StageManager] 스테이지 데이터 불러오기 완료, 현재 스테이지 : {currentStage}");
     }
 
     public void StartStage()
