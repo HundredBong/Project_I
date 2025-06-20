@@ -70,7 +70,6 @@ public class Enemy : MonoBehaviour, IPooledObject
             return;
         }
 
-        //TODO : StageData의 Rate값이랑 연동하기
         maxHealth = enemyData.HP * stageData.HPRate;
         health = maxHealth;
         damage = enemyData.ATK * stageData.ATKRate;

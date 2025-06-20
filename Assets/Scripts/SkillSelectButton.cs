@@ -9,6 +9,7 @@ public class SkillSelectButton : MonoBehaviour
 {
     [SerializeField] private Image skillIcon;
     [SerializeField] private TextMeshProUGUI skillNameText;
+    [SerializeField] private GameObject lockOverlay;
 
     private SkillData skillData; //이 버튼이 담당하는 스킬
 
@@ -22,6 +23,21 @@ public class SkillSelectButton : MonoBehaviour
         skillNameText.text = DataManager.Instance.GetLocalizedText(skillData.NameKey);
         skillIcon.sprite = DataManager.Instance.spriteDic[skillData.SkillIcon];
 
-        button.onClick.AddListener(() => onClick(skillData));
+        lockOverlay.SetActive(SkillManager.Instance.IsUnlocked(skillData.SkillId) == false);
+
+        button.onClick.AddListener(() =>
+        {
+            //잠금 해제된 스킬만 클릭 이벤트를 실행함.
+            if (SkillManager.Instance.IsUnlocked(skillData.SkillId) == true)
+            {
+                onClick(skillData);
+            }
+            else
+            {
+                //TODO : string을 인자로 받는 팝업을 UIManager에 추가하여 사용
+                //       GetLocalizedText를 사용
+                Debug.LogWarning($"[SkillSelectButton] 잠겨있는 스킬임, {skillData.SkillId}");
+            }
+        }); 
     }
 }

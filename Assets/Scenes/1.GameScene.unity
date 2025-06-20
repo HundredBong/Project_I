@@ -2972,7 +2972,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: X100
+  m_text: "\uC2A4\uD0AC \uC7A5\uCC29"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7d7bd7ee46c707a40bc5a83de0312c36, type: 2}
   m_sharedMaterial: {fileID: -2530527467424470486, guid: 7d7bd7ee46c707a40bc5a83de0312c36, type: 2}
@@ -4526,7 +4526,6 @@ GameObject:
   - component: {fileID: 401766261}
   - component: {fileID: 401766260}
   - component: {fileID: 401766259}
-  - component: {fileID: 401766258}
   m_Layer: 5
   m_Name: 'Skill Equip '
   m_TagString: Untagged
@@ -4554,21 +4553,6 @@ RectTransform:
   m_AnchoredPosition: {x: -50, y: 50}
   m_SizeDelta: {x: 200, y: 70}
   m_Pivot: {x: 1, y: 0}
---- !u!114 &401766258
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 401766256}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6450de9c6edd7c54ba38000b34195d84, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  amountValue: 100
-  unselectedColor: {r: 0.75294125, g: 0.60784316, b: 0.7725491, a: 1}
-  selectedColor: {r: 0.17644179, g: 0.3583075, b: 0.6132076, a: 1}
 --- !u!114 &401766259
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18229,7 +18213,6 @@ MonoBehaviour:
   statSaver: {fileID: 1333783327}
   enemyList: []
   firebaseReady: 0
-  equippedSkills: 000000000000000000000000000000000000000000000000
 --- !u!1 &1744575511
 GameObject:
   m_ObjectHideFlags: 0
@@ -20758,6 +20741,50 @@ Transform:
   - {fileID: 1560248590}
   - {fileID: 1762947354}
   m_Father: {fileID: 980060536}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1941708243
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1941708245}
+  - component: {fileID: 1941708244}
+  m_Layer: 0
+  m_Name: Skill Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1941708244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1941708243}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4c1d0fb695f21c49a9d12dbb8c66a96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1941708245
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1941708243}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1943638517
 GameObject:
@@ -28243,6 +28270,7 @@ SceneRoots:
   - {fileID: 467928907}
   - {fileID: 1357589085}
   - {fileID: 1799514478}
+  - {fileID: 1941708245}
   - {fileID: 1333783326}
   - {fileID: 519420032}
   - {fileID: 1789550201}

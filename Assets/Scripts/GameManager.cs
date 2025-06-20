@@ -20,8 +20,6 @@ public class GameManager : MonoBehaviour
     [Space(20)]
     public bool firebaseReady = false;
 
-    public SkillId[] equippedSkills = new SkillId[6];
-
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -98,15 +96,19 @@ public class GameManager : MonoBehaviour
 
         statSaver.LoadSkillEquipData(data =>
         {
-            Instance.equippedSkills = data.equippedSkills;
+            SkillManager.Instance.SetEquippedSkills(data.equippedSkills);
             FindObjectOfType<ActiveSkillPanel>().Refresh(data.equippedSkills);
         });
 
         statSaver.LoadStageData(data =>
         {
-            Debug.Log($"{data.CurrentStageId}");
             StageManager.Instance.SetStageData(data);
             StageManager.Instance.StartStage();
+        });
+
+        statSaver.LoadPlayerSkillData(data =>
+        {
+            SkillManager.Instance.LoadFrom(data); 
         });
     }
 
@@ -138,6 +140,13 @@ public class GameManager : MonoBehaviour
     public static void LoadStats()
     {
         Instance.statSaver.LoadStatLevels(Instance.stats.SetAllLevels);
+    }
+
+    [MenuItem("Tools/Save Skill State")]
+    public static void SaveSkillState()
+    {
+        SkillManager.Instance.AddSkill(SkillId.Lightning,1);
+        Instance.statSaver.SavePlayerSkillData(SkillManager.Instance.BuildSaveData());
     }
 
 #endif

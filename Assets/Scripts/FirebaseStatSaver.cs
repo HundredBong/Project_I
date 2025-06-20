@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using Cysharp.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
 
 public class FirebaseStatSaver : MonoBehaviour
 {
@@ -210,6 +211,51 @@ public class FirebaseStatSaver : MonoBehaviour
         await UniTask.SwitchToMainThread();
         onLoaded?.Invoke(data);
     }
+
+    public void SavePlayerSkillData(PlayerSkillSaveData data)
+    {
+        string json = JsonUtility.ToJson(data);
+        string userId = "test_user";
+        string path = $"users/{userId}/skillState";
+
+        dbRef.Child(path).SetRawJsonValueAsync(json).ContinueWith(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                Debug.Log("[FirebaseStatSaver] 플레이어 스킬 데이터 저장 성공");
+            }
+            else
+            {
+                Debug.LogError($"[FirebaseStatSaver] 플레이어 스킬 데이터 저장 실패, {task.Exception}");
+            }
+        });
+    }
+
+    public void LoadPlayerSkillData(Action<PlayerSkillSaveData> onLoaded)
+    {
+        string userId = "test_user";
+        string path = $"users/{userId}/skillState";
+
+        dbRef.Child(path).GetValueAsync().ContinueWith(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                string json = task.Result.GetRawJsonValue();
+                PlayerSkillSaveData data = JsonUtility.FromJson<PlayerSkillSaveData>(json);
+                MainThreadDispatcher(data, onLoaded);
+            }
+            else
+            {
+                Debug.LogError($"[FirebaseStatSaver] 플레이어 스킬 데이터 불러오기 실패, {task.Exception}");
+            }
+        });
+    }
+
+    public async void MainThreadDispatcher(PlayerSkillSaveData data, Action<PlayerSkillSaveData> onLoaded)
+    {
+        await UniTask.SwitchToMainThread();
+        onLoaded?.Invoke(data);
+    }
 }
 
 [System.Serializable]
@@ -226,4 +272,19 @@ public class StageSaveData
 public class SkillEquipSaveData
 {
     public SkillId[] equippedSkills = new SkillId[6]; 
+}
+
+[System.Serializable]
+public class SkillStateSaveData
+{
+    public SkillId skillId;
+    public int level;
+    public int ownedCount;
+    public int awakenLevel;
+}
+
+[System.Serializable]
+public class PlayerSkillSaveData
+{
+    public List<SkillStateSaveData> skillStates = new List<SkillStateSaveData>();
 }

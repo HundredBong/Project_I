@@ -76,7 +76,7 @@ public class SkillEquipPopup : UIPopup
         {
             if (slot.GetEquippedSkill() == skill) //이미 장착된 스킬이면 아무것도 안함
             {
-                Debug.LogWarning("[SkillEquipPopup] 이미 장착된 스킬입니다.");
+                Debug.LogWarning("[SkillEquipPopup] 이미 장착된 스킬임");
                 return;
             }
         }
@@ -123,21 +123,24 @@ public class SkillEquipPopup : UIPopup
 
     private void SaveEquippedSkills()
     {
+        SkillId[] newEquippedSkills = new SkillId[6];
         //슬롯을 게임매니저에 저장
         for (int i = 0; i < slots.Count; i++)
         {
             SkillData skill = slots[i].GetEquippedSkill();
-            GameManager.Instance.equippedSkills[i] = (skill != null) ? skill.SkillId : SkillId.None;
+            newEquippedSkills[i] = (skill != null) ? skill.SkillId : SkillId.None; //슬롯이 비어있으면 None으로 설정
         }
+
+        SkillManager.Instance.SetEquippedSkills(newEquippedSkills); //스킬 매니저에 장착된 스킬 설정
 
         //게임매니저 -> 파이어베이스 저장
         SkillEquipSaveData saveData = new SkillEquipSaveData();
-        for(int i = 0; i < GameManager.Instance.equippedSkills.Length; i++)
+        for(int i = 0; i < SkillManager.Instance.GetEquippedSkills().Length; i++)
         {
-            saveData.equippedSkills[i] = GameManager.Instance.equippedSkills[i];
+            saveData.equippedSkills[i] = newEquippedSkills[i];
         }
         GameManager.Instance.statSaver.SaveSkillEquipData(saveData);
 
-        activeSkillPanel.Refresh(GameManager.Instance.equippedSkills);
+        activeSkillPanel.Refresh(newEquippedSkills);
     }
 }

@@ -309,7 +309,8 @@ public class DataManager : MonoBehaviour
                 StatusEffect = Enum.Parse<StatusEffectType>(tokens[17].Trim()),
                 StatucChance = float.Parse(tokens[18]),
                 HitCount = int.Parse(tokens[19]),
-                TargetCount = int.Parse(tokens[20])
+                TargetCount = int.Parse(tokens[20]),
+                isUnlocked = false
             };
             skillDataTable[data.SkillId] = data;
         }
@@ -416,6 +417,7 @@ public class SkillData
     public float StatucChance;
     public int HitCount;
     public int TargetCount;
+    public bool isUnlocked; 
 }
 
 public class LocalizedText
