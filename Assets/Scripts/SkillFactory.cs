@@ -8,45 +8,42 @@ public static class SkillFactory
     //상태를 가지지않고, 단순 입출력만 처리하는 기능이라 인스턴스를 만들 이유가 없음
     //내부에 필드도 없고 단순히 Create로 입력을 받고 결과만 반환함 -> 스태틱 클래스
 
+    //SkillData를 넣으면 SkillBase를 반환함
+    private static readonly Dictionary<SkillId, Func<SkillData, SkillBase>> skillCreators = new Dictionary<SkillId, Func<SkillData, SkillBase>>();
 
-    //추후 딕셔너리로 관리하기
-    //private Dictionary<SkillType, Func<ISkill>> skillMap;
-
-    //    public SkillFactory()
-    //{
-    //    skillMap = new Dictionary<SkillType, Func<ISkill>>
-    //    {
-    //        { SkillType.Fire, () => new FireSkill() },
-    //        { SkillType.Ice, () => new IceSkill() }
-    //    };
-    //}
-
-    //public ISkill CreateSkill(SkillType type)
-    //{
-    //    if (skillMap.TryGetValue(type, out var constructor))
-    //    {
-    //        return constructor();
-    //    }
-
-    //    throw new ArgumentException($"스킬 타입 {type}은(는) 등록되지 않았음");
-    //}
-
-    public static SkillBase Create(SkillId id)
+    static SkillFactory()
     {
-        if (DataManager.Instance.skillDataTable.TryGetValue(id, out SkillData skillData) == false)
+        //스킬타입에 따라 생성자
+        Register(SkillId.Lightning, data => new SkillLightning(data));
+
+        //스킬이 생기면 여기에 추가로 등록
+    }
+
+    //함수를 딕셔너리에 저장하는 메서드
+    public static void Register(SkillId id, Func<SkillData, SkillBase> constructor)
+    {
+        if (skillCreators.ContainsKey(id))
         {
-            Debug.LogWarning($"[SkillFactory] SkillId {id}에 해당하는 데이터 없음");
-            return null;
+            Debug.LogWarning($"[SkillFactory] 이미 등록된 스킬 ID: {id}");
+            return;
         }
 
-        switch (id)
-        {
-            case SkillId.Lightning:
-                return new SkillLightning(skillData);
+        skillCreators[id] = constructor;
+    }
 
-            default:
-                Debug.LogWarning($"[SkillFactory] SkillId {id}에 해당하는 클래스가 정의되지 않음");
-                return null;
+    //딕셔너리에서 함수를 찾아 실행하는 메서드
+    public static SkillBase Create(SkillId id, SkillData data)
+    {
+        //var constructor = Func<SkillData, SkillBase>로 자동 추론됨
+        //딕셔너리에 있는 SkillId에 해당하는 생성자를 찾아서 실행함
+        //SkillId.Lightning이 들어왔다고 가정하면 data => new SkillLightning(data) 함수를 정의함
+        //constructor.Invoke(data)로 실행해야 SkillLightning의 생성자가 호출됨, 꺼낸다고 해서 자동으로 실행되는게 아님
+        if (skillCreators.TryGetValue(id, out var constructor))
+        {
+            return constructor.Invoke(data);
         }
+
+        Debug.LogWarning($"[SkillFactory] 등록되지 않은 스킬 ID: {id}");
+        return null;
     }
 }
