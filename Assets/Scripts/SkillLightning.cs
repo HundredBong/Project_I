@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SkillLightning : SkillBase
@@ -12,18 +13,26 @@ public class SkillLightning : SkillBase
     {
         Debug.Log($"[SkillLightning] {skillData.SkillId} 실행됨");
 
-        //ProjectileLightning에 대응하는 프리팹 키를 딕셔너리에서 가져옴, 뽑을 준비만 하는거
-        GameObject obj = ObjectPoolManager.Instance.projectilePool.GetPrefab(ProjectileId.Lightning);
+        List<Enemy> targets = FindClosestEnemies(owner.transform.position, skillData.TargetCount);
 
-        //가져온 프리팹 키로 풀 안에 있는 스택에서 ProjectileLightning 오브젝트를 꺼냄, 실제로 생성되는 거
-        ProjectileLightning proj = ObjectPoolManager.Instance.projectilePool.Get(obj) as ProjectileLightning;
-
-        if(proj == null)
+        foreach (var enemy in targets)
         {
-            Debug.LogError("[SkillLightning] ProjectileLightning이 아님");
-            return;
-        }
+            Vector3 spawnPos = enemy.transform.position + Vector3.up * 5f;
+            Vector3 direction = Vector3.down;
 
-        proj.Initialize(skillData);
+            GameObject prefab = ObjectPoolManager.Instance.projectilePool.GetPrefab(ProjectileId.Lightning);
+            ProjectileLightning lightning = ObjectPoolManager.Instance.projectilePool.Get(prefab) as ProjectileLightning;
+
+            lightning.Initialize(skillData, enemy.gameObject);
+        }
+    }
+
+    private List<Enemy> FindClosestEnemies(Vector3 center, int count)
+    {
+        //GameManager의 EnemyList에서 활성화된 Enemy를 찾아서 거리순으로 지정된 개수만큼 정렬하고 반환함
+        List<Enemy> allEnemies = GameManager.Instance.enemyList.Where(e => e != null && e.isDead == false)
+            .OrderBy(e => Vector3.Distance(center, e.transform.position)).Take(count).ToList();
+
+        return allEnemies;
     }
 }

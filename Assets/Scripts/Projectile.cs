@@ -8,8 +8,11 @@ public class Projectile : MonoBehaviour, IPooledObject
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        OnHit(other.gameObject);
-        ObjectPoolManager.Instance.projectilePool.Return(this);
+        if (other.CompareTag("Projectile") == false)
+        {
+            OnHit(other.gameObject);
+            ObjectPoolManager.Instance.projectilePool.Return(this);
+        }
     }
 
     protected virtual void OnHit(GameObject other)

@@ -7,7 +7,7 @@ public class Enemy : MonoBehaviour, IPooledObject
 {
     [Header("기본 데이터")]
     [SerializeField] private EnemyId enemyId;
-     public bool isDead = true;
+    public bool isDead = true;
 
     //private필드, 원활한 디버깅을 위해 public으로 함
     //TODO : private으로 변경
@@ -84,6 +84,8 @@ public class Enemy : MonoBehaviour, IPooledObject
     public void TakeDamage(float damage)
     {
         health -= damage;
+
+        Debug.Log($"[Enemy] {damage}의 피해를 받음, 남은 체력 : {health}");
 
         if (health <= 0)
         {
