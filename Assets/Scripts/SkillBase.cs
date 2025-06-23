@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public abstract class SkillBase
@@ -13,22 +14,26 @@ public abstract class SkillBase
 
     public bool IsReady => Time.time >= lastUsedTime + skillData.Cooldown;
 
+    public float Cooldown => skillData.Cooldown;
+
     //생성자로 데이터 초기화함. 불변성 확보
     public SkillBase(SkillData data)
     {
         skillData = data;
     }
 
-    public void TryExecute(GameObject owner)
+    public bool TryExecute(GameObject owner)
     {
         if (IsReady == true)
         {
             Execute(owner);
             lastUsedTime = Time.time;
+            return true;
         }
         else
         {
             Debug.Log($"[SkillBase] {skillData.SkillId} 쿨타임 중, 남은 시간 : {GetRemainingCooldown():F2}초");
+            return false;
         }
     }
 
