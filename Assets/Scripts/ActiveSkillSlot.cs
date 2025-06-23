@@ -38,7 +38,7 @@ public class ActiveSkillSlot : MonoBehaviour
             return;
         }
         
-        equippedSkill.Execute(GameManager.Instance.player.gameObject);
+        equippedSkill.TryExecute(GameManager.Instance.player.gameObject);
     }
 
 }

@@ -9,10 +9,34 @@ public abstract class SkillBase
 
     protected SkillData skillData;
 
+    protected float lastUsedTime = -100;
+
+    public bool IsReady => Time.time >= lastUsedTime + skillData.Cooldown;
+
     //생성자로 데이터 초기화함. 불변성 확보
     public SkillBase(SkillData data)
     {
         skillData = data;
+    }
+
+    public void TryExecute(GameObject owner)
+    {
+        if (IsReady == true)
+        {
+            Execute(owner);
+            lastUsedTime = Time.time;
+        }
+        else
+        {
+            Debug.Log($"[SkillBase] {skillData.SkillId} 쿨타임 중, 남은 시간 : {GetRemainingCooldown():F2}초");
+        }
+    }
+
+    public float GetRemainingCooldown()
+    {
+        //(이전에 쓴 시간 + 스킬 쿨타임) - 현재 시간
+        //이전에 쓴 시간이 3초, 스킬 쿨타임이 7초고 현재 시간이 9초면 쿨타임 1초 남게됨 
+        return Mathf.Max(0, (lastUsedTime + skillData.Cooldown) - Time.time);
     }
 
     //스킬 실행 로직, owner는 스킬을 사용하는 주체

@@ -15,7 +15,10 @@ public class ProjectileLightning : Projectile
     {
         hasHit = false;
 
-        DelayCallManager.Instance.CallLater(3f, () => { ObjectPoolManager.Instance.projectilePool.Return(this); });
+        if (isInitialized)
+        {
+            DelayCallManager.Instance.CallLater(3f, () => { ObjectPoolManager.Instance.projectilePool.Return(this); });
+        }
     }
 
     public void Initialize(SkillData data, GameObject target)
@@ -32,7 +35,16 @@ public class ProjectileLightning : Projectile
         //아래로 떨어지도록 이동로직 구현
         if (isInitialized == true)
         {
-            transform.position += Vector3.down * Time.deltaTime * 50f;
+            transform.position += Vector3.down * Time.deltaTime * 75f;
+        }
+    }
+
+    protected override void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Projectile") == false)
+        {
+            OnHit(other.gameObject);
+            DelayCallManager.Instance.CallLater(0.05f, () => { ObjectPoolManager.Instance.projectilePool.Return(this); });
         }
     }
 

@@ -85,7 +85,7 @@ public class Enemy : MonoBehaviour, IPooledObject
     {
         health -= damage;
 
-        Debug.Log($"[Enemy] {damage}의 피해를 받음, 남은 체력 : {health}");
+        //Debug.Log($"[Enemy] {damage}의 피해를 받음, 남은 체력 : {health}");
 
         if (health <= 0)
         {

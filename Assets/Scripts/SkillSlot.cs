@@ -29,6 +29,6 @@ public class SkillSlot
             return;
         }
 
-        equippedSkill.Execute(owner);
+        equippedSkill.TryExecute(owner);
     }
 }
