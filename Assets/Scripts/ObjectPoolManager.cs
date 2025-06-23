@@ -7,6 +7,7 @@ public class ObjectPoolManager : MonoBehaviour
     public static ObjectPoolManager Instance {  get; private set; }
 
     public EnemyPool enemyPool;
+    public ProjectilePool projectilePool;
 
     private void Awake()
     {

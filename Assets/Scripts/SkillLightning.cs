@@ -11,5 +11,19 @@ public class SkillLightning : SkillBase
     public override void Execute(GameObject owner)
     {
         Debug.Log($"[SkillLightning] {skillData.SkillId} 실행됨");
+
+        //ProjectileLightning에 대응하는 프리팹 키를 딕셔너리에서 가져옴, 뽑을 준비만 하는거
+        GameObject obj = ObjectPoolManager.Instance.projectilePool.GetPrefab(ProjectileId.Lightning);
+
+        //가져온 프리팹 키로 풀 안에 있는 스택에서 ProjectileLightning 오브젝트를 꺼냄, 실제로 생성되는 거
+        ProjectileLightning proj = ObjectPoolManager.Instance.projectilePool.Get(obj) as ProjectileLightning;
+
+        if(proj == null)
+        {
+            Debug.LogError("[SkillLightning] ProjectileLightning이 아님");
+            return;
+        }
+
+        proj.Initialize(skillData);
     }
 }

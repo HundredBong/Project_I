@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEditor;
 using UnityEngine;
@@ -116,6 +117,7 @@ public class GameManager : MonoBehaviour
     {
         return statSaver != null && stats != null && firebaseInit != null && statSaver.gameObject.activeInHierarchy;
     }
+
 
 #if UNITY_EDITOR
     [MenuItem("Tools/Set Language KR")]

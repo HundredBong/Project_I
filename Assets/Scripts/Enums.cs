@@ -14,7 +14,7 @@ public enum StageType { Forest, Cave }
 
 public enum SkillId
 {
-    None, 
+    None,
     Lightning,
 }
 
@@ -25,3 +25,5 @@ public enum SkillType { Active, Buff, Passive }
 public enum SkillEffectType { GoldBonus, ExpBonus }
 
 public enum StatusEffectType { ElectricShock }
+
+public enum ProjectileId { Lightning, }

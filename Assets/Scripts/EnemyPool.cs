@@ -8,6 +8,7 @@ public class EnemyPool : GenericPoolManager<Enemy>
     //EnemyPool을 미리 초기화해두고 , EnemyId를 기반으로 프리팹을 로드하여 관리함
 
     private HashSet<EnemyId> loadedEnemyIds = new HashSet<EnemyId>(); //로드된 EnemyId를 저장하여 중복 로드를 방지
+    //이게 꼭 있어야 하나, 밑에 딕셔너리도 ContainsKey로 확인할 수 있는데
 
     //실제 프리팹 객체 매핑용 캐시, 없으면 SpawnManager에서 로드할 때마다 Resources.Load를 호출해야함
     //EnemyId가 어떤 프리팹을 가리키는지 매핑하는 딕셔너리
