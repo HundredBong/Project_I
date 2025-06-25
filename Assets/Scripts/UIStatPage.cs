@@ -10,6 +10,7 @@ public class UIStatPage : UIPage
     [SerializeField] private PlayerStats playerStats;
     [SerializeField] private GameObject statSlotPrefab;
     [SerializeField] private Transform contentRoot;
+    [SerializeField] private Button openUpgradeButton;
 
     [Header("업데이트할 텍스트")]
     [SerializeField] private TextMeshProUGUI levelText;
@@ -26,6 +27,8 @@ public class UIStatPage : UIPage
             slot.Init(playerStats, type);
             slotUIs.Add(slot);
         }
+
+        openUpgradeButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UIGoldUpgradePage>());
     }
 
     private void OnEnable()

@@ -356,8 +356,16 @@ public class ProgressEntry
 }
 
 [System.Serializable]
+public class GoldLevelEntry
+{
+    public GoldUpgradeType GoldUpgradeType;
+    public int Level;
+}
+
+[System.Serializable]
 public class PlayerProgressSaveData
 {
     public List<ProgressEntry> progressValues = new();
     public List<StatLevelEntry> statLevels = new();
+    public List<GoldLevelEntry> goldUpgradeLevels = new();
 }

@@ -28,14 +28,45 @@ public class PlayerStats : MonoBehaviour
 
     [Header("재화")]
     public int statPoint = 0;
-    public int gold = 0;
+    public float gold = 0;
     public int diamond = 0;
 
+    public float Gold
+    {
+        get => gold;
+        set
+        {
+            //if (gold != value)
+            //{
+                gold = value;
+                OnCurrencyChanged?.Invoke();
+            //}
+        }
+    }
+
+    public int Diamond
+    {
+        get => diamond;
+        set
+        {
+            //if (diamond != value)
+            //{
+                diamond = value;
+                OnCurrencyChanged?.Invoke();
+            //}
+        }
+    }
+
+
     private Dictionary<StatUpgradeType, int> statLevels = new Dictionary<StatUpgradeType, int>();
+    private Dictionary<GoldUpgradeType, int> upgradeLevels = new Dictionary<GoldUpgradeType, int>();
     private Dictionary<PlayerProgressType, float> playerProgress = new Dictionary<PlayerProgressType, float>();
 
     //StatPanelUI 업데이트용 액션
     public event Action OnStatChanged;
+    //골드, 다이아 업데이트용 액션
+    public event Action OnCurrencyChanged;
+
 
     private void Awake()
     {
@@ -47,6 +78,11 @@ public class PlayerStats : MonoBehaviour
         foreach (PlayerProgressType type in Enum.GetValues(typeof(PlayerProgressType)))
         {
             playerProgress[type] = 0;
+        }
+
+        foreach (GoldUpgradeType type in Enum.GetValues(typeof(GoldUpgradeType)))
+        {
+            upgradeLevels[type] = 0;
         }
     }
 
@@ -65,6 +101,15 @@ public class PlayerStats : MonoBehaviour
             LevelUp();
         }
     }
+
+    public void GetGold(float gold)
+    {
+        Gold += gold;
+    }
+
+    public int GetGold() { return (int)Gold; }
+
+    public int GetDiamond() { return (int)Diamond; }
 
     private void LevelUp()
     {
@@ -106,9 +151,43 @@ public class PlayerStats : MonoBehaviour
         OnStatChanged?.Invoke(); //UI 새로고침
     }
 
+    public void AddStat(GoldUpgradeType type, int amount)
+    {
+        int currentLevel = GetUpgradeLevel(type);
+        int maxLevel = GetMaxUpgradeLevel(type);
+        int targetLevel = currentLevel + amount;
+
+        if (targetLevel > maxLevel)
+        {
+            Debug.LogWarning($"[PlayerStats] {type} 최대 레벨 초과");
+            return;
+        }
+
+        GoldUpgradeData data = DataManager.Instance.GetGoldUpgradeData(type);
+        float price = data.Price + (data.PriceIncrease * currentLevel);
+
+        if (Gold < price)
+        {
+            Debug.LogWarning($"[PlayerStats] 골드가 부족함 {Gold} / {price}");
+            return;
+        }
+
+        Gold -= price;
+        upgradeLevels[type] = targetLevel;
+
+        RecalculateStats();
+        GameManager.Instance.statSaver.RequestSave(GetProgressSaveData());
+        OnStatChanged?.Invoke(); //UI 및 골드 새로고침 해줘야 함
+    }
+
     public int GetStat(StatUpgradeType statType)
     {
         return statLevels.TryGetValue(statType, out int level) ? level : 0;
+    }
+
+    public int GetUpgradeLevel(GoldUpgradeType type)
+    {
+        return upgradeLevels.TryGetValue(type, out int level) ? level : 0;
     }
 
     public float GetProgress(PlayerProgressType progressType)
@@ -122,11 +201,27 @@ public class PlayerStats : MonoBehaviour
         {
             StatUpgradeType.Attack => 25000,
             StatUpgradeType.Health => 25000,
-            StatUpgradeType.Critical => 1000,
             StatUpgradeType.AttackSpeed => 300,
             StatUpgradeType.MoveSpeed => 300,
             _ => 0
         };
+    }
+
+    public int GetMaxUpgradeLevel(GoldUpgradeType type)
+    {
+        return type switch
+        {
+            GoldUpgradeType.Attack => DataManager.Instance.GetGoldUpgradeData(type).MaxLevel,
+            GoldUpgradeType.Health => DataManager.Instance.GetGoldUpgradeData(type).MaxLevel,
+            GoldUpgradeType.CriticalChance => DataManager.Instance.GetGoldUpgradeData(type).MaxLevel,
+            GoldUpgradeType.CriticalDamage => DataManager.Instance.GetGoldUpgradeData(type).MaxLevel,
+            _ => 0
+        };
+    }
+
+    private float GetUpgradeValue(GoldUpgradeType type)
+    {
+        return DataManager.Instance.GetGoldUpgradeData(type).BaseValue + (DataManager.Instance.GetGoldUpgradeData(type).BaseValueIncrease * GetUpgradeLevel(type));
     }
 
     public void RecalculateStats()
@@ -135,14 +230,15 @@ public class PlayerStats : MonoBehaviour
         currentExp = GetProgress(PlayerProgressType.CurrentExp);
         maxExp = maxExp = DataManager.Instance.GetExpData(level);
         statPoint = (int)GetProgress(PlayerProgressType.StatPoint);
-        gold = (int)GetProgress(PlayerProgressType.Gold);
-        diamond = (int)GetProgress(PlayerProgressType.Diamond);
+        Gold = (int)GetProgress(PlayerProgressType.Gold);
+        Diamond = (int)GetProgress(PlayerProgressType.Diamond);
 
-        damage = 5 + GetStat(StatUpgradeType.Attack) * 3;
-        maxHealth = 50 + GetStat(StatUpgradeType.Health) * 10;
-        critical = GetStat(StatUpgradeType.Critical) * 0.01f;
-        attackSpeed = 1 + GetStat(StatUpgradeType.AttackSpeed) * 0.01f;
-        moveSpeed = 5 + GetStat(StatUpgradeType.MoveSpeed) * 0.01f;
+        damage = 5 + (GetStat(StatUpgradeType.Attack) * 3) + (GetUpgradeValue(GoldUpgradeType.Attack));
+        maxHealth = 50 + (GetStat(StatUpgradeType.Health) * 10) + (GetUpgradeValue(GoldUpgradeType.Health));
+        critical = GetUpgradeLevel(GoldUpgradeType.CriticalChance);
+        //TODO : 크리 공식 손봐야 하는데 우선순위 매우낮음
+        attackSpeed = 1 + (GetStat(StatUpgradeType.AttackSpeed) * 0.01f);
+        moveSpeed = 5 + (GetStat(StatUpgradeType.MoveSpeed) * 0.01f);
 
         //이거 제대로 하려면 CSV에서 읽어와야 함, 임시로 하드코딩함
         //만약 한다면 StatType, BaseValue, GrowthPerLevel
@@ -197,6 +293,15 @@ public class PlayerStats : MonoBehaviour
             });
         }
 
+        foreach (KeyValuePair<GoldUpgradeType, int> upgrade in upgradeLevels)
+        {
+            data.goldUpgradeLevels.Add(new GoldLevelEntry
+            {
+                GoldUpgradeType = upgrade.Key,
+                Level = upgrade.Value
+            });
+        }
+
         return data;
     }
 
@@ -216,6 +321,11 @@ public class PlayerStats : MonoBehaviour
         {
             statLevels[entry.StatUpgradeType] = entry.Level;
             Debug.Log($"[PlayerStats] {entry.StatUpgradeType} : {entry.Level}");
+        }
+
+        foreach (GoldLevelEntry entry in data.goldUpgradeLevels)
+        {
+            upgradeLevels[entry.GoldUpgradeType] = entry.Level;
         }
 
         //결과 반영

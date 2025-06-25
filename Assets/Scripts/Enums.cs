@@ -2,7 +2,9 @@ public enum EnemyType { None = -1, Melee = 0, Range = 1, Boss = 2 } //None = -1 
 
 public enum EnemyId { Skeleton, Slime, Bat, Goblin }
 
-public enum StatUpgradeType { Attack, Health, Critical, AttackSpeed, MoveSpeed, }
+public enum StatUpgradeType { Attack, Health, AttackSpeed, MoveSpeed, }
+
+public enum GoldUpgradeType { Attack, Health, CriticalChance, CriticalDamage }
 
 public enum PlayerProgressType { Level, CurrentExp, MaxExp, StatPoint, Gold, Diamond }
 

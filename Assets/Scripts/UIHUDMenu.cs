@@ -19,22 +19,25 @@ public class UIHUDMenu : MonoBehaviour
     [SerializeField] private TextMeshProUGUI skillText;
     [SerializeField] private TextMeshProUGUI inventoryText;
     [SerializeField] private TextMeshProUGUI menuText;
-
+    [SerializeField] private TextMeshProUGUI goldText;
+    [SerializeField] private TextMeshProUGUI diamondText;
     private void OnEnable()
     {
         LanguageManager.OnLanguageChanged += RefreshLanguage;
+        GameManager.Instance.stats.OnCurrencyChanged += RefreshCurrency;
     }
 
     private void OnDisable()
     {
         LanguageManager.OnLanguageChanged -= RefreshLanguage;
+        GameManager.Instance.stats.OnCurrencyChanged -= RefreshCurrency;
     }
 
     private void Start()
     {
         //shopButton.onClick.AddListener(() => UIManager.Instance.PageOpen<>());
-        statButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UIStatPage>());
-       skillButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UISkillPage>());
+        statButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UIGoldUpgradePage>());
+        skillButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UISkillPage>());
         //inventoryButton.onClick.AddListener(() => UIManager.Instance.PageOpen<>());
         //menuButton.onClick.AddListener(() => UIManager.Instance.PageOpen<>());
 
@@ -56,6 +59,12 @@ public class UIHUDMenu : MonoBehaviour
         inventoryText.text = DataManager.Instance.GetLocalizedText("HUD_Inventory");
         menuText.text = DataManager.Instance.GetLocalizedText("HUD_Menu");
     }
+
+    private void RefreshCurrency()
+    {
+        goldText.text = GameManager.Instance.stats.GetGold().ToString();
+        diamondText.text = GameManager.Instance.stats.GetDiamond().ToString();
+    }
 }
 
-    
+

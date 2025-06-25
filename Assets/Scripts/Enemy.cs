@@ -20,6 +20,7 @@ public class Enemy : MonoBehaviour, IPooledObject
     public float attackRange;
     public float attackInterval;
     public float expValue = 1f;
+    public float goldValue;
 
 
     public GameObject prefabReference { get; set; }
@@ -78,6 +79,7 @@ public class Enemy : MonoBehaviour, IPooledObject
         attackRange = enemyData.Range;
         attackInterval = enemyData.AttackInterval;
         expValue = enemyData.EXP * stageData.RewardRate;
+        goldValue = enemyData.Gold * stageData.RewardRate;
 
     }
 
@@ -96,6 +98,7 @@ public class Enemy : MonoBehaviour, IPooledObject
     private void Die()
     {
         GameManager.Instance.player.GetExp(expValue);
+        GameManager.Instance.player.GetGold(goldValue);
         GameManager.Instance.enemyList.Remove(this);
         StageManager.Instance.NotifyKill();
 

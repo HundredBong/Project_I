@@ -19,6 +19,7 @@ public class DataManager : MonoBehaviour
     public Dictionary<int, StageData> stageDataTable = new Dictionary<int, StageData>();
     public Dictionary<SkillId, SkillData> skillDataTable = new Dictionary<SkillId, SkillData>();
     private Dictionary<string, LocalizedText> localizedTexts = new Dictionary<string, LocalizedText>();
+    private Dictionary<GoldUpgradeType, GoldUpgradeData> goldUpgradeTable = new Dictionary<GoldUpgradeType, GoldUpgradeData>();
 
     private void Awake()
     {
@@ -40,7 +41,7 @@ public class DataManager : MonoBehaviour
         LoadEnemyData();
         LoadStageData();
         LoadSkillData();
-
+        LoadGoldUpgradeData();
     }
 
     private void LoadSpritesData()
@@ -219,6 +220,7 @@ public class DataManager : MonoBehaviour
                 Range = float.Parse(tokens[6]),
                 AttackInterval = float.Parse(tokens[7]),
                 EXP = float.Parse(tokens[8]),
+                Gold = float.Parse(tokens[9]),
             };
 
             enemyDataTable[data.Id] = data;
@@ -328,6 +330,47 @@ public class DataManager : MonoBehaviour
 
         return skillList;
     }
+
+    private void LoadGoldUpgradeData()
+    {
+        TextAsset skillText = Resources.Load<TextAsset>("CSV/GoldUpgradeData");
+        string[] lines = skillText.text.Split('\n');
+
+        for (int i = 1; i < lines.Length; i++)
+        {
+            if (string.IsNullOrEmpty(lines[i])) { continue; }
+
+            string[] tokens = lines[i].Split(',');
+
+            GoldUpgradeType type = Enum.Parse<GoldUpgradeType>(tokens[0].Trim());
+
+            GoldUpgradeData goldUpgradeData = new GoldUpgradeData()
+            {
+                GoldUpgradeType = type,
+                NameKey = tokens[1].Trim(),
+                MaxLevel = int.Parse(tokens[2].Trim()),
+                BaseValue = float.Parse(tokens[3].Trim()),
+                BaseValueIncrease = float.Parse(tokens[4].Trim()),
+                StatIcon = tokens[5].Trim(),
+                Price = float.Parse(tokens[6].Trim()),
+                PriceIncrease = float.Parse(tokens[7].Trim()),
+            };
+
+            goldUpgradeTable[type] = goldUpgradeData;
+        }
+        Debug.Log($"[DataManager] GoldUpgradeData : {skillDataTable.Count}개의 데이터를 로드함");
+    }
+
+    public GoldUpgradeData GetGoldUpgradeData(GoldUpgradeType type)
+    {
+        if (goldUpgradeTable.TryGetValue(type, out GoldUpgradeData data))
+        {
+            return data;
+        }
+
+        Debug.LogWarning($"[DataManager] GoldUpgradeType {type}에 해당하는 데이터가 없음");
+        return null;
+    }
 }
 
 [System.Serializable]
@@ -376,6 +419,7 @@ public class EnemyData
     public float Range;
     public float AttackInterval;
     public float EXP;
+    public float Gold;
 }
 
 [System.Serializable]
@@ -434,4 +478,16 @@ public class LocalizedText
             _ => KR
         };
     }
+}
+
+public class GoldUpgradeData
+{
+    public GoldUpgradeType GoldUpgradeType;
+    public string NameKey;
+    public int MaxLevel;
+    public float BaseValue;
+    public float BaseValueIncrease;
+    public string StatIcon;
+    public float Price;
+    public float PriceIncrease;
 }

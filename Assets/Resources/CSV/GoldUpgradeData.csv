@@ -1,0 +1,5 @@
+StatType,NameKey,MaxLevel,BaseValue,BaseValueIncrease,StatIcon,Price,PriceIncrease
+Health,Stat_Health,10000,10,10,Stat_Health,10,1
+Attack,Stat_Attack,10000,10,10,Stat_Attack,10,1
+CriticalChance,Stat_CriticalChance,1000,0.1,1,Stat_CriticalChance,100,10
+CriticalDamage,Stat_CriticalDamage,1000,10,0.1,Stat_CriticalDamage,10,5

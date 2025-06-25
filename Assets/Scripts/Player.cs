@@ -167,7 +167,11 @@ public class Player : MonoBehaviour
     public void GetExp(float exp)
     {
         stats.GetExp(exp);
+    }
 
+    public void GetGold(float gold)
+    {
+        stats.GetGold(gold);
     }
 
     private void OnDrawGizmos()

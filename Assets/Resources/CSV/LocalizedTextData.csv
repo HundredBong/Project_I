@@ -1,7 +1,7 @@
 Key,KR,EN
 Stat_Attack,공격력,Attack
 Stat_Health,체력,Health
-Stat_Critical,크리티컬,Critical
+Stat_CriticalChance,크리티컬 확률,Critical Chance
 Stat_MoveSpeed,이동속도,Move Speed
 Stat_AttackSpeed,공격속도,Attack Speed
 HUD_Shop,상점,Shop
@@ -15,3 +15,4 @@ Skill_Count,보유 수량,Skills owned
 Skill_Effect,보유 효과,Passive Effect 
 Skill_Effect_GoldBonus,골드 획득량 증가,Increased Gold Gain
 Grade_Common,일반,Common
+Stat_CriticalDamage,크리티컬 대미지,Critical Damage
