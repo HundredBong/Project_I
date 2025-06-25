@@ -9,6 +9,7 @@ public class UIGoldUpgradeSlot : MonoBehaviour
     [SerializeField] private TextMeshProUGUI upgradeNameText;
     [SerializeField] private TextMeshProUGUI upgradeValueText;
     [SerializeField] private TextMeshProUGUI upgradeMaxText;
+    [SerializeField] private TextMeshProUGUI priceText;
     [SerializeField] private Button addButton;
 
     private PlayerStats stats;
@@ -25,9 +26,13 @@ public class UIGoldUpgradeSlot : MonoBehaviour
 
     public void Refresh()
     {
+        int upgradeValue = stats.GetUpgradeLevel(upgradeType);
+        float price = DataManager.Instance.GetGoldUpgradeData(upgradeType).Price + (DataManager.Instance.GetGoldUpgradeData(upgradeType).PriceIncrease * upgradeValue);
+
         upgradeNameText.text = DataManager.Instance.GetLocalizedText(DataManager.Instance.GetGoldUpgradeData(upgradeType).NameKey);
-        upgradeValueText.text = $"Lv. {stats.GetUpgradeLevel(upgradeType)}";
+        upgradeValueText.text = $"Lv. {upgradeValue}";
         upgradeMaxText.text = $"Max Lv. {stats.GetMaxUpgradeLevel(upgradeType)}";
+        priceText.text = $"{price:F1}";
     }
 
     private void OnClickAdd()
