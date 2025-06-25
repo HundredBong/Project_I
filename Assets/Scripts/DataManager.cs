@@ -12,7 +12,7 @@ public class DataManager : MonoBehaviour
     public static DataManager Instance { get; private set; }
 
     public Dictionary<string, Sprite> spriteDic = new Dictionary<string, Sprite>();
-    public Dictionary<StatType, StatNameData> statNames = new Dictionary<StatType, StatNameData>();
+    public Dictionary<StatUpgradeType, StatNameData> statNames = new Dictionary<StatUpgradeType, StatNameData>();
     public Dictionary<HUDType, HudNameData> HudNames = new Dictionary<HUDType, HudNameData>();
     public Dictionary<int, float> expTable = new Dictionary<int, float>();
     public Dictionary<EnemyId, EnemyData> enemyDataTable = new Dictionary<EnemyId, EnemyData>();
@@ -126,7 +126,7 @@ public class DataManager : MonoBehaviour
 
             //CSV에 있는 Key값을 파싱해서 딕셔너리 키 생성
             //Trim으로 줄 양쪽 끝에 혹시 모를 \r같은 보이지않는 문자 제거
-            StatType key = Enum.Parse<StatType>(tokens[0].Trim());
+            StatUpgradeType key = Enum.Parse<StatUpgradeType>(tokens[0].Trim());
 
             //데이터 초기화
             StatNameData data = new StatNameData
@@ -321,7 +321,7 @@ public class DataManager : MonoBehaviour
     {
         List<SkillData> skillList = new List<SkillData>();
 
-        foreach (KeyValuePair<SkillId,SkillData> kvp in skillDataTable)
+        foreach (KeyValuePair<SkillId, SkillData> kvp in skillDataTable)
         {
             skillList.Add(kvp.Value);
         }
@@ -417,7 +417,7 @@ public class SkillData
     public float StatucChance;
     public int HitCount;
     public int TargetCount;
-    public bool isUnlocked; 
+    public bool isUnlocked;
 }
 
 public class LocalizedText

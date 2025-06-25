@@ -10,7 +10,7 @@ public class StatsSlotUI : MonoBehaviour
     public Button addButton;
 
     private PlayerStats stats;
-    private StatType statType;
+    private StatUpgradeType statType;
 
     private void OnEnable()
     {
@@ -29,7 +29,7 @@ public class StatsSlotUI : MonoBehaviour
     }
     
     //UIStatPage가 실행시켜 줌
-    public void Init(PlayerStats stats, StatType type)
+    public void Init(PlayerStats stats, StatUpgradeType type)
     {
         this.stats = stats;
 

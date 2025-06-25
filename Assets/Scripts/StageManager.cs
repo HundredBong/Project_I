@@ -107,6 +107,7 @@ public class StageManager : MonoBehaviour
 
         SaveStageData();
         ResetStage();
+        GameManager.Instance.statSaver.SavePlayerProgressData(GameManager.Instance.stats.GetProgressSaveData());
     }
 
     private void SaveStageData()

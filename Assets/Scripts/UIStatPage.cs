@@ -19,7 +19,7 @@ public class UIStatPage : UIPage
     private void Start()
     {
         //시작하면 타입에 맞게 패널 UI 알아서 생성해줌
-        foreach (StatType type in System.Enum.GetValues(typeof(StatType)))
+        foreach (StatUpgradeType type in System.Enum.GetValues(typeof(StatUpgradeType)))
         {
             GameObject obj = Instantiate(statSlotPrefab, contentRoot);
             StatsSlotUI slot = obj.GetComponent<StatsSlotUI>();

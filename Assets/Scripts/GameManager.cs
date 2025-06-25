@@ -87,13 +87,17 @@ public class GameManager : MonoBehaviour
         Debug.Log("[GameManager] FirebaseStatSaver가 파이어베이스에 연결됨");
 
         //불러오기 실행
-        statSaver.LoadStatLevels(stats.SetAllLevels);
+        //statSaver.LoadStatLevels(stats.SetAllLevels);
+        statSaver.LoadPlayerProgressData(data =>
+        {
+            stats.LoadProgressSaveData(data);
+        });
         Debug.Log("[GameManager] 스탯 불러오기 실행됨");
 
-        stats.OnStatChanged += () =>
-        {
-            statSaver.RequestSave(stats.GetAllLevels());
-        };
+        //stats.OnStatChanged += () =>
+        //{
+        //    statSaver.RequestSave(stats.GetAllLevels());
+        //};
 
         statSaver.LoadSkillEquipData(data =>
         {
@@ -109,7 +113,7 @@ public class GameManager : MonoBehaviour
 
         statSaver.LoadPlayerSkillData(data =>
         {
-            SkillManager.Instance.LoadFrom(data); 
+            SkillManager.Instance.LoadFrom(data);
         });
     }
 
@@ -135,19 +139,21 @@ public class GameManager : MonoBehaviour
     [MenuItem("Tools/Save Stats")]
     public static void SaveStats()
     {
-        Instance.statSaver.SaveStatLevels(Instance.stats.GetAllLevels());
+        //Instance.statSaver.SaveStatLevels(Instance.stats.GetAllLevels());
+        Instance.statSaver.RequestSave(Instance.stats.GetProgressSaveData());
     }
 
     [MenuItem("Tools/Load Stats")]
     public static void LoadStats()
     {
-        Instance.statSaver.LoadStatLevels(Instance.stats.SetAllLevels);
+        //Instance.statSaver.LoadStatLevels(Instance.stats.SetAllLevels);
+        Instance.statSaver.LoadPlayerProgressData(data => Instance.stats.LoadProgressSaveData(data));
     }
 
     [MenuItem("Tools/Save Skill State")]
     public static void SaveSkillState()
     {
-        SkillManager.Instance.AddSkill(SkillId.Lightning,1);
+        SkillManager.Instance.AddSkill(SkillId.Lightning, 1);
         Instance.statSaver.SavePlayerSkillData(SkillManager.Instance.BuildSaveData());
     }
 

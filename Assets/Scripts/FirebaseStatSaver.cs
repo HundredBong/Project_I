@@ -22,7 +22,7 @@ public class FirebaseStatSaver : MonoBehaviour
         Debug.Log("[FirebaseStatSaver] 파이어베이스 초기화 됨");
     }
 
-    public void RequestSave(Dictionary<StatType, int> statLevels)
+    public void RequestSave(PlayerProgressSaveData data)
     {
         if (saveCts != null)
         {
@@ -31,17 +31,22 @@ public class FirebaseStatSaver : MonoBehaviour
         saveCts = new CancellationTokenSource();
 
         //비동기 함수를 기다릴 필요 없으니 Forget선언
-        DelayAndSave(statLevels, saveCts.Token).Forget();
+        DelayAndSave(data, saveCts.Token).Forget();
+
+        Debug.Log("[FirebaseStatSaver] 저장 요청 들어옴"); 
+        string json = JsonUtility.ToJson(data);
+        Debug.Log($"[FirebaseStatSaver] 저장될 JSON : {json}"); 
     }
 
-    private async UniTaskVoid DelayAndSave(Dictionary<StatType, int> statLevels, CancellationToken token)
+    private async UniTaskVoid DelayAndSave(PlayerProgressSaveData data, CancellationToken token)
     {
         //CancellationToken은 이 작업이 취소되었는지를 체크하는 신호장치
         try
         {
             //2초간 대기하다가 token에서 취소 신호가 오면 중단
             await UniTask.Delay(TimeSpan.FromSeconds(2), cancellationToken: token);
-            SaveStatLevels(statLevels);
+            //SaveStatLevels(statLevels);
+            SavePlayerProgressData(data);
         }
         catch (OperationCanceledException)
         {
@@ -50,14 +55,59 @@ public class FirebaseStatSaver : MonoBehaviour
         }
     }
 
-    public void SaveStatLevels(Dictionary<StatType, int> statLevels)
+    public void SavePlayerProgressData(PlayerProgressSaveData data)
+    {
+        string json = JsonUtility.ToJson(data);
+        string userId = "test_user";
+        string path = $"users/{userId}/progress";
+
+        dbRef.Child(path).SetRawJsonValueAsync(json).ContinueWith(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                Debug.Log("[FirebaseStatSaver] 플레이어 진행 상태 저장 성공");
+            }
+            else
+            {
+                Debug.LogError($"[FirebaseStatSaver] 진행 상태 저장 실패, {task.Exception}");
+            }
+        });
+    }
+
+    public void LoadPlayerProgressData(Action<PlayerProgressSaveData> onLoaded)
+    {
+        string userId = "test_user";
+        string path = $"users/{userId}/progress";
+
+        dbRef.Child(path).GetValueAsync().ContinueWith(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                string json = task.Result.GetRawJsonValue();
+                PlayerProgressSaveData data = JsonUtility.FromJson<PlayerProgressSaveData>(json);
+                MainThreadDispatcher(data, onLoaded);
+            }
+            else
+            {
+                Debug.LogError($"[FirebaseStatSaver] 진행 상태 불러오기 실패, {task.Exception}");
+            }
+        });
+    }
+
+    private async void MainThreadDispatcher(PlayerProgressSaveData data, Action<PlayerProgressSaveData> onLoaded)
+    {
+        await UniTask.SwitchToMainThread();
+        onLoaded?.Invoke(data);
+    }
+
+    public void SaveStatLevels(Dictionary<StatUpgradeType, int> statLevels)
     {
         //스탯은 enum 기반이므로 반복해서 저장 가능함,
 
         string userId = "test_user"; //추후 Firebase Auth로 대체하기
         string path = $"users/{userId}/stats"; //저장경로
 
-        foreach (KeyValuePair<StatType, int> stat in statLevels)
+        foreach (KeyValuePair<StatUpgradeType, int> stat in statLevels)
         {
             string statName = stat.Key.ToString(); //Attack이나 뭐 그런걸로 저장됨, 키 값 가져오기
             int level = stat.Value; //Attack의 레벨 가져오기
@@ -77,7 +127,7 @@ public class FirebaseStatSaver : MonoBehaviour
         }
     }
 
-    public void LoadStatLevels(Action<Dictionary<StatType, int>> onLoaded)
+    public void LoadStatLevels(Action<Dictionary<StatUpgradeType, int>> onLoaded)
     {
         string userId = "test_user";
         string path = $"users/{userId}/stats";
@@ -87,14 +137,14 @@ public class FirebaseStatSaver : MonoBehaviour
             if (task.IsCompletedSuccessfully)
             {
                 DataSnapshot snapShot = task.Result;
-                Dictionary<StatType, int> loadedStats = new Dictionary<StatType, int>();
+                Dictionary<StatUpgradeType, int> loadedStats = new Dictionary<StatUpgradeType, int>();
 
                 foreach (DataSnapshot child in snapShot.Children)
                 {
                     string statName = child.Key;
                     string valueStr = child.Value.ToString();
 
-                    if (Enum.TryParse(statName, out StatType statType))
+                    if (Enum.TryParse(statName, out StatUpgradeType statType))
                     {
                         if (int.TryParse(valueStr, out int level))
                         {
@@ -115,7 +165,7 @@ public class FirebaseStatSaver : MonoBehaviour
         });
     }
 
-    private async void MainThreadDispatcher(Dictionary<StatType, int> loadedStats, Action<Dictionary<StatType, int>> onLoaded)
+    private async void MainThreadDispatcher(Dictionary<StatUpgradeType, int> loadedStats, Action<Dictionary<StatUpgradeType, int>> onLoaded)
     {
         await UniTask.SwitchToMainThread();
         onLoaded?.Invoke(loadedStats);
@@ -148,7 +198,7 @@ public class FirebaseStatSaver : MonoBehaviour
 
         dbRef.Child(path).GetValueAsync().ContinueWith(task =>
         {
-            if (task.IsCompletedSuccessfully) 
+            if (task.IsCompletedSuccessfully)
             {
                 string json = task.Result.GetRawJsonValue();
                 StageSaveData data = JsonUtility.FromJson<StageSaveData>(json);
@@ -173,7 +223,7 @@ public class FirebaseStatSaver : MonoBehaviour
         string userId = "test_user";
         string path = $"users/{userId}/skillEquip";
 
-        dbRef.Child(path).SetRawJsonValueAsync(json).ContinueWith (task =>
+        dbRef.Child(path).SetRawJsonValueAsync(json).ContinueWith(task =>
         {
             if (task.IsCompletedSuccessfully)
             {
@@ -193,7 +243,7 @@ public class FirebaseStatSaver : MonoBehaviour
 
         dbRef.Child(path).GetValueAsync().ContinueWith(task =>
         {
-            if(task.IsCompletedSuccessfully)
+            if (task.IsCompletedSuccessfully)
             {
 
                 string json = task.Result.GetRawJsonValue();
@@ -256,6 +306,8 @@ public class FirebaseStatSaver : MonoBehaviour
         await UniTask.SwitchToMainThread();
         onLoaded?.Invoke(data);
     }
+
+
 }
 
 [System.Serializable]
@@ -271,13 +323,13 @@ public class StageSaveData
 [System.Serializable]
 public class SkillEquipSaveData
 {
-    public SkillId[] equippedSkills = new SkillId[6]; 
+    public SkillId[] equippedSkills = new SkillId[6];
 }
 
 [System.Serializable]
 public class SkillStateSaveData
 {
-    public SkillId skillId;
+    public SkillId skillId; //enum 필드는 괜찮음
     public int level;
     public int ownedCount;
     public int awakenLevel;
@@ -287,4 +339,25 @@ public class SkillStateSaveData
 public class PlayerSkillSaveData
 {
     public List<SkillStateSaveData> skillStates = new List<SkillStateSaveData>();
+}
+
+[System.Serializable]
+public class StatLevelEntry
+{
+    public StatUpgradeType StatUpgradeType;
+    public int Level;
+}
+
+[System.Serializable]
+public class ProgressEntry
+{
+    public PlayerProgressType PlayerProgressType;
+    public float Value;
+}
+
+[System.Serializable]
+public class PlayerProgressSaveData
+{
+    public List<ProgressEntry> progressValues = new();
+    public List<StatLevelEntry> statLevels = new();
 }
