@@ -56,6 +56,7 @@ public class ProjectileLightning : Projectile
         {
             //플레이어 스킬 정보 가져오기
             PlayerSkillState state = SkillManager.Instance.GetSkillState(skillData.SkillId);
+            //여기서 GameManager.Instance.stats.GetDamage()같은걸로 스킬 개별이 아닌 플레이어 대미지 기반 스킬도 만들 수 있음 
             float damage = skillData.BaseValue + (skillData.BaseValueIncrease * state.Level);
             float shockChance = skillData.StatucChance;
 

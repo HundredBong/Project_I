@@ -33,9 +33,9 @@ public class FirebaseStatSaver : MonoBehaviour
         //비동기 함수를 기다릴 필요 없으니 Forget선언
         DelayAndSave(data, saveCts.Token).Forget();
 
-        Debug.Log("[FirebaseStatSaver] 저장 요청 들어옴"); 
+        Debug.Log("[FirebaseStatSaver] 저장 요청 들어옴");
         string json = JsonUtility.ToJson(data);
-        Debug.Log($"[FirebaseStatSaver] 저장될 JSON : {json}"); 
+        Debug.Log($"[FirebaseStatSaver] 저장될 JSON : {json}");
     }
 
     private async UniTaskVoid DelayAndSave(PlayerProgressSaveData data, CancellationToken token)
@@ -307,7 +307,50 @@ public class FirebaseStatSaver : MonoBehaviour
         onLoaded?.Invoke(data);
     }
 
+    public void SaveInventoryData(InventorySaveData data)
+    {
+        string json = JsonUtility.ToJson(data);
+        string userId = "test_user";
+        string path = $"users/{userId}/InventoryData";
 
+        dbRef.Child(path).SetRawJsonValueAsync(json).ContinueWith(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                Debug.Log("[FirebaseStatSaver] 플레이어 인벤토리 데이터 저장 성공");
+            }
+            else
+            {
+                Debug.LogError($"[FirebaseStatSaver] 플레이어 인벤토리 데이터 저장 실패, {task.Exception}");
+            }
+        });
+    }
+
+    public void LoadInventoryData(Action<InventorySaveData> onLoaded)
+    {
+        string userId = "test_user";
+        string path = $"users/{userId}/InventoryData";
+
+        dbRef.Child(path).GetValueAsync().ContinueWith(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                string json = task.Result.GetRawJsonValue();
+                InventorySaveData data = JsonUtility.FromJson<InventorySaveData>(json);
+                MainThreadDispatcher(data, onLoaded);
+            }
+            else
+            {
+                Debug.LogError($"[FirebaseStatSaver] 진행 상태 불러오기 실패, {task.Exception}");
+            }
+        });
+    }
+
+    public async void MainThreadDispatcher(InventorySaveData data, Action<InventorySaveData> onLoaded)
+    {
+        await UniTask.SwitchToMainThread();
+        onLoaded?.Invoke(data);
+    }
 }
 
 [System.Serializable]
@@ -368,4 +411,20 @@ public class PlayerProgressSaveData
     public List<ProgressEntry> progressValues = new();
     public List<StatLevelEntry> statLevels = new();
     public List<GoldLevelEntry> goldUpgradeLevels = new();
+}
+
+[System.Serializable]
+public class InventoryEntry
+{
+    public int Id;
+    public int Level;
+    public int Count;
+    public bool IsEquipped;
+    public bool IsUnlocked;
+}
+
+[System.Serializable]
+public class InventorySaveData
+{
+    public List<InventoryEntry> inventoryEntries = new List<InventoryEntry>();
 }

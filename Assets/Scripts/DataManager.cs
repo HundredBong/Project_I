@@ -20,6 +20,7 @@ public class DataManager : MonoBehaviour
     public Dictionary<SkillId, SkillData> skillDataTable = new Dictionary<SkillId, SkillData>();
     private Dictionary<string, LocalizedText> localizedTexts = new Dictionary<string, LocalizedText>();
     private Dictionary<GoldUpgradeType, GoldUpgradeData> goldUpgradeTable = new Dictionary<GoldUpgradeType, GoldUpgradeData>();
+    private Dictionary<int, ItemData> itemDataTable = new Dictionary<int, ItemData>();
 
     private void Awake()
     {
@@ -42,6 +43,7 @@ public class DataManager : MonoBehaviour
         LoadStageData();
         LoadSkillData();
         LoadGoldUpgradeData();
+        LoadItemData();
     }
 
     private void LoadSpritesData()
@@ -333,8 +335,8 @@ public class DataManager : MonoBehaviour
 
     private void LoadGoldUpgradeData()
     {
-        TextAsset skillText = Resources.Load<TextAsset>("CSV/GoldUpgradeData");
-        string[] lines = skillText.text.Split('\n');
+        TextAsset goldUpgradeText = Resources.Load<TextAsset>("CSV/GoldUpgradeData");
+        string[] lines = goldUpgradeText.text.Split('\n');
 
         for (int i = 1; i < lines.Length; i++)
         {
@@ -370,6 +372,43 @@ public class DataManager : MonoBehaviour
 
         Debug.LogWarning($"[DataManager] GoldUpgradeType {type}에 해당하는 데이터가 없음");
         return null;
+    }
+
+    private void LoadItemData()
+    {
+        TextAsset itemText = Resources.Load<TextAsset>("CSV/ItemData");
+        string[] lines = itemText.text.Split('\n');
+
+        for (int i = 1; i < lines.Length; i++)
+        {
+            if (string.IsNullOrEmpty(lines[i])) { continue; }
+
+            string[] tokens = lines[i].Split(',');
+            int id = int.Parse(tokens[0].Trim());
+
+            ItemData itemDate = new ItemData()
+            {
+                Id = id,
+                ItemType = Enum.Parse<ItemType>(tokens[1].Trim()),
+                GradeType = Enum.Parse<GradeType>(tokens[2].Trim()),
+                Stage = int.Parse(tokens[3].Trim()),
+                MaxLevel = int.Parse(tokens[4].Trim()),
+                BaseValue = float.Parse(tokens[5].Trim()),
+                BaseValuePerLevel = float.Parse(tokens[6].Trim()),
+                OwnedValue = float.Parse(tokens[7].Trim()),
+                OwnedValuePerLevel = float.Parse(tokens[8].Trim()),
+                NameKey = tokens[9].Trim(),
+            };
+
+            itemDataTable[id] = itemDate;
+
+            Debug.Log($"[DataManager] {itemDataTable.Count}의 아이템 데이터가 로드됨");
+        }
+    }
+
+    public Dictionary<int, ItemData> GetItemData()
+    {
+        return itemDataTable;
     }
 }
 
@@ -490,4 +529,37 @@ public class GoldUpgradeData
     public string StatIcon;
     public float Price;
     public float PriceIncrease;
+}
+
+public class ItemData
+{
+    public int Id;
+    public ItemType ItemType;
+    public GradeType GradeType;
+    public int Stage;
+    public int MaxLevel;
+    public float BaseValue;
+    public float BaseValuePerLevel;
+    public float OwnedValue;
+    public float OwnedValuePerLevel;
+    public string NameKey;
+}
+
+[System.Serializable]
+public class InventoryItem
+{
+    public ItemData Data;
+    public int Level;
+    public int Count;
+    public bool IsEquipped;
+    public bool IsUnlocked;
+
+    public InventoryItem(ItemData data, bool isUnlocked = false)
+    {
+        Data = data;
+        Level = 1;
+        Count = 1;
+        IsEquipped = false;
+        IsUnlocked = isUnlocked;
+    }
 }
