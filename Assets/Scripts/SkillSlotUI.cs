@@ -32,7 +32,7 @@ public class SkillSlotUI : MonoBehaviour
     public void Refresh()
     {
         skillNameText.text = DataManager.Instance.GetLocalizedText(skillData.NameKey);
-        skillIcon.sprite = DataManager.Instance.spriteDic[skillData.SkillIcon];
+        skillIcon.sprite = DataManager.Instance.GetSpriteByKey(skillData.SkillIcon);
 
         if(SkillManager.Instance.GetSkillState(skillData.SkillId) != null)
         {

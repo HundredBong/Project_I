@@ -1,18 +1,61 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
+using UnityEngine.UI;
 
-public class UIInventoryPage : MonoBehaviour
+public class UIInventoryPage : UIPage
 {
-    // Start is called before the first frame update
-    void Start()
+    [Header("생성할 프리팹, 루트")]
+    [SerializeField] private GameObject contentPrefab;
+    [SerializeField] private Transform contentRoot;
+
+    [Header("필터 버튼")]
+    [SerializeField] private Button showWeaponButton;
+    [SerializeField] private Button showArmorButton;
+    [SerializeField] private Button showNecklaceButton;
+
+    private Dictionary<int, UIItemSlot> itemSlots = new Dictionary<int, UIItemSlot>();
+    private ItemType currentItemType;
+
+    private async void Start()
     {
-        
+        Debug.Log("인벤 스타트1");
+        //UIManager의 Awake에서 전부 SetActive(false)시켜주긴 하는데
+        //그럼 유니태스크 안쓰고 OnEnable로 해도 되지 않나
+        //그래도 가끔 Awake보다 OnEnable이 먼저 실행될 때도 있으니 안전하게 유니태스크 사용
+        await UniTask.WaitUntil(() => GameManager.Instance.inventoryReady);
+        Debug.Log("인벤 스타트2");
+
+        foreach (ItemData itemData in DataManager.Instance.GetItemData().Values)
+        {
+            GameObject obj = Instantiate(contentPrefab, contentRoot);
+            UIItemSlot slot = obj.GetComponent<UIItemSlot>();
+            slot.Init(itemData);
+            itemSlots[itemData.Id] = slot;
+        }
+
+        FilteringByType(ItemType.Weapon);
+
+        showWeaponButton.onClick.AddListener(() => FilteringByType(ItemType.Weapon));
+        showArmorButton.onClick.AddListener(() => FilteringByType(ItemType.Armor));
+        showNecklaceButton.onClick.AddListener(() => FilteringByType(ItemType.Necklace));
     }
 
-    // Update is called once per frame
-    void Update()
+    private void FilteringByType(ItemType itemType)
     {
-        
+        foreach (UIItemSlot item in itemSlots.Values)
+        {
+            if (itemType == item.GetItemType())
+            {
+                item.gameObject.SetActive(true);
+            }
+            else
+            {
+                item.gameObject.SetActive(false);
+            }
+        }
+
+        currentItemType = itemType;
     }
 }

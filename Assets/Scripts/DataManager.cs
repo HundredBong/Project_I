@@ -11,7 +11,7 @@ public class DataManager : MonoBehaviour
 {
     public static DataManager Instance { get; private set; }
 
-    public Dictionary<string, Sprite> spriteDic = new Dictionary<string, Sprite>();
+    private Dictionary<string, Sprite> spriteDic = new Dictionary<string, Sprite>();
     public Dictionary<StatUpgradeType, StatNameData> statNames = new Dictionary<StatUpgradeType, StatNameData>();
     public Dictionary<HUDType, HudNameData> HudNames = new Dictionary<HUDType, HudNameData>();
     public Dictionary<int, float> expTable = new Dictionary<int, float>();
@@ -52,8 +52,11 @@ public class DataManager : MonoBehaviour
 
         foreach (Sprite sprite in sprites)
         {
+            Debug.Log($"{sprite.name}");
             spriteDic.Add(sprite.name, sprite);
         }
+
+     
     }
 
     private void LoadLocalizedTexts()
@@ -397,18 +400,34 @@ public class DataManager : MonoBehaviour
                 BaseValuePerLevel = float.Parse(tokens[6].Trim()),
                 OwnedValue = float.Parse(tokens[7].Trim()),
                 OwnedValuePerLevel = float.Parse(tokens[8].Trim()),
-                NameKey = tokens[9].Trim(),
+                UpgradePrice = float.Parse(tokens[9].Trim()),
+                NameKey = tokens[10].Trim(),
+                IconKey = tokens[11].Trim(),
             };
 
             itemDataTable[id] = itemDate;
-
-            Debug.Log($"[DataManager] {itemDataTable.Count}의 아이템 데이터가 로드됨");
         }
+
+        Debug.Log($"[DataManager] {itemDataTable.Count}의 아이템 데이터가 로드됨");
     }
 
     public Dictionary<int, ItemData> GetItemData()
     {
         return itemDataTable;
+    }
+
+    public Sprite GetSpriteByKey(string key)
+    {
+        if (spriteDic.TryGetValue(key, out Sprite sprite))
+        {
+            return sprite;
+        }
+        else
+        {
+            Debug.LogWarning("[DataManager] 해당하는 키의 스프라이트를 찾을 수 없음");
+            return null;
+        }
+
     }
 }
 
@@ -542,7 +561,9 @@ public class ItemData
     public float BaseValuePerLevel;
     public float OwnedValue;
     public float OwnedValuePerLevel;
+    public float UpgradePrice;
     public string NameKey;
+    public string IconKey;
 }
 
 [System.Serializable]

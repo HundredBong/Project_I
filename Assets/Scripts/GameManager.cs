@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
 
     [Space(20)]
     public bool firebaseReady = false;
+    public bool inventoryReady = false;
 
     private void Awake()
     {
@@ -115,6 +116,30 @@ public class GameManager : MonoBehaviour
         {
             SkillManager.Instance.LoadFrom(data);
         });
+
+        statSaver.LoadInventoryData(data =>
+        {
+            //게임을 처음 시작하는 경우라면 기본 아이템 지급
+            if (data == null || data.inventoryEntries == null || data.inventoryEntries.Count == 0)
+            {
+                Debug.Log("[GameManager] 인벤토리 데이터 없음, 기본 아이템 지급");
+                foreach (var itemData in DataManager.Instance.GetItemData().Values)
+                {
+                    if (itemData.GradeType == GradeType.Common && itemData.Stage == 1)
+                    {
+                        InventoryManager.Instance.AddItem(itemData, 1);
+                    }
+                }
+                statSaver.SaveInventoryData(InventoryManager.Instance.GetSaveData());
+            }
+            else
+            {
+                InventoryManager.Instance.SetInventoryData(data);
+            }
+            inventoryReady = true;
+        });
+
+
     }
 
     private bool CheckReadyForLoad()
@@ -155,6 +180,12 @@ public class GameManager : MonoBehaviour
     {
         SkillManager.Instance.AddSkill(SkillId.Lightning, 1);
         Instance.statSaver.SavePlayerSkillData(SkillManager.Instance.BuildSaveData());
+    }
+
+    [MenuItem("Tools/Save Inventory Data")]
+    public static void SaveInventoryData()
+    {
+        Instance.statSaver.SaveInventoryData(InventoryManager.Instance.GetSaveData());
     }
 
 #endif

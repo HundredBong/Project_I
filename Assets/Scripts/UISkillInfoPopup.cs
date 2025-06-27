@@ -35,9 +35,9 @@ public class UISkillInfoPopup : UIPopup
     public void Init(SkillData data)
     {
         //이미지
-        skillIcon.sprite = DataManager.Instance.spriteDic[data.SkillIcon];
+        skillIcon.sprite = DataManager.Instance.GetSpriteByKey(data.SkillIcon);
         //skillStatus.sprite = DataManager.Instance.spriteDic[data.StatusEffect.ToString()];
-        skillAwakenIcon.sprite = DataManager.Instance.spriteDic[data.SkillIcon];
+        skillAwakenIcon.sprite = DataManager.Instance.GetSpriteByKey(data.SkillIcon);
 
         //텍스트
         skillGradeText.text = DataManager.Instance.GetLocalizedText($"Grade_{data.Grade}");

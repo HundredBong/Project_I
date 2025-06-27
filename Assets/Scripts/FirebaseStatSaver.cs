@@ -328,6 +328,7 @@ public class FirebaseStatSaver : MonoBehaviour
 
     public void LoadInventoryData(Action<InventorySaveData> onLoaded)
     {
+        Debug.Log("로드 인벤토리");
         string userId = "test_user";
         string path = $"users/{userId}/InventoryData";
 
@@ -338,10 +339,11 @@ public class FirebaseStatSaver : MonoBehaviour
                 string json = task.Result.GetRawJsonValue();
                 InventorySaveData data = JsonUtility.FromJson<InventorySaveData>(json);
                 MainThreadDispatcher(data, onLoaded);
+                Debug.Log("인벤 불러오기 완료");
             }
             else
             {
-                Debug.LogError($"[FirebaseStatSaver] 진행 상태 불러오기 실패, {task.Exception}");
+                Debug.LogError($"[FirebaseStatSaver] 인벤토리 불러오기 실패, {task.Exception}");
             }
         });
     }

@@ -31,7 +31,7 @@ public class SkillEquipSlot : MonoBehaviour
     {
         //내부에 SkillData를 저장하고, 아이콘을 표시하고, 해제버튼 활성화
         equippedSkill = skillData;
-        skillIcon.sprite = DataManager.Instance.spriteDic[skillData.SkillIcon];
+        skillIcon.sprite = DataManager.Instance.GetSpriteByKey(skillData.SkillIcon);
         skillIcon.enabled = true;
         removeButton.gameObject.SetActive(true);
     }

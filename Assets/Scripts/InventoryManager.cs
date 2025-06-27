@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -32,7 +33,7 @@ public class InventoryManager : MonoBehaviour
         return null;
     }
 
-    public bool hasItem(int itemId)
+    public bool HasItem(int itemId)
     {
         return inventory.ContainsKey(itemId);
     }
@@ -94,6 +95,7 @@ public class InventoryManager : MonoBehaviour
     public InventorySaveData GetSaveData()
     {
         InventorySaveData data = new InventorySaveData();
+        Debug.Log($"저장할 데이터 : {inventory.Count},{inventory.Values.Count}");
 
         foreach (InventoryItem item in inventory.Values)
         {
@@ -108,5 +110,50 @@ public class InventoryManager : MonoBehaviour
         }
 
         return data;
+    }
+
+    public void SetInventoryData(InventorySaveData saveData)
+    {
+
+        Debug.Log("셋 인벤토리");
+        Debug.Log(saveData);
+        Debug.Log(saveData == null ? "세이브 데이터 널임" : "세이브데이터 살아있음");
+        Debug.Log(saveData.inventoryEntries == null ? "인벤엔트리 클래스 널임" : "인벤엔트리 클래스 없음");
+        Debug.Log("셋 인벤토리" + saveData.inventoryEntries.Count);
+        inventory.Clear();
+
+        foreach (InventoryEntry entry in saveData.inventoryEntries)
+        {
+
+            //itemDataTable의 id에 해당하는 아이템 가져오기
+            ItemData data = DataManager.Instance.GetItemData()[entry.Id];
+
+            //가져온 데이터로 초기화
+            InventoryItem item = new InventoryItem(data, entry.IsUnlocked)
+            {
+                Level = entry.Level,
+                Count = entry.Count,
+                IsEquipped = entry.IsEquipped,
+            };
+
+            //딕셔너리 초기화
+            inventory[entry.Id] = item;
+
+            Debug.Log($"인벤토리 정보 : {entry.Id} / {inventory[entry.Id]}");
+        }
+
+
+
+        //장착중인 아이템 정보 삭제
+        equippedItems.Clear();
+
+        //위에서 읽어온 대이터로 대체함
+        foreach (InventoryItem item in inventory.Values)
+        {
+            if (item.IsEquipped)
+            {
+                equippedItems[item.Data.ItemType] = item;
+            }
+        }
     }
 }

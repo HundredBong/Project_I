@@ -43,7 +43,7 @@ public class ActiveSkillSlot : MonoBehaviour
         SkillData data = DataManager.Instance.skillDataTable[id];
         equippedSkill = SkillFactory.Create(id, data);
 
-        skillIcon.sprite = DataManager.Instance.spriteDic[data.SkillIcon];
+        skillIcon.sprite = DataManager.Instance.GetSpriteByKey(data.SkillIcon);
         skillIcon.enabled = true;
         skillButton.onClick.AddListener(OnSkillButtonClicked);
     }

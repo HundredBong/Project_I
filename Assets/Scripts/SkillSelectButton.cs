@@ -21,7 +21,7 @@ public class SkillSelectButton : MonoBehaviour
         //버튼은 클릭될 때 뭔가를 해야하는데 그걸 외부에서 정의할 수 있도록 함.
         this.skillData = skillData;
         skillNameText.text = DataManager.Instance.GetLocalizedText(skillData.NameKey);
-        skillIcon.sprite = DataManager.Instance.spriteDic[skillData.SkillIcon];
+        skillIcon.sprite = DataManager.Instance.GetSpriteByKey(skillData.SkillIcon);
 
         lockOverlay.SetActive(SkillManager.Instance.IsUnlocked(skillData.SkillId) == false);
 

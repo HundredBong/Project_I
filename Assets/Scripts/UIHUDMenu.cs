@@ -38,7 +38,7 @@ public class UIHUDMenu : MonoBehaviour
         //shopButton.onClick.AddListener(() => UIManager.Instance.PageOpen<>());
         statButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UIGoldUpgradePage>());
         skillButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UISkillPage>());
-        //inventoryButton.onClick.AddListener(() => UIManager.Instance.PageOpen<>());
+        inventoryButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UIInventoryPage>());
         //menuButton.onClick.AddListener(() => UIManager.Instance.PageOpen<>());
 
         //-----------------------------------------------------------------------------------------
