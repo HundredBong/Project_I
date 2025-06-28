@@ -9,7 +9,6 @@ public class UISkillPage : UIPage
     //열기 버튼은 다른 UI에 붙어있음
     //그럼 여기서 해야할 일은 UIStatPage처럼 DataManager의 skillDataTable을 순회하며 오브젝트 생성
     //스킬 레벨에 변동이 있을 때마다 업데이트
-
     [SerializeField] private GameObject skillSlotPrefab;
     [SerializeField] private Transform activeContentRoot;
     [SerializeField] private Transform passiveContentRoot;

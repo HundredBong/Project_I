@@ -45,6 +45,7 @@ public class UISkillInfoPopup : UIPopup
         skillCountText.text = $"{DataManager.Instance.GetLocalizedText("Skill_Count")}"; //TODO: DataManager에 추가, 추후 플레이어 스킬 개수로 변경 필요  
         skillLevelText.text = $"Lv.1/{data.MaxLevel}"; //TODO:추후 플레이어 스킬 레벨로 변경 필요
         skillDescriptionText.text = DataManager.Instance.GetSkillDesc(data, data.SkillId);
+        
         skillEffectName.text = DataManager.Instance.GetLocalizedText("Skill_Effect"); //DataManager에 추가 
         skillEffectDescText.text = DataManager.Instance.GetLocalizedText($"Skill_Effect_{data.EffectType.ToString()}"); //DataManager에 추가
         skillEffectValueText.text = $"{data.PassiveValue}%"; //TODO : 스킬 레벨별 Increase 공식 적용

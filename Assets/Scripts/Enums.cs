@@ -20,13 +20,13 @@ public enum SkillId
     Lightning,
 }
 
-public enum ItemType { Weapon, Armor, Necklace}
+public enum ItemType { Weapon, Armor, Necklace }
 
 public enum GradeType { Common, Uncommon, Rare, Epic, Legendary, Mythical }
 
 public enum SkillType { Active, Buff, Passive }
 
-public enum SkillEffectType { GoldBonus, ExpBonus }
+public enum SkillEffectType { GoldBonus, ExpBonus, DamageBonus, HealthBonus, CriticalDamageBonus, CriticalChanceBonus }
 
 public enum StatusEffectType { ElectricShock }
 

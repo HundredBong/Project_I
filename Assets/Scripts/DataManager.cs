@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Linq;
 using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
@@ -56,7 +57,7 @@ public class DataManager : MonoBehaviour
             spriteDic.Add(sprite.name, sprite);
         }
 
-     
+
     }
 
     private void LoadLocalizedTexts()
@@ -99,9 +100,6 @@ public class DataManager : MonoBehaviour
 
     public string GetSkillDesc(SkillData data, SkillId id)
     {
-        //기존SkillInfoPopup에서 옮김
-
-        //모든 스킬이 동일한 형식을 가진게 아니다보니 함수로 빼서 따로 작성함
         string rawText = DataManager.Instance.GetLocalizedText(data.DescKey);
         string formattedText = "";
         switch (id)
@@ -403,6 +401,8 @@ public class DataManager : MonoBehaviour
                 UpgradePrice = float.Parse(tokens[9].Trim()),
                 NameKey = tokens[10].Trim(),
                 IconKey = tokens[11].Trim(),
+                EquippedEffectType = Enum.Parse<SkillEffectType>(tokens[12].Trim()),
+                OwnedEffectType = Enum.Parse<SkillEffectType>(tokens[13].Trim()),
             };
 
             itemDataTable[id] = itemDate;
@@ -564,6 +564,8 @@ public class ItemData
     public float UpgradePrice;
     public string NameKey;
     public string IconKey;
+    public SkillEffectType EquippedEffectType;
+    public SkillEffectType OwnedEffectType;
 }
 
 [System.Serializable]
@@ -584,3 +586,4 @@ public class InventoryItem
         IsUnlocked = isUnlocked;
     }
 }
+

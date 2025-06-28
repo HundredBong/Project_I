@@ -1,19 +1,35 @@
 Key,KR,EN
-Stat_Attack,공격력,Attack
-Stat_Health,체력,Health
-Stat_CriticalChance,크리티컬 확률,Critical Chance
-Stat_MoveSpeed,이동속도,Move Speed
-Stat_AttackSpeed,공격속도,Attack Speed
-HUD_Shop,상점,Shop
-HUD_Stat,능력치,Stat
-HUD_Skill,스킬,Skill
+Grade_Common,일반,Common
+Grade_Epic,영웅,Epic
+Grade_Legendary,전설,Legendary
+Grade_Mythical,신화,Mythical
+Grade_Rare,희귀,Rare
+Grade_Uncommon,고급,Uncommon
 HUD_Inventory,인벤토리,Inventory
 HUD_Menu,메뉴,Menu
-Skill_Lightning_Name,라이트닝,Lightning
-Skill_Lightning_Desc,적 위치에 번개를 내리치며 타격받은 적은 <color=white>{0}%</color> 대미지로 {1}번 피해를 입습니다. 타격받은 적은 <color=blue>{2}%</color>확률로 감전상태가 됩니다. <color=yellow>(쿨타임 {3}초)</color>,Calls lightning on enemy position. Deals <color=white>{0}%</color> damage {1} times. Has <color=cyan>{2}%</color> chance to shock. <color=yellow>(Cooldown: {3}s)</color>
+HUD_Shop,상점,Shop
+HUD_Skill,스킬,Skill
+HUD_Stat,능력치,Stat
+Item_Effect_CriticalChanceBonus,크리티컬 확률 보너스,Critical Damage Bonus
+Item_Effect_CriticalDamageBonus,크리티컬 대미지 보너스,Critical Chance Bonus
+Item_Effect_DamageBonus,공격력 보너스,Damage Bonus
+Item_Effect_ExpBonus,경험치 획득량 증가,Exp Bonus
+Item_Effect_GoldBonus,골드 획득량 증가,Gold Bonus
+Item_Effect_HealthBonus,체력 보너스,Health Bonus
+Item_Stage,단계,Stage
 Skill_Count,보유 수량,Skills owned
 Skill_Effect,보유 효과,Passive Effect 
 Skill_Effect_GoldBonus,골드 획득량 증가,Increased Gold Gain
-Grade_Common,일반,Common
+Skill_Lightning_Desc,적 위치에 번개를 내리치며 타격받은 적은 <color=white>{0}%</color> 대미지로 {1}번 피해를 입습니다. 타격받은 적은 <color=blue>{2}%</color>확률로 감전상태가 됩니다. <color=yellow>(쿨타임 {3}초)</color>,Calls lightning on enemy position. Deals <color=white>{0}%</color> damage {1} times. Has <color=cyan>{2}%</color> chance to shock. <color=yellow>(Cooldown: {3}s)</color>
+Skill_Lightning_Name,라이트닝,Lightning
+Stat_Attack,공격력,Attack
+Stat_AttackSpeed,공격속도,Attack Speed
+Stat_CriticalChance,크리티컬 확률,Critical Chance
 Stat_CriticalDamage,크리티컬 대미지,Critical Damage
-Item_Stage,단계,Stage
+Stat_Health,체력,Health
+Stat_MoveSpeed,이동속도,Move Speed
+UI_UpgradeType,강화,Upgrade
+UI_Synthesis,합성,Synthesis
+UI_EquippedEffect,장착 효과,Equipped Effect
+UI_OwnedEffect,보유 효과,Owned Effect
+UI_UpgradeMaterial,강화 재료,Upgrade Material

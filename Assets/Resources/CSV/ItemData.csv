@@ -1,31 +1,31 @@
-Id,ItemType,GradeType,Stage,MaxLevel,BaseValue,BaseValuePerLevel,OwnedValue,OwnedValuePerLevel,UpgradePrice,NameKey,IconKey
-101,Weapon,Common,1,100,5,1,2,0.1,10,Weapon_Sword_01,Sword1
-102,Weapon,Common,2,100,7,1,3,0.15,15,Weapon_Sword_02,Sword2
-103,Weapon,Uncommon,1,100,10,3,4,0.2,30,Weapon_Sword_03,Sword3
-104,Weapon,Uncommon,2,100,15,5,5,0.5,45,Weapon_Sword_04,Sword5
-105,Weapon,Rare,1,100,30,10,10,1,100,Weapon_Sword_05,Sword7
-106,Weapon,Rare,2,100,40,15,10,1,150,Weapon_Sword_06,Sword15
-107,Weapon,Epic,1,100,60,20,20,2,500,Weapon_Sword_07,Sword13
-108,Weapon,Epic,2,100,80,25,20,5,750,Weapon_Sword_08,Sword12
-109,Weapon,Legendary,1,100,100,30,25,10,1000,Weapon_Sword_09,Sword11
-110,Weapon,Legendary,2,100,150,100,50,10,1500,Weapon_Sword_10,Sword10
-201,Armor,Common,1,100,5,1,2,0.1,10,Armor_Plate_01,Roman_AncientHero00
-202,Armor,Common,2,100,7,1,3,0.15,15,Armor_Plate_02,Roman_BronzeSmith00
-203,Armor,Uncommon,1,100,10,3,4,0.2,30,Armor_Plate_03,Roman_DarkCenturion00
-204,Armor,Uncommon,2,100,15,5,5,0.5,45,Armor_Plate_04,Roman_EmeraldPath00
-205,Armor,Rare,1,100,30,10,10,1,100,Armor_Plate_05,Roman_GuildCrafter00
-206,Armor,Rare,2,100,40,15,10,1,150,Armor_Plate_06,Roman_HellforgedLegion00
-207,Armor,Epic,1,100,60,20,20,2,500,Armor_Plate_07,Roman_Salamander00
-208,Armor,Epic,2,100,80,25,20,5,750,Armor_Plate_08,Roman_SeasideCityState00
-209,Armor,Legendary,1,100,100,30,25,10,1000,Armor_Plate_09,Roman_Triarii00
-210,Armor,Legendary,2,100,150,100,50,10,1500,Armor_Plate_10,Roman_StormDrooper00
-301,Necklace,Common,1,100,5,1,2,0.1,10,Necklace_01,Amulets 100x100 Outline_16
-302,Necklace,Common,2,100,7,1,3,0.15,15,Necklace_02,Amulets 100x100 Outline_17
-303,Necklace,Uncommon,1,100,10,3,4,0.2,30,Necklace_03,Amulets 100x100 Outline_11
-304,Necklace,Uncommon,2,100,15,5,5,0.5,45,Necklace_04,Amulets 100x100 Outline_13
-305,Necklace,Rare,1,100,30,10,10,1,100,Necklace_05,Amulets 100x100 Outline_40
-306,Necklace,Rare,2,100,40,15,10,1,150,Necklace_06,Amulets 100x100 Outline_42
-307,Necklace,Epic,1,100,60,20,20,2,500,Necklace_07,Amulets 100x100 Outline_46
-308,Necklace,Epic,2,100,80,25,20,5,750,Necklace_08,Amulets 100x100 Outline_48
-309,Necklace,Legendary,1,100,100,30,25,10,1000,Necklace_09,Amulets 100x100 Outline_29
-310,Necklace,Legendary,2,100,150,100,50,10,1500,Necklace_10,Amulets 100x100 Outline_28
+Id,ItemType,GradeType,Stage,MaxLevel,BaseValue,BaseValuePerLevel,OwnedValue,OwnedValuePerLevel,UpgradePrice,NameKey,IconKey,EquippedEffectType,OwnedEffectType
+101,Weapon,Common,1,100,5,1,2,0.1,10,Weapon_Sword_01,Sword1,DamageBonus,GoldBonus
+102,Weapon,Common,2,100,7,1,3,0.15,15,Weapon_Sword_02,Sword2,DamageBonus,GoldBonus
+103,Weapon,Uncommon,1,100,10,3,4,0.2,30,Weapon_Sword_03,Sword3,DamageBonus,GoldBonus
+104,Weapon,Uncommon,2,100,15,5,5,0.5,45,Weapon_Sword_04,Sword5,DamageBonus,GoldBonus
+105,Weapon,Rare,1,100,30,10,10,1,100,Weapon_Sword_05,Sword7,DamageBonus,GoldBonus
+106,Weapon,Rare,2,100,40,15,10,1,150,Weapon_Sword_06,Sword15,DamageBonus,GoldBonus
+107,Weapon,Epic,1,100,60,20,20,2,500,Weapon_Sword_07,Sword13,DamageBonus,GoldBonus
+108,Weapon,Epic,2,100,80,25,20,5,750,Weapon_Sword_08,Sword12,DamageBonus,GoldBonus
+109,Weapon,Legendary,1,100,100,30,25,10,1000,Weapon_Sword_09,Sword11,DamageBonus,GoldBonus
+110,Weapon,Legendary,2,100,150,100,50,10,1500,Weapon_Sword_10,Sword10,DamageBonus,GoldBonus
+201,Armor,Common,1,100,5,1,2,0.1,10,Armor_Plate_01,Roman_AncientHero00,HealthBonus,ExpBonus
+202,Armor,Common,2,100,7,1,3,0.15,15,Armor_Plate_02,Roman_BronzeSmith00,HealthBonus,ExpBonus
+203,Armor,Uncommon,1,100,10,3,4,0.2,30,Armor_Plate_03,Roman_DarkCenturion00,HealthBonus,ExpBonus
+204,Armor,Uncommon,2,100,15,5,5,0.5,45,Armor_Plate_04,Roman_EmeraldPath00,HealthBonus,ExpBonus
+205,Armor,Rare,1,100,30,10,10,1,100,Armor_Plate_05,Roman_GuildCrafter00,HealthBonus,ExpBonus
+206,Armor,Rare,2,100,40,15,10,1,150,Armor_Plate_06,Roman_HellforgedLegion00,HealthBonus,ExpBonus
+207,Armor,Epic,1,100,60,20,20,2,500,Armor_Plate_07,Roman_Salamander00,HealthBonus,ExpBonus
+208,Armor,Epic,2,100,80,25,20,5,750,Armor_Plate_08,Roman_SeasideCityState00,HealthBonus,ExpBonus
+209,Armor,Legendary,1,100,100,30,25,10,1000,Armor_Plate_09,Roman_Triarii00,HealthBonus,ExpBonus
+210,Armor,Legendary,2,100,150,100,50,10,1500,Armor_Plate_10,Roman_StormDrooper00,HealthBonus,ExpBonus
+301,Necklace,Common,1,100,5,1,2,0.1,10,Necklace_01,Amulets 100x100 Outline_16,CriticalChanceBonus,CriticalDamageBonus
+302,Necklace,Common,2,100,7,1,3,0.15,15,Necklace_02,Amulets 100x100 Outline_17,CriticalChanceBonus,CriticalDamageBonus
+303,Necklace,Uncommon,1,100,10,3,4,0.2,30,Necklace_03,Amulets 100x100 Outline_11,CriticalChanceBonus,CriticalDamageBonus
+304,Necklace,Uncommon,2,100,15,5,5,0.5,45,Necklace_04,Amulets 100x100 Outline_13,CriticalChanceBonus,CriticalDamageBonus
+305,Necklace,Rare,1,100,30,10,10,1,100,Necklace_05,Amulets 100x100 Outline_40,CriticalChanceBonus,CriticalDamageBonus
+306,Necklace,Rare,2,100,40,15,10,1,150,Necklace_06,Amulets 100x100 Outline_42,CriticalChanceBonus,CriticalDamageBonus
+307,Necklace,Epic,1,100,60,20,20,2,500,Necklace_07,Amulets 100x100 Outline_46,CriticalChanceBonus,CriticalDamageBonus
+308,Necklace,Epic,2,100,80,25,20,5,750,Necklace_08,Amulets 100x100 Outline_48,CriticalChanceBonus,CriticalDamageBonus
+309,Necklace,Legendary,1,100,100,30,25,10,1000,Necklace_09,Amulets 100x100 Outline_29,CriticalChanceBonus,CriticalDamageBonus
+310,Necklace,Legendary,2,100,150,100,50,10,1500,Necklace_10,Amulets 100x100 Outline_28,CriticalChanceBonus,CriticalDamageBonus
