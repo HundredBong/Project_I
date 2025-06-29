@@ -30,6 +30,7 @@ public class PlayerStats : MonoBehaviour
     public int statPoint = 0;
     public float gold = 0;
     public int diamond = 0;
+    public int enhanceStone = 0;
 
     public float Gold
     {
@@ -38,8 +39,8 @@ public class PlayerStats : MonoBehaviour
         {
             //if (gold != value)
             //{
-                gold = value;
-                OnCurrencyChanged?.Invoke();
+            gold = value;
+            OnCurrencyChanged?.Invoke();
             //}
         }
     }
@@ -51,8 +52,8 @@ public class PlayerStats : MonoBehaviour
         {
             //if (diamond != value)
             //{
-                diamond = value;
-                OnCurrencyChanged?.Invoke();
+            diamond = value;
+            OnCurrencyChanged?.Invoke();
             //}
         }
     }
@@ -331,5 +332,58 @@ public class PlayerStats : MonoBehaviour
         //결과 반영
         RecalculateStats();
         OnStatChanged?.Invoke(); //(UIStatPage) playerStats.OnStatChanged += Refresh;
+    }
+
+    //강화용, 골드 제외
+    public bool TrySpendItem(PlayerProgressType type, int amount)
+    {
+        if (type == PlayerProgressType.Gold || type == PlayerProgressType.MaxExp || type == PlayerProgressType.CurrentExp)
+        {
+            Debug.LogWarning($"[PlayerStats] 사용할 수 없는 타입, {type}");
+        }
+
+
+        if (playerProgress.TryGetValue(type, out float value) && value >= amount)
+        {
+            Debug.Log($"[PlayerStats] {type}, {playerProgress[type]}, {value:F1}, {amount}");
+
+            playerProgress[type] -= amount;
+            return true;
+        }
+        return false;
+    }
+
+    public bool TryEnhanceItem(ItemData itemData, InventoryItem item)
+    {
+        //강화하려는 아이템 레벨이 최대 레벨 이상이라면
+        if (item.Level >= itemData.MaxLevel)
+        {
+            Debug.Log("[PlayerStats] 이미 최대 레벨에 도달함");
+            return false;
+        }
+        
+        //아이템 데이터에서 강화비용 불러오기
+        int cost = itemData.UpgradePrice;
+
+        //강화석으로 강화하려는데 실패했다면 리턴
+        if (TrySpendItem(PlayerProgressType.EnhanceStone, cost) == false)
+        {
+            Debug.Log($"[PlayerStats] 강화석이 부족함 {enhanceStone} / {cost}");
+            return false;
+        }
+
+        item.Level++;
+
+        //저장 요청, 이후 ItemUI는 UIItemInfoPopup에서 갱신함
+        GameManager.Instance.statSaver.RequestSave(GetProgressSaveData());
+        GameManager.Instance.statSaver.RequestSave(InventoryManager.Instance.GetSaveData());
+        //OnStatChanged?.Invoke();
+        return true;
+    }
+
+    [ContextMenu("테스트")]
+    private void Test()
+    {
+        playerProgress[PlayerProgressType.EnhanceStone] = 100000;
     }
 }

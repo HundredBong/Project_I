@@ -12,7 +12,8 @@ public class FirebaseStatSaver : MonoBehaviour
     private DatabaseReference dbRef;
 
     //취소 신호를 만들어주는 컨트롤러 객체, async작업을 중간에 취소할 수 있게 해줌. 
-    private CancellationTokenSource saveCts;
+    private CancellationTokenSource progressSaveCts;
+    private CancellationTokenSource inventorySaveCts;
 
     private async void Start()
     {
@@ -24,14 +25,14 @@ public class FirebaseStatSaver : MonoBehaviour
 
     public void RequestSave(PlayerProgressSaveData data)
     {
-        if (saveCts != null)
+        if (progressSaveCts != null)
         {
-            saveCts.Cancel();
+            progressSaveCts.Cancel();
         }
-        saveCts = new CancellationTokenSource();
-
+        progressSaveCts = new CancellationTokenSource();
+        
         //비동기 함수를 기다릴 필요 없으니 Forget선언
-        DelayAndSave(data, saveCts.Token).Forget();
+        DelayAndSave(data, progressSaveCts.Token).Forget();
 
         Debug.Log("[FirebaseStatSaver] 저장 요청 들어옴");
         string json = JsonUtility.ToJson(data);
@@ -305,6 +306,30 @@ public class FirebaseStatSaver : MonoBehaviour
     {
         await UniTask.SwitchToMainThread();
         onLoaded?.Invoke(data);
+    }
+
+    public void RequestSave(InventorySaveData data)
+    {
+        if (inventorySaveCts != null)
+        {
+            inventorySaveCts.Cancel();
+        }
+        inventorySaveCts = new CancellationTokenSource();
+        DelayAndSave(data, inventorySaveCts.Token).Forget();
+        string json = JsonUtility.ToJson(data);
+    }
+
+    private async UniTaskVoid DelayAndSave(InventorySaveData data, CancellationToken token)
+    {
+        try
+        {
+            await UniTask.Delay(TimeSpan.FromSeconds(2), cancellationToken: token);
+            SaveInventoryData(data);
+        }
+        catch (OperationCanceledException)
+        {
+            Debug.Log("[FirebaseStatSaver] 저장 취소됨");
+        }
     }
 
     public void SaveInventoryData(InventorySaveData data)

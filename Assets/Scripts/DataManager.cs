@@ -398,7 +398,7 @@ public class DataManager : MonoBehaviour
                 BaseValuePerLevel = float.Parse(tokens[6].Trim()),
                 OwnedValue = float.Parse(tokens[7].Trim()),
                 OwnedValuePerLevel = float.Parse(tokens[8].Trim()),
-                UpgradePrice = float.Parse(tokens[9].Trim()),
+                UpgradePrice = int.Parse(tokens[9].Trim()),
                 NameKey = tokens[10].Trim(),
                 IconKey = tokens[11].Trim(),
                 EquippedEffectType = Enum.Parse<SkillEffectType>(tokens[12].Trim()),
@@ -561,7 +561,7 @@ public class ItemData
     public float BaseValuePerLevel;
     public float OwnedValue;
     public float OwnedValuePerLevel;
-    public float UpgradePrice;
+    public int UpgradePrice;
     public string NameKey;
     public string IconKey;
     public SkillEffectType EquippedEffectType;

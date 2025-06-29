@@ -6,7 +6,7 @@ public enum StatUpgradeType { Attack, Health, AttackSpeed, MoveSpeed, }
 
 public enum GoldUpgradeType { Attack, Health, CriticalChance, CriticalDamage }
 
-public enum PlayerProgressType { Level, CurrentExp, MaxExp, StatPoint, Gold, Diamond }
+public enum PlayerProgressType { Level, CurrentExp, MaxExp, StatPoint, Gold, Diamond, EnhanceStone }
 
 public enum HUDType { Shop, Stat, Skill, Inventory, Menu }
 
