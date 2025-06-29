@@ -54,26 +54,30 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    public bool EquipItem(int itemId)
+    public void EquipItem(int itemId)
     {
         if (inventory.TryGetValue(itemId, out InventoryItem item) == false)
         {
-            Debug.LogWarning($"[InventoryManager] 없는 아이템 작착 시도함, {itemId}");
-            return false;
+            Debug.LogWarning($"[InventoryManager] 없는 아이템 장착 시도함, {itemId}");
+            return;
         }
 
         ItemType type = item.Data.ItemType;
 
         //해당 부위에 아이템 착용중인지 확인
-        if (equippedItems.TryGetValue(type, out InventoryItem alreadyEquipped))
+        if (equippedItems.ContainsKey(type))
         {
             //이미 착용중인 아이템이 있다면 장착해제
-            alreadyEquipped.IsEquipped = false;
+            UnequipItem(type);
         }
 
         item.IsEquipped = true;
         equippedItems[type] = item;
-        return true;
+
+        //장착은 보통 한번씩 이루어지니 바로 저장
+        GameManager.Instance.statSaver.SaveInventoryData(GetSaveData());
+        //장착하고나면 대미지 재계산
+        GameManager.Instance.stats.RecalculateStats();
     }
 
     public void UnequipItem(ItemType type)
@@ -83,6 +87,8 @@ public class InventoryManager : MonoBehaviour
         {
             item.IsEquipped = false;
             equippedItems.Remove(type);
+            GameManager.Instance.statSaver.SaveInventoryData(GetSaveData());
+            GameManager.Instance.stats.RecalculateStats();
         }
     }
 

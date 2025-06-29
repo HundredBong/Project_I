@@ -81,11 +81,11 @@ public class UIItemInfoPopup : UIPopup
 
         effectText.text = DataManager.Instance.GetLocalizedText("UI_EquippedEffect");
         effectTypeText.text = DataManager.Instance.GetLocalizedText($"Item_Effect_{itemData.EquippedEffectType}");
-        effectValueText.text = $"{itemData.BaseValue * inventoryItem.Level}"; //TODO : 식 확인 필요
+        effectValueText.text = $"{itemData.BaseValue + (itemData.BaseValuePerLevel * inventoryItem.Level):F0}";
 
         ownedEffectText.text = DataManager.Instance.GetLocalizedText("UI_OwnedEffect");
         ownedTypeText.text = DataManager.Instance.GetLocalizedText($"Item_Effect_{itemData.OwnedEffectType}");
-        ownedValueText.text = $"{itemData.OwnedValue}";
+        ownedValueText.text = $"{itemData.OwnedValue + (itemData.OwnedValuePerLevel * inventoryItem.Level):F0}";
 
         upgradeMaterialText.text = DataManager.Instance.GetLocalizedText("UI_UpgradeMaterial");
         upgradePriceText.text = $"{(int)GameManager.Instance.stats.GetProgress(PlayerProgressType.EnhanceStone)} / {itemData.UpgradePrice}";
@@ -94,8 +94,9 @@ public class UIItemInfoPopup : UIPopup
         upgradeButton.onClick.AddListener(OnClickEnhance);
 
         upgradeButtonText.text = DataManager.Instance.GetLocalizedText("UI_LevelUp");
-        equipButton.onClick.AddListener(() => { Debug.Log("기존 장비 해제 및 새로운 장비 장착"); });
-        equipButtonText.text = DataManager.Instance.GetLocalizedText("UI_Equip");
+        equipButton.onClick.AddListener(OnClickEquip);
+        equipButtonText.text = inventoryItem.IsEquipped == true ? DataManager.Instance.GetLocalizedText("UI_Equipped") : DataManager.Instance.GetLocalizedText("UI_Equip");
+        equipButton.interactable = inventoryItem.IsEquipped == true ? false : true;
     }
 
     private void Refresh()
@@ -107,27 +108,27 @@ public class UIItemInfoPopup : UIPopup
         itemCountText.text = $"{DataManager.Instance.GetLocalizedText("UI_OwnedCount")} : {inventoryItem.Count})";
 
         upgradeTypeButtonText.text = DataManager.Instance.GetLocalizedText("UI_UpgradeType");
-        upgradeTypeButton.onClick.AddListener(() => { Debug.Log("업그레이드 패널 "); });
         synthesisTypeButtonText.text = DataManager.Instance.GetLocalizedText("UI_Synthesis");
-        synthesisTypeButton.onClick.AddListener(() => { Debug.Log("합성 패널"); });
 
         effectText.text = DataManager.Instance.GetLocalizedText("UI_EquippedEffect");
         effectTypeText.text = DataManager.Instance.GetLocalizedText($"Item_Effect_{itemData.EquippedEffectType}");
-        effectValueText.text = $"{itemData.BaseValue * inventoryItem.Level}"; //TODO : 식 확인 필요
+        effectValueText.text = $"{itemData.BaseValue + (itemData.BaseValuePerLevel * inventoryItem.Level):F0}";
 
         ownedEffectText.text = DataManager.Instance.GetLocalizedText("UI_OwnedEffect");
         ownedTypeText.text = DataManager.Instance.GetLocalizedText($"Item_Effect_{itemData.OwnedEffectType}");
-        ownedValueText.text = $"{itemData.OwnedValue}";
+        ownedValueText.text = $"{itemData.OwnedValue + (itemData.OwnedValuePerLevel * inventoryItem.Level):F0}";
 
         upgradeMaterialText.text = DataManager.Instance.GetLocalizedText("UI_UpgradeMaterial");
-        upgradePriceText.text = $"{itemData.UpgradePrice}"; //TODO : 플레이어 재화 보유량 표시
-        upgradeButton.onClick.AddListener(() => { Debug.Log("업그레이드 됨"); });
+        upgradePriceText.text = $"{(int)GameManager.Instance.stats.GetProgress(PlayerProgressType.EnhanceStone)} / {itemData.UpgradePrice}";
         upgradeButtonText.text = DataManager.Instance.GetLocalizedText("UI_LevelUp");
-        equipButton.onClick.AddListener(() => { Debug.Log("기존 장비 해제 및 새로운 장비 장착"); });
-        equipButtonText.text = DataManager.Instance.GetLocalizedText("UI_Equip");
+        equipButtonText.text = inventoryItem.IsEquipped == true ? DataManager.Instance.GetLocalizedText("UI_Equipped") : DataManager.Instance.GetLocalizedText("UI_Equip");
+        equipButton.interactable = inventoryItem.IsEquipped == true ? false : true;
+
     }
 
-    public void OnClickEnhance()
+
+
+    private void OnClickEnhance()
     {
         //PlayerStats에서 강화석으로 강화 시도
         bool success = GameManager.Instance.stats.TryEnhanceItem(itemData, inventoryItem);
@@ -136,7 +137,16 @@ public class UIItemInfoPopup : UIPopup
         {
             onUpgraded?.Invoke(); //UIItemSlot의 UI 갱신
             Refresh(); //자기 자신의 UI 갱신
+            GameManager.Instance.stats.RecalculateStats(); //스탯 재계산
         }
+    }
+
+    private void OnClickEquip()
+    {
+        InventoryManager.Instance.UnequipItem(itemData.ItemType);
+        InventoryManager.Instance.EquipItem(itemData.Id);
+        Refresh();
+        GameManager.Instance.stats.RecalculateStats();
     }
 
 }

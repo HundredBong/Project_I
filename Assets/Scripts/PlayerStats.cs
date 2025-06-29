@@ -32,6 +32,10 @@ public class PlayerStats : MonoBehaviour
     public int diamond = 0;
     public int enhanceStone = 0;
 
+    [Header("보너스")]
+    private float goldBonus = 0;
+    private float expBonus = 0;
+
     public float Gold
     {
         get => gold;
@@ -241,12 +245,23 @@ public class PlayerStats : MonoBehaviour
         attackSpeed = 1 + (GetStat(StatUpgradeType.AttackSpeed) * 0.01f);
         moveSpeed = 5 + (GetStat(StatUpgradeType.MoveSpeed) * 0.01f);
 
-        //이거 제대로 하려면 CSV에서 읽어와야 함, 임시로 하드코딩함
-        //만약 한다면 StatType, BaseValue, GrowthPerLevel
-        //           Attack, 10, 2.5
-        //           Health, 100, 20
-        //만들어두면 damage = baseValue + GetStat(StatType.Attack) * growthPerLevel; 이런 식으로 계산 가능함
+        RecalculateItem();
+        RecalculateSkill();
     }
+
+    private void RecalculateItem()
+    {
+        //아이템 영향 계산
+
+    }
+
+    private void RecalculateSkill()
+    {
+        //스킬 영향 계산
+
+    }
+
+
     public Dictionary<StatUpgradeType, int> GetAllLevels()
     {
         return statLevels;
@@ -361,7 +376,7 @@ public class PlayerStats : MonoBehaviour
             Debug.Log("[PlayerStats] 이미 최대 레벨에 도달함");
             return false;
         }
-        
+
         //아이템 데이터에서 강화비용 불러오기
         int cost = itemData.UpgradePrice;
 

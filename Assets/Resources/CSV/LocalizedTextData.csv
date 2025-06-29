@@ -39,3 +39,4 @@ Weapon_Sword_01,나무칼,Wood Sword
 UI_OwnedCount,보유 수량,Quantity
 UI_LevelUp,레벨 업,Level Up
 UI_Equip,장착,Equip
+UI_Equipped,장착중,Equipped
