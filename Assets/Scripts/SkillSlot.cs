@@ -8,7 +8,7 @@ public class SkillSlot
 
     public void Equip(SkillId id)
     {
-        SkillData data = DataManager.Instance.skillDataTable[id];
+        SkillData data = DataManager.Instance.GetSkill(id);
         SkillBase skill = SkillFactory.Create(id, data);
 
         if (equippedSkill == null)

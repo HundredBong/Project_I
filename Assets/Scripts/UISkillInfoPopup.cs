@@ -10,17 +10,17 @@ public class UISkillInfoPopup : UIPopup
     [Header("이미지")]
     [SerializeField] private Image skillIcon;
     [SerializeField] private Image skillStatus;
-    [SerializeField] private Image skillAwakenIcon; 
+    [SerializeField] private Image skillAwakenIcon;
 
     [Header("텍스트")]
     [SerializeField] private TextMeshProUGUI skillGradeText;
     [SerializeField] private TextMeshProUGUI skillNameText;
-    [SerializeField] private TextMeshProUGUI skillCountText;    
+    [SerializeField] private TextMeshProUGUI skillCountText;
     [SerializeField] private TextMeshProUGUI skillLevelText;
     [SerializeField] private TextMeshProUGUI skillDescriptionText;
     [SerializeField] private TextMeshProUGUI skillEffectName;
     [SerializeField] private TextMeshProUGUI skillEffectDescText;
-    [SerializeField] private TextMeshProUGUI skillEffectValueText; 
+    [SerializeField] private TextMeshProUGUI skillEffectValueText;
 
     [Header("버튼")]
     [SerializeField] private Button upgradeButton;
@@ -42,13 +42,13 @@ public class UISkillInfoPopup : UIPopup
         //텍스트
         skillGradeText.text = DataManager.Instance.GetLocalizedText($"Grade_{data.Grade}");
         skillNameText.text = DataManager.Instance.GetLocalizedText(data.NameKey);
-        skillCountText.text = $"{DataManager.Instance.GetLocalizedText("Skill_Count")}"; //TODO: DataManager에 추가, 추후 플레이어 스킬 개수로 변경 필요  
-        skillLevelText.text = $"Lv.1/{data.MaxLevel}"; //TODO:추후 플레이어 스킬 레벨로 변경 필요
+        skillCountText.text = $"{DataManager.Instance.GetLocalizedText("UI_OwnedCount")} : {SkillManager.Instance.GetSkillState(data.SkillId).OwnedCount}";
+        skillLevelText.text = $"Lv. {SkillManager.Instance.GetSkillState(data.SkillId).Level} / {data.MaxLevel}";
         skillDescriptionText.text = DataManager.Instance.GetSkillDesc(data, data.SkillId);
-        
-        skillEffectName.text = DataManager.Instance.GetLocalizedText("Skill_Effect"); //DataManager에 추가 
-        skillEffectDescText.text = DataManager.Instance.GetLocalizedText($"Skill_Effect_{data.EffectType.ToString()}"); //DataManager에 추가
-        skillEffectValueText.text = $"{data.PassiveValue}%"; //TODO : 스킬 레벨별 Increase 공식 적용
+
+        skillEffectName.text = DataManager.Instance.GetLocalizedText("Skill_Effect");
+        skillEffectDescText.text = DataManager.Instance.GetLocalizedText($"Skill_Effect_{data.EffectType.ToString()}");
+        skillEffectValueText.text = $"{data.PassiveValue}%"; //TODO : 스킬 레벨별 Increase 공식 적용, 인데 우선도는 낮음, 사유 : 수학이라서
 
         //버튼
         upgradeButton.onClick.AddListener(ShowUpgradePanel);
@@ -64,7 +64,7 @@ public class UISkillInfoPopup : UIPopup
         upgradePanel.SetActive(true);
         awakenPanel.SetActive(false);
         decompositionPanel.SetActive(false);
-    }   
+    }
 
     private void ShowAwakenPanel()
     {

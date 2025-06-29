@@ -114,9 +114,10 @@ public class SkillEquipPopup : UIPopup
         {
             SkillId id = saveData.equippedSkills[i];
 
-            if (id != SkillId.None && DataManager.Instance.skillDataTable.TryGetValue(id, out SkillData data) == true)
+            if (id != SkillId.None)
             {
-                slots[i].SetSkill(data);
+                SkillData skillData = DataManager.Instance.GetSkill(id);
+                slots[i].SetSkill(skillData);
             }
         }
     }

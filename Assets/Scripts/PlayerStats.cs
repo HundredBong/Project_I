@@ -19,7 +19,8 @@ public class PlayerStats : MonoBehaviour
 
     [Header("대미지")]
     public float damage = 1;
-    public float critical = 0;
+    public float criticalChance = 0;
+    public float criticalDamage = 0;
 
     [Header("레벨")]
     public int level = 1;
@@ -33,8 +34,8 @@ public class PlayerStats : MonoBehaviour
     public int enhanceStone = 0;
 
     [Header("보너스")]
-    private float goldBonus = 0;
-    private float expBonus = 0;
+    [SerializeField] private float goldBonus = 1;
+    [SerializeField] private float expBonus = 1;
 
     public float Gold
     {
@@ -44,6 +45,7 @@ public class PlayerStats : MonoBehaviour
             //if (gold != value)
             //{
             gold = value;
+            playerProgress[PlayerProgressType.Gold] = gold;
             OnCurrencyChanged?.Invoke();
             //}
         }
@@ -57,6 +59,7 @@ public class PlayerStats : MonoBehaviour
             //if (diamond != value)
             //{
             diamond = value;
+            playerProgress[PlayerProgressType.Diamond] = diamond;
             OnCurrencyChanged?.Invoke();
             //}
         }
@@ -93,7 +96,7 @@ public class PlayerStats : MonoBehaviour
 
     public void GetExp(float exp)
     {
-        currentExp += exp;
+        currentExp += (exp * expBonus);
         //Debug.Log($"{exp} 경험치 획득함, {currentExp} / {maxExp}");
         playerProgress[PlayerProgressType.CurrentExp] = currentExp;
 
@@ -109,7 +112,7 @@ public class PlayerStats : MonoBehaviour
 
     public void GetGold(float gold)
     {
-        Gold += gold;
+        Gold += (gold * goldBonus);
     }
 
     public int GetGold() { return (int)Gold; }
@@ -240,7 +243,7 @@ public class PlayerStats : MonoBehaviour
 
         damage = 5 + (GetStat(StatUpgradeType.Attack) * 3) + (GetUpgradeValue(GoldUpgradeType.Attack));
         maxHealth = 50 + (GetStat(StatUpgradeType.Health) * 10) + (GetUpgradeValue(GoldUpgradeType.Health));
-        critical = GetUpgradeLevel(GoldUpgradeType.CriticalChance);
+        criticalChance = GetUpgradeLevel(GoldUpgradeType.CriticalChance);
         //TODO : 크리 공식 손봐야 하는데 우선순위 매우낮음
         attackSpeed = 1 + (GetStat(StatUpgradeType.AttackSpeed) * 0.01f);
         moveSpeed = 5 + (GetStat(StatUpgradeType.MoveSpeed) * 0.01f);
@@ -253,12 +256,67 @@ public class PlayerStats : MonoBehaviour
     {
         //아이템 영향 계산
 
+        //보유 아이템
+        foreach (InventoryItem item in InventoryManager.Instance.GetItemList())
+        {
+            //아이템을 보유중이라면
+            if (item.IsUnlocked == true)
+            {
+                float value = item.Data.OwnedValue + (item.Data.OwnedValuePerLevel * item.Level);
+                ApplyEffect(item.Data.OwnedEffectType, value);
+            }
+        }
+
+        foreach (ItemType type in Enum.GetValues(typeof(ItemType)))
+        {
+            //장착중인 아이템 가져오기
+            InventoryItem item = InventoryManager.Instance.GetEquippedItem(type);
+            if (item == null)
+                continue;
+
+            float value = item.Data.BaseValue + (item.Data.BaseValuePerLevel * item.Level);
+            ApplyEffect(item.Data.EquippedEffectType, value);
+        }
     }
 
     private void RecalculateSkill()
     {
-        //스킬 영향 계산
+        //모든 스킬 데이터를 불러오고
+        foreach (SkillData data in DataManager.Instance.GetAllSkillData())
+        {
+            //현재 얻은 스킬인지 확인하고
+            if (SkillManager.Instance.IsUnlocked(data.SkillId))
+            {
+                //얻은 스킬이라면 계산에 활용함
+                ApplyEffect(data.EffectType, data.PassiveValue + (data.PassiveValuePerLevel * SkillManager.Instance.GetSkillState(data.SkillId).Level));
+            }
 
+        }
+    }
+
+    private void ApplyEffect(SkillEffectType type, float value)
+    {
+        switch (type)
+        {
+            case SkillEffectType.GoldBonus:
+                goldBonus += value;
+                break;
+            case SkillEffectType.ExpBonus:
+                expBonus += value;
+                break;
+            case SkillEffectType.DamageBonus:
+                damage += value;
+                break;
+            case SkillEffectType.HealthBonus:
+                health += value;
+                break;
+            case SkillEffectType.CriticalDamageBonus:
+                criticalDamage += value; 
+                break;
+            case SkillEffectType.CriticalChanceBonus:
+                criticalChance += value; 
+                break;
+        }
     }
 
 
@@ -394,11 +452,5 @@ public class PlayerStats : MonoBehaviour
         GameManager.Instance.statSaver.RequestSave(InventoryManager.Instance.GetSaveData());
         //OnStatChanged?.Invoke();
         return true;
-    }
-
-    [ContextMenu("테스트")]
-    private void Test()
-    {
-        playerProgress[PlayerProgressType.EnhanceStone] = 100000;
     }
 }

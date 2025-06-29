@@ -18,7 +18,7 @@ public class DataManager : MonoBehaviour
     public Dictionary<int, float> expTable = new Dictionary<int, float>();
     public Dictionary<EnemyId, EnemyData> enemyDataTable = new Dictionary<EnemyId, EnemyData>();
     public Dictionary<int, StageData> stageDataTable = new Dictionary<int, StageData>();
-    public Dictionary<SkillId, SkillData> skillDataTable = new Dictionary<SkillId, SkillData>();
+    private Dictionary<SkillId, SkillData> skillDataTable = new Dictionary<SkillId, SkillData>();
     private Dictionary<string, LocalizedText> localizedTexts = new Dictionary<string, LocalizedText>();
     private Dictionary<GoldUpgradeType, GoldUpgradeData> goldUpgradeTable = new Dictionary<GoldUpgradeType, GoldUpgradeData>();
     private Dictionary<int, ItemData> itemDataTable = new Dictionary<int, ItemData>();
@@ -306,7 +306,7 @@ public class DataManager : MonoBehaviour
                 BufferDuration = float.Parse(tokens[9]),
                 EffectType = Enum.Parse<SkillEffectType>(tokens[10].Trim()),
                 PassiveValue = float.Parse(tokens[11]),
-                PassiveEffectIncrease = float.Parse(tokens[12]),
+                PassiveValuePerLevel = float.Parse(tokens[12]),
                 MaxLevel = int.Parse(tokens[13]),
                 UpgradeCost = int.Parse(tokens[14]),
                 UpgradeCostPerLevel = int.Parse(tokens[15]),
@@ -332,6 +332,11 @@ public class DataManager : MonoBehaviour
         }
 
         return skillList;
+    }
+
+    public SkillData GetSkill(SkillId skillId)
+    {
+        return skillDataTable[skillId];
     }
 
     private void LoadGoldUpgradeData()
@@ -510,7 +515,7 @@ public class SkillData
     public float BufferDuration; //버프 지속 시간, 초 단위, 버프 스킬에만 적용
     public SkillEffectType EffectType; //스킬 효과 타입, GoldBonus, ExpBonus 등
     public float PassiveValue; //보유 효과
-    public float PassiveEffectIncrease; //보유 효과 증가량
+    public float PassiveValuePerLevel; //보유 효과 증가량
     public int MaxLevel; //스킬의 최대 레벨
     public int UpgradeCost; //스킬 업그레이드 비용, 골드 등
     public int UpgradeCostPerLevel; //레벨당 업그레이드 비용 증가량

@@ -33,6 +33,18 @@ public class InventoryManager : MonoBehaviour
         return null;
     }
 
+    public List<InventoryItem> GetItemList()
+    {
+        List<InventoryItem> list = new List<InventoryItem>();
+
+        foreach (InventoryItem item in inventory.Values)
+        {
+            list.Add(item);
+        }
+
+        return list;
+    }
+
     public bool HasItem(int itemId)
     {
         return inventory.ContainsKey(itemId);
@@ -145,7 +157,7 @@ public class InventoryManager : MonoBehaviour
             //딕셔너리 초기화
             inventory[entry.Id] = item;
 
-            Debug.Log($"인벤토리 정보 : {entry.Id} / {inventory[entry.Id]}");
+            Debug.Log($"인벤토리 정보 : {entry.Id}");
         }
 
 
@@ -161,5 +173,7 @@ public class InventoryManager : MonoBehaviour
                 equippedItems[item.Data.ItemType] = item;
             }
         }
+
+        GameManager.Instance.stats.RecalculateStats();
     }
 }

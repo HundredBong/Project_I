@@ -40,7 +40,7 @@ public class ActiveSkillSlot : MonoBehaviour
         }
         gameObject.SetActive(true);
 
-        SkillData data = DataManager.Instance.skillDataTable[id];
+        SkillData data = DataManager.Instance.GetSkill(id);
         equippedSkill = SkillFactory.Create(id, data);
 
         skillIcon.sprite = DataManager.Instance.GetSpriteByKey(data.SkillIcon);

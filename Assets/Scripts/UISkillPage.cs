@@ -57,11 +57,11 @@ public class UISkillPage : UIPage
 
     private void Start()
     {
-        foreach (KeyValuePair<SkillId, SkillData> kvp in DataManager.Instance.skillDataTable)
+        foreach (SkillData data in DataManager.Instance.GetAllSkillData())
         {
-            GameObject obj = Instantiate(skillSlotPrefab, kvp.Value.Type == SkillType.Active ? activeContentRoot : passiveContentRoot);
+            GameObject obj = Instantiate(skillSlotPrefab, data.Type == SkillType.Active ? activeContentRoot : passiveContentRoot);
             SkillSlotUI ui = obj.GetComponent<SkillSlotUI>();
-            ui.Init(kvp.Value);
+            ui.Init(data);
             slotUIs.Add(ui);
         }
 
