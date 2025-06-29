@@ -40,3 +40,7 @@ UI_OwnedCount,보유 수량,Quantity
 UI_LevelUp,레벨 업,Level Up
 UI_Equip,장착,Equip
 UI_Equipped,장착중,Equipped
+UI_Grade,단계,Stage
+UI_ItemSynthesisDesc,이 장비 5개를 소모해 다음 등급 장비를 획득합니다.,Use 5 of these equipment to obtain the next class of equipment.
+UI_Synthesis,합성,Synthesis
+UI_BatchSynthesis,일괄 합성,Batch Synthesis

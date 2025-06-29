@@ -58,4 +58,14 @@ public class UIInventoryPage : UIPage
 
         currentItemType = itemType;
     }
+
+    [ContextMenu("테스트")]
+    private void Test()
+    {
+        foreach (var item in itemSlots)
+        {
+            Debug.Log("새로고침 : " + itemSlots.Values.Count);
+            item.Value.Refresh();
+        }
+    }
 }

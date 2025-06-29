@@ -52,17 +52,34 @@ public class InventoryManager : MonoBehaviour
 
     public void AddItem(ItemData data, int count = 1)
     {
-        if (inventory.TryGetValue(data.Id, out InventoryItem item))
+        Debug.Log($"[InventoryManager] 추가할 아이템 : {data.Id}");
+
+        //아이템이 존재한다면 카운트만 증가시킴
+        if (inventory.TryGetValue(data.Id, out InventoryItem inventoryItem))
         {
-            item.Count += count;
-            item.IsUnlocked = true;
+            inventoryItem.Count += count;
         }
+        //존재하지 않다면 새로 생성
         else
         {
             inventory[data.Id] = new InventoryItem(data, true)
             {
                 Count = count
             };
+        }
+
+        Debug.Log($"[InventoryManager] 추가된 아이템 : {inventory[data.Id].Data.NameKey}, {inventory[data.Id].IsUnlocked}, {inventory[data.Id].Count}");
+    }
+
+    public void SubtractItem(ItemData data, int count = 1)
+    {
+        if (inventory.TryGetValue(data.Id, out InventoryItem item))
+        {
+            item.Count -= count;
+        }
+        else
+        {
+            Debug.LogWarning("[InventoryManager] 없는 아이템 차감 시도함");
         }
     }
 

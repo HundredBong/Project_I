@@ -58,9 +58,45 @@ public class UIItemInfoPopup : UIPopup
     [SerializeField] private Button equipButton;
     [SerializeField] private TextMeshProUGUI equipButtonText;
 
+    [Space(20)]
+    [SerializeField] private GameObject upgradePanel;
+    [SerializeField] private GameObject synthesisPanel;
+
+    [Space(20)]
+    [SerializeField] private TextMeshProUGUI currentItemGradeText;
+    [SerializeField] private Image currentItemImage;
+    [SerializeField] private TextMeshProUGUI nextItemGradeText;
+    [SerializeField] private Image nextItemImage;
+    [SerializeField] private TextMeshProUGUI currentItemCount;
+    [SerializeField] private TextMeshProUGUI nextItemCount;
+    [SerializeField] private TextMeshProUGUI synthesisDesc;
+    [SerializeField] private TextMeshProUGUI synthesisCountText;
+    [SerializeField] private Button synthesisButton;
+    [SerializeField] private TextMeshProUGUI synthesisButtonText;
+    [SerializeField] private Button batchSynthesisButton;
+    [SerializeField] private TextMeshProUGUI batchSynthesisButtonText;
+
+
+    [Space(20)]
+    [SerializeField] private Button minButton;
+    [SerializeField] private Button negativeButton;
+    [SerializeField] private Button maxButton;
+    [SerializeField] private Button positiveButton;
+
     private Action onUpgraded;
     private ItemData itemData;
     private InventoryItem inventoryItem;
+    private int synthesisCount = 0;
+    private bool showingUpgradePanel = true;
+    private ItemData nextItem = null;
+
+    private void OnEnable()
+    {
+        minButton.onClick.AddListener(OnClickMinButton);
+        negativeButton.onClick.AddListener(OnClickNegativeButton);
+        maxButton.onClick.AddListener(OnClickMaxButton);
+        positiveButton.onClick.AddListener(OnClickPositiveButton);
+    }
 
     public void Init(ItemData itemData, InventoryItem inventoryItem, Action onUpgraded)
     {
@@ -68,16 +104,20 @@ public class UIItemInfoPopup : UIPopup
         this.inventoryItem = inventoryItem;
         this.onUpgraded = onUpgraded;
 
+        //nextItem = InventoryManager.Instance.GetItem(itemData.Id + 1).Data; //현재 ID보다 하나 높은ID를 가진 아이템 불러오기
+        nextItem = DataManager.Instance.GetItemData()[itemData.Id + 1];
+
         itemIconImage.sprite = DataManager.Instance.GetSpriteByKey(itemData.IconKey);
-        gradeText.text = DataManager.Instance.GetLocalizedText($"Grade_{itemData.GradeType.ToString()}");
+        //일반 1단계 라는 식을 표현하려면 {아이템 등급} {n} {단계}
+        gradeText.text = $"{DataManager.Instance.GetLocalizedText($"Grade_{itemData.GradeType.ToString()}")} {itemData.Stage}{DataManager.Instance.GetLocalizedText("UI_Grade")}";
         itemNameText.text = DataManager.Instance.GetLocalizedText(itemData.NameKey);
         itemLevelText.text = $"Lv. {inventoryItem.Level} / {itemData.MaxLevel}";
         itemCountText.text = $"{DataManager.Instance.GetLocalizedText("UI_OwnedCount")} : {inventoryItem.Count}";
 
         upgradeTypeButtonText.text = DataManager.Instance.GetLocalizedText("UI_UpgradeType");
-        upgradeTypeButton.onClick.AddListener(() => { Debug.Log("업그레이드 패널 "); });
+        upgradeTypeButton.onClick.AddListener(ShowUpgradePanel);
         synthesisTypeButtonText.text = DataManager.Instance.GetLocalizedText("UI_Synthesis");
-        synthesisTypeButton.onClick.AddListener(() => { Debug.Log("합성 패널"); });
+        synthesisTypeButton.onClick.AddListener(ShowSynthesisPanel);
 
         effectText.text = DataManager.Instance.GetLocalizedText("UI_EquippedEffect");
         effectTypeText.text = DataManager.Instance.GetLocalizedText($"Item_Effect_{itemData.EquippedEffectType}");
@@ -97,6 +137,41 @@ public class UIItemInfoPopup : UIPopup
         equipButton.onClick.AddListener(OnClickEquip);
         equipButtonText.text = inventoryItem.IsEquipped == true ? DataManager.Instance.GetLocalizedText("UI_Equipped") : DataManager.Instance.GetLocalizedText("UI_Equip");
         equipButton.interactable = inventoryItem.IsEquipped == true ? false : true;
+
+        currentItemGradeText.text = $"{itemData.Stage}{DataManager.Instance.GetLocalizedText("UI_Grade")}";
+        currentItemImage.sprite = DataManager.Instance.GetSpriteByKey(itemData.IconKey);
+        nextItemGradeText.text = $"{nextItem.Stage}{DataManager.Instance.GetLocalizedText("UI_Grade")}";
+        nextItemImage.sprite = DataManager.Instance.GetSpriteByKey(nextItem.IconKey);
+
+
+        int usedCount = synthesisCount * 5;
+        currentItemCount.text = $"{inventoryItem.Count} (-{usedCount})";
+        nextItemCount.text = $"+{synthesisCount}";
+
+        synthesisDesc.text = DataManager.Instance.GetLocalizedText("UI_ItemSynthesisDesc");
+
+        synthesisCountText.text = synthesisCount.ToString();
+
+        synthesisButton.onClick.RemoveListener(OnClickSynthesisButton);
+        synthesisButton.onClick.AddListener(OnClickSynthesisButton);
+
+        synthesisButtonText.text = DataManager.Instance.GetLocalizedText("UI_Synthesis");
+
+        batchSynthesisButton.onClick.RemoveListener(OnClickBatchSynthesisButton);
+        batchSynthesisButton.onClick.AddListener(OnClickBatchSynthesisButton);
+
+        batchSynthesisButtonText.text = DataManager.Instance.GetLocalizedText("UI_BatchSynthesis");
+
+
+
+        if (showingUpgradePanel)
+        {
+            ShowUpgradePanel();
+        }
+        else
+        {
+            ShowSynthesisPanel();
+        }
     }
 
     private void Refresh()
@@ -126,8 +201,6 @@ public class UIItemInfoPopup : UIPopup
 
     }
 
-
-
     private void OnClickEnhance()
     {
         //PlayerStats에서 강화석으로 강화 시도
@@ -149,4 +222,82 @@ public class UIItemInfoPopup : UIPopup
         GameManager.Instance.stats.RecalculateStats();
     }
 
+    private void ShowUpgradePanel()
+    {
+        upgradePanel.SetActive(true);
+        synthesisPanel.SetActive(false);
+        showingUpgradePanel = true;
+    }
+
+    private void ShowSynthesisPanel()
+    {
+        upgradePanel.SetActive(false);
+        synthesisPanel.SetActive(true);
+        showingUpgradePanel = false;
+    }
+
+    private void OnClickMinButton()
+    {
+        synthesisCount = 0;
+        RefreshSynthesisUI();
+    }
+
+    private void OnClickNegativeButton()
+    {
+        synthesisCount = Mathf.Max(0, synthesisCount - 1);
+        RefreshSynthesisUI();
+    }
+
+    private void OnClickMaxButton()
+    {
+        if (itemData == null || nextItem == null) { return; }
+        synthesisCount = inventoryItem.Count / 5;
+        RefreshSynthesisUI();
+    }
+
+    private void OnClickPositiveButton()
+    {
+        if (itemData == null || nextItem == null) { return; }
+        synthesisCount = Mathf.Max(synthesisCount + 1, inventoryItem.Count / 5);
+        RefreshSynthesisUI();
+    }
+
+    private void RefreshSynthesisUI()
+    {
+        int usedCount = synthesisCount * 5;
+        currentItemCount.text = $"{inventoryItem.Count} (-{usedCount})";
+        nextItemCount.text = $"+{synthesisCount}";
+        synthesisCountText.text = synthesisCount.ToString();
+    }
+
+    private void OnClickSynthesisButton()
+    {
+        //합성할 횟수 * 5만큼 현재 아이템 갯수 차감
+        //합성한 횟수만큼 itemData.Id + 1의 아이템을 Add
+
+        InventoryManager.Instance.SubtractItem(itemData, synthesisCount * 5);
+        InventoryManager.Instance.AddItem(nextItem, synthesisCount);
+
+        onUpgraded?.Invoke();
+        Refresh();
+        RefreshSynthesisUI();
+        GameManager.Instance.stats.RecalculateStats();
+    }
+
+    private void OnClickBatchSynthesisButton()
+    {
+
+    }
+
+    [ContextMenu("테스트")]
+    private void Test()
+    {
+        InventoryManager.Instance.AddItem(itemData, 10);
+
+
+        onUpgraded?.Invoke();
+        Refresh();
+        RefreshSynthesisUI();
+        GameManager.Instance.stats.RecalculateStats();
+    }
 }

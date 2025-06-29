@@ -63,6 +63,8 @@ public class UIItemSlot : MonoBehaviour
 
     public void Refresh()
     {
+        Debug.Log($"새로고침 {itemData.NameKey}, {inventoryItem.IsUnlocked}");
+
         if (inventoryItem != null && inventoryItem.IsUnlocked)
         {
             lockedImage.gameObject.SetActive(false);
