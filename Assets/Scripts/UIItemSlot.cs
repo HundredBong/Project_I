@@ -63,7 +63,10 @@ public class UIItemSlot : MonoBehaviour
 
     public void Refresh()
     {
-        Debug.Log($"새로고침 {itemData.NameKey}, {inventoryItem.IsUnlocked}");
+        //예전 참조 유지라서 매번 새로운 데이터 가져와야 에러 안뜸    
+        //itemData는 불변 데이터라서 괜찮음
+        inventoryItem = InventoryManager.Instance.GetItem(itemData.Id);
+        Debug.Log($"새로고침 {itemData.NameKey}, {inventoryItem?.IsUnlocked}");
 
         if (inventoryItem != null && inventoryItem.IsUnlocked)
         {
@@ -71,6 +74,7 @@ public class UIItemSlot : MonoBehaviour
             itemLevelText.text = $"Lv. {inventoryItem.Level}";
             itemStageText.text = $"{itemData.Stage}{DataManager.Instance.GetLocalizedText("Item_Stage")}";
             itemCountText.text = $"{inventoryItem.Count}";
+            openPopupButton.interactable = true;
         }
         else
         {
@@ -78,6 +82,7 @@ public class UIItemSlot : MonoBehaviour
             itemLevelText.text = "";
             itemStageText.text = "";
             itemCountText.text = "";
+            openPopupButton.interactable = false;
         }
 
         itemIcon.sprite = DataManager.Instance.GetSpriteByKey(itemData.IconKey);

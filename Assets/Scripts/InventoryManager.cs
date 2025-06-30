@@ -57,11 +57,18 @@ public class InventoryManager : MonoBehaviour
         //아이템이 존재한다면 카운트만 증가시킴
         if (inventory.TryGetValue(data.Id, out InventoryItem inventoryItem))
         {
+            //기존 객체의 값만 바꾸는 거라서 문제되지 않음,
+            //클래스니까 참조하는 모든 곳에서 동시에 바뀜
             inventoryItem.Count += count;
         }
         //존재하지 않다면 새로 생성
         else
         {
+            //새로운 객체로 덮어쓰기함
+            //기존에 inventory[data.Id]를 참조하던 UIItemSlot은 옛날 객체를 들고있게 됨
+            //딕셔너리에서 접근 불가해짐 -> 딕셔너리의 키는 고유 키임 
+            //Remove()한건 아니니까 실제 객체는 메모리에 살아있을 수도 있으나 접근은 불가능 함
+            //이 때문에 매번 Refresh에서 최신 객체를 딕셔너리에서 받아와야 딕셔너리와 UI가 동기화 됨
             inventory[data.Id] = new InventoryItem(data, true)
             {
                 Count = count
