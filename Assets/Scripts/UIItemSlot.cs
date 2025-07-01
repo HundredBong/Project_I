@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -22,10 +23,12 @@ public class UIItemSlot : MonoBehaviour
 
     private ItemData itemData;
     private InventoryItem inventoryItem;
+    private Action onSynthesisComplete;
 
-    public void Init(ItemData itemData)
+    public void Init(ItemData itemData, Action onSynthesisComplete)
     {
         this.itemData = itemData;
+        this.onSynthesisComplete = onSynthesisComplete;
 
         inventoryItem = InventoryManager.Instance.GetItem(itemData.Id);
 
@@ -53,7 +56,7 @@ public class UIItemSlot : MonoBehaviour
     private void OnClick()
     {
         //장비 누르면 업그레이드 할 수 있도록 팝업 띄워주기
-        UIManager.Instance.PopupOpen<UIItemInfoPopup>().Init(itemData, inventoryItem, Refresh);
+        UIManager.Instance.PopupOpen<UIItemInfoPopup>().Init(itemData, inventoryItem, Refresh, onSynthesisComplete);
     }
 
     public ItemType GetItemType()

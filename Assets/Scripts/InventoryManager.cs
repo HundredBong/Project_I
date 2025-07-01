@@ -78,15 +78,22 @@ public class InventoryManager : MonoBehaviour
         Debug.Log($"[InventoryManager] 추가된 아이템 : {inventory[data.Id].Data.NameKey}, {inventory[data.Id].IsUnlocked}, {inventory[data.Id].Count}");
     }
 
-    public void SubtractItem(ItemData data, int count = 1)
+    public bool SubtractItem(ItemData data, int count = 1)
     {
         if (inventory.TryGetValue(data.Id, out InventoryItem item))
         {
-            item.Count -= count;
+            if (item.Count - count < 0)
+            {
+                Debug.LogWarning("[InventoryManager] 가지고있는 아이템보다 많이 차감하려고 함");
+                return false;
+            }
+            item.Count = Mathf.Max(0, item.Count - count);
+            return true;
         }
         else
         {
             Debug.LogWarning("[InventoryManager] 없는 아이템 차감 시도함");
+            return false;
         }
     }
 

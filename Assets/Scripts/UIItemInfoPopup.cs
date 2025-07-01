@@ -84,6 +84,7 @@ public class UIItemInfoPopup : UIPopup
     [SerializeField] private Button positiveButton;
 
     private Action onUpgraded;
+    private Action onSynthesisComplete;
     private ItemData itemData;
     private InventoryItem inventoryItem;
     private int synthesisCount = 0;
@@ -98,14 +99,46 @@ public class UIItemInfoPopup : UIPopup
         positiveButton.onClick.AddListener(OnClickPositiveButton);
     }
 
-    public void Init(ItemData itemData, InventoryItem inventoryItem, Action onUpgraded)
+    private void OnDisable()
+    {
+        minButton.onClick.RemoveListener(OnClickMinButton);
+        negativeButton.onClick.RemoveListener(OnClickNegativeButton);
+        maxButton.onClick.RemoveListener(OnClickMaxButton);
+        positiveButton.onClick.RemoveListener(OnClickPositiveButton);
+    }
+
+    public void Init(ItemData itemData, InventoryItem inventoryItem, Action onUpgraded, Action onSynthesisComplete)
     {
         this.itemData = itemData;
         this.inventoryItem = inventoryItem;
         this.onUpgraded = onUpgraded;
+        this.onSynthesisComplete = onSynthesisComplete;
+
+
+        upgradeTypeButtonText.text = DataManager.Instance.GetLocalizedText("UI_UpgradeType");
+        upgradeTypeButton.onClick.AddListener(ShowUpgradePanel);
+        synthesisTypeButtonText.text = DataManager.Instance.GetLocalizedText("UI_Synthesis");
+        synthesisTypeButton.onClick.AddListener(ShowSynthesisPanel);
+
+        if (showingUpgradePanel)
+        {
+            ShowUpgradePanel();
+        }
+        else
+        {
+            ShowSynthesisPanel();
+        }
 
         //nextItem = InventoryManager.Instance.GetItem(itemData.Id + 1).Data; //현재 ID보다 하나 높은ID를 가진 아이템 불러오기
-        nextItem = DataManager.Instance.GetItemData()[itemData.Id + 1];
+        //nextItem = DataManager.Instance.GetItemData()[itemData.Id + 1];
+
+        //아이템 테이블에 다음 아이템이 없을경우
+        if (DataManager.Instance.GetItemData().TryGetValue(itemData.Id + 1, out nextItem) == false)
+        {
+            //업그레이드 패널만 보여주고, 합성 패널은 비활성화
+            ShowUpgradePanel();
+            synthesisButton.interactable = false;
+        }
 
         itemIconImage.sprite = DataManager.Instance.GetSpriteByKey(itemData.IconKey);
         //일반 1단계 라는 식을 표현하려면 {아이템 등급} {n} {단계}
@@ -114,10 +147,6 @@ public class UIItemInfoPopup : UIPopup
         itemLevelText.text = $"Lv. {inventoryItem.Level} / {itemData.MaxLevel}";
         itemCountText.text = $"{DataManager.Instance.GetLocalizedText("UI_OwnedCount")} : {inventoryItem.Count}";
 
-        upgradeTypeButtonText.text = DataManager.Instance.GetLocalizedText("UI_UpgradeType");
-        upgradeTypeButton.onClick.AddListener(ShowUpgradePanel);
-        synthesisTypeButtonText.text = DataManager.Instance.GetLocalizedText("UI_Synthesis");
-        synthesisTypeButton.onClick.AddListener(ShowSynthesisPanel);
 
         effectText.text = DataManager.Instance.GetLocalizedText("UI_EquippedEffect");
         effectTypeText.text = DataManager.Instance.GetLocalizedText($"Item_Effect_{itemData.EquippedEffectType}");
@@ -150,7 +179,6 @@ public class UIItemInfoPopup : UIPopup
 
         synthesisDesc.text = DataManager.Instance.GetLocalizedText("UI_ItemSynthesisDesc");
 
-        synthesisCountText.text = synthesisCount.ToString();
 
         synthesisButton.onClick.RemoveListener(OnClickSynthesisButton);
         synthesisButton.onClick.AddListener(OnClickSynthesisButton);
@@ -162,16 +190,14 @@ public class UIItemInfoPopup : UIPopup
 
         batchSynthesisButtonText.text = DataManager.Instance.GetLocalizedText("UI_BatchSynthesis");
 
+        //초기에 최대로 보이게 설정
+        synthesisCount = Mathf.Min(synthesisCount, inventoryItem.Count / 5);
+        synthesisCountText.text = synthesisCount.ToString();
+
+        synthesisButton.interactable = synthesisCount != 0;
+        batchSynthesisButton.interactable = synthesisCount != 0;
 
 
-        if (showingUpgradePanel)
-        {
-            ShowUpgradePanel();
-        }
-        else
-        {
-            ShowSynthesisPanel();
-        }
     }
 
     private void Refresh()
@@ -180,7 +206,7 @@ public class UIItemInfoPopup : UIPopup
         gradeText.text = DataManager.Instance.GetLocalizedText($"Grade_{itemData.GradeType.ToString()}");
         itemNameText.text = DataManager.Instance.GetLocalizedText(itemData.NameKey);
         itemLevelText.text = $"Lv. {inventoryItem.Level} / {itemData.MaxLevel}";
-        itemCountText.text = $"{DataManager.Instance.GetLocalizedText("UI_OwnedCount")} : {inventoryItem.Count})";
+        itemCountText.text = $"{DataManager.Instance.GetLocalizedText("UI_OwnedCount")} : {inventoryItem.Count}";
 
         upgradeTypeButtonText.text = DataManager.Instance.GetLocalizedText("UI_UpgradeType");
         synthesisTypeButtonText.text = DataManager.Instance.GetLocalizedText("UI_Synthesis");
@@ -199,6 +225,8 @@ public class UIItemInfoPopup : UIPopup
         equipButtonText.text = inventoryItem.IsEquipped == true ? DataManager.Instance.GetLocalizedText("UI_Equipped") : DataManager.Instance.GetLocalizedText("UI_Equip");
         equipButton.interactable = inventoryItem.IsEquipped == true ? false : true;
 
+        synthesisButton.interactable = synthesisCount != 0;
+        batchSynthesisButton.interactable = synthesisCount != 0;
     }
 
     private void OnClickEnhance()
@@ -258,7 +286,9 @@ public class UIItemInfoPopup : UIPopup
     private void OnClickPositiveButton()
     {
         if (itemData == null || nextItem == null) { return; }
-        synthesisCount = Mathf.Max(synthesisCount + 1, inventoryItem.Count / 5);
+
+        synthesisCount = Mathf.Min(synthesisCount + 1, inventoryItem.Count / 5);
+
         RefreshSynthesisUI();
     }
 
@@ -268,6 +298,9 @@ public class UIItemInfoPopup : UIPopup
         currentItemCount.text = $"{inventoryItem.Count} (-{usedCount})";
         nextItemCount.text = $"+{synthesisCount}";
         synthesisCountText.text = synthesisCount.ToString();
+
+        synthesisButton.interactable = synthesisCount != 0;
+        batchSynthesisButton.interactable = synthesisCount != 0;
     }
 
     private void OnClickSynthesisButton()
@@ -275,13 +308,21 @@ public class UIItemInfoPopup : UIPopup
         //합성할 횟수 * 5만큼 현재 아이템 갯수 차감
         //합성한 횟수만큼 itemData.Id + 1의 아이템을 Add
 
-        InventoryManager.Instance.SubtractItem(itemData, synthesisCount * 5);
-        InventoryManager.Instance.AddItem(nextItem, synthesisCount);
+        if (InventoryManager.Instance.SubtractItem(itemData, synthesisCount * 5))
+        {
+            //인벤토리에 아이템 추가 및 저장
+            InventoryManager.Instance.AddItem(nextItem, synthesisCount);
+            GameManager.Instance.statSaver.RequestSave(InventoryManager.Instance.GetSaveData());
+            //onUpgraded?.Invoke(); //개별 아이템 슬롯 초기화
 
-        onUpgraded?.Invoke();
-        Refresh();
-        RefreshSynthesisUI();
-        GameManager.Instance.stats.RecalculateStats();
+            //UI 새로고침 및 스탯 반영되도록 재계산
+            onSynthesisComplete?.Invoke(); 
+            Refresh();
+            RefreshSynthesisUI();
+            GameManager.Instance.stats.RecalculateStats();
+
+        }
+
     }
 
     private void OnClickBatchSynthesisButton()

@@ -31,7 +31,7 @@ public class UIInventoryPage : UIPage
         {
             GameObject obj = Instantiate(contentPrefab, contentRoot);
             UIItemSlot slot = obj.GetComponent<UIItemSlot>();
-            slot.Init(itemData);
+            slot.Init(itemData, RefreshAll);
             itemSlots[itemData.Id] = slot;
         }
 
@@ -57,10 +57,12 @@ public class UIInventoryPage : UIPage
         }
 
         currentItemType = itemType;
+        UIManager.Instance.PopupClose();
+        RefreshAll();
     }
 
     [ContextMenu("Å×½ºÆ®")]
-    private void Test()
+    private void RefreshAll()
     {
         foreach (var item in itemSlots)
         {
