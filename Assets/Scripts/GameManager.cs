@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,9 @@ public class GameManager : MonoBehaviour
     [Space(20)]
     public bool firebaseReady = false;
     public bool inventoryReady = false;
+    public bool summonReady = false;
+
+    public ShopSummonManager SummonManager { get; private set; }
 
     private void Awake()
     {
@@ -34,6 +38,7 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         LanguageManager.SetLanguage(System.Enum.Parse<LanguageType>(LocalSetting.LoadLanguage()));
+        SummonManager = new ShopSummonManager();
 
         FindComponent();
     }
@@ -139,7 +144,27 @@ public class GameManager : MonoBehaviour
             inventoryReady = true;
         });
 
+        statSaver.LoadSummonProgressData(data => 
+        { 
+            if (data == null || data.SummonProgressList.Count == 0)
+            {
+                Debug.Log("[GameManager] 소환레벨 데이터 없음, 기본 데이터 초기화");
+                foreach (SummonSubCategory category in Enum.GetValues(typeof(SummonSubCategory)))
+                {
+                    Debug.Log(SummonManager == null ? "SummonManager가 Null임" : "SummonManager가 Null이 아닌데 어째서");
+                    SummonManager.AddExp(category, 0);
+                    SummonManager.SetLevel(category, 1);
+                }
 
+                statSaver.SaveSummonProgress(SummonManager.GetSummonProgressData());
+            }
+            else
+            {
+                SummonManager.Init(data);
+            }
+
+            summonReady = true;
+        });
     }
 
     private bool CheckReadyForLoad()

@@ -26,6 +26,7 @@ public class InventoryManager : MonoBehaviour
 
     public InventoryItem GetItem(int itemId)
     {
+        //인벤토리에 있나 없나 확인
         if (inventory.TryGetValue(itemId, out InventoryItem item))
         {
             return item;

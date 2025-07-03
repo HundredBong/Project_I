@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Firebase;
+using Firebase.Auth;
 
 public class FirebaseInit : MonoBehaviour
 {
@@ -12,8 +13,18 @@ public class FirebaseInit : MonoBehaviour
         {
             if (task.Result == DependencyStatus.Available)
             {
-                GameManager.Instance.firebaseReady = true;
-                Debug.Log("파이어베이스 준비됨");
+                FirebaseAuth.DefaultInstance.SignInAnonymouslyAsync().ContinueWith(authTask =>
+                {
+                    if (authTask.IsCompleted && authTask.IsFaulted == false && authTask.IsCanceled == false)
+                    {
+                        GameManager.Instance.firebaseReady = true;
+                        Debug.Log("파이어베이스 준비됨, 익명 로그인 성공");
+                    }
+                    else
+                    {
+                        Debug.LogError($"익명 로그인 실패, {authTask.Exception}");
+                    }
+                });
             }
             else
             {

@@ -316,7 +316,7 @@ public class UIItemInfoPopup : UIPopup
             //onUpgraded?.Invoke(); //개별 아이템 슬롯 초기화
 
             //UI 새로고침 및 스탯 반영되도록 재계산
-            onSynthesisComplete?.Invoke(); 
+            onSynthesisComplete?.Invoke();
             Refresh();
             RefreshSynthesisUI();
             GameManager.Instance.stats.RecalculateStats();
@@ -327,7 +327,41 @@ public class UIItemInfoPopup : UIPopup
 
     private void OnClickBatchSynthesisButton()
     {
+        //아이템 A가 100개 있음 -> 일괄 합성하면 B가 20개 생성됨 -> B가 5개 이상이니까 합성 또 진행함 -> C가 4개 생성됨 -> 중단
 
+        int currentId = itemData.Id;
+
+        while (true)
+        {
+            //현재 아이템 정보 받아오기
+            InventoryItem currentItem = InventoryManager.Instance.GetItem(currentId);
+
+            //아이템 정보를 받아올 수 없거나, 아이템의 숫자가 5 미만이라면 합성 중지
+            if (currentItem == null || currentItem.Count > 5)
+            {
+                break;
+            }
+
+            //다음 아이템이 존재하지 않는다면 중지
+            if (DataManager.Instance.GetItemData().TryGetValue(itemData.Id + 1, out ItemData nextItemData) == false)
+            {
+                break; 
+            }
+
+            //현재 아이템을 합성할 횟수 * 5만큼 차감
+            InventoryManager.Instance.SubtractItem(currentItem.Data, synthesisCount * 5);
+            //합성할 횟수만큼 다음 아이템 추가
+            InventoryManager.Instance.AddItem(nextItemData, synthesisCount);
+
+            currentId++;
+        }
+
+        GameManager.Instance.statSaver.RequestSave(InventoryManager.Instance.GetSaveData());
+
+        onSynthesisComplete?.Invoke();
+        Refresh();
+        RefreshSynthesisUI();
+        GameManager.Instance.stats.RecalculateStats();
     }
 
     [ContextMenu("테스트")]

@@ -22,6 +22,7 @@ public class DataManager : MonoBehaviour
     private Dictionary<string, LocalizedText> localizedTexts = new Dictionary<string, LocalizedText>();
     private Dictionary<GoldUpgradeType, GoldUpgradeData> goldUpgradeTable = new Dictionary<GoldUpgradeType, GoldUpgradeData>();
     private Dictionary<int, ItemData> itemDataTable = new Dictionary<int, ItemData>();
+    private Dictionary<SummonSubCategory, List<int>> summonExpDatas = new Dictionary<SummonSubCategory, List<int>>();
 
     private void Awake()
     {
@@ -45,6 +46,7 @@ public class DataManager : MonoBehaviour
         LoadSkillData();
         LoadGoldUpgradeData();
         LoadItemData();
+        LoadSummonExpData();
     }
 
     private void LoadSpritesData()
@@ -434,6 +436,56 @@ public class DataManager : MonoBehaviour
         }
 
     }
+
+    private void LoadSummonExpData()
+    {
+        TextAsset expText = Resources.Load<TextAsset>("CSV/SummonExpData");
+        string[] lines = expText.text.Split('\n');
+
+        for (int i = 1; i < lines.Length; i++)
+        {
+            if (string.IsNullOrEmpty(lines[i])) { continue; }
+
+            string[] tokens = lines[i].Split(',');
+            SummonSubCategory category = Enum.Parse<SummonSubCategory>(tokens[0].Trim());
+
+            string[] exps = tokens[1].Trim().Split(';');
+            List<int> expList = new List<int>();
+
+            for (int h = 0; h < exps.Length; h++)
+            {
+                expList.Add(int.Parse(exps[h].Trim()));
+            }
+
+            summonExpDatas[category] = expList;
+        }
+
+        Debug.Log($"[DataManager] 딕셔너리 {summonExpDatas.Count}, 리스트{summonExpDatas.Values.Count}의 데이터를 로드함");
+    }
+
+    public int GetSummonMaxExp(SummonSubCategory category, int currentLevel)
+    {
+        if (summonExpDatas.TryGetValue(category, out var expData))
+        {
+            //최소 0, 최대 리스트 크기 - 1
+            int index = Mathf.Clamp(currentLevel - 1, 0, expData.Count - 1);
+            return expData[index];
+        }
+
+        return 1000;
+    }
+
+
+    //public float GetExpData(int level)
+    //{
+    //    if (expTable.ContainsKey(level) == false)
+    //    {
+    //        Debug.LogWarning($"[DataManager] 레벨 {level}에 대한 데이터가 없음");
+    //        return 1000;
+    //    }
+
+    //    return expTable[level];
+    //}
 }
 
 [System.Serializable]
@@ -591,4 +643,3 @@ public class InventoryItem
         IsUnlocked = isUnlocked;
     }
 }
-

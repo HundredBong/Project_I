@@ -31,3 +31,7 @@ public enum SkillEffectType { GoldBonus, ExpBonus, DamageBonus, HealthBonus, Cri
 public enum StatusEffectType { ElectricShock }
 
 public enum ProjectileId { Lightning, }
+
+public enum ShopCategory { Summon, Normal, Skill, Score, Package, Cash }
+
+public enum SummonSubCategory { Weapon, Armor, Necklace, Skill }

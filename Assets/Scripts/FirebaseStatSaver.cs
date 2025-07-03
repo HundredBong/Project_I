@@ -5,6 +5,8 @@ using System;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
+using UnityEditor.Experimental.GraphView;
 
 public class FirebaseStatSaver : MonoBehaviour
 {
@@ -373,7 +375,53 @@ public class FirebaseStatSaver : MonoBehaviour
         });
     }
 
-    public async void MainThreadDispatcher(InventorySaveData data, Action<InventorySaveData> onLoaded)
+    private async void MainThreadDispatcher(InventorySaveData data, Action<InventorySaveData> onLoaded)
+    {
+        await UniTask.SwitchToMainThread();
+        onLoaded?.Invoke(data);
+    }
+
+    public void SaveSummonProgress(SummonProgressData data)
+    {
+        string json = JsonUtility.ToJson(data);
+        string userId = "test_uesr";
+        string path = $"users/{userId}/SummonProgress";
+
+        dbRef.Child(path).SetRawJsonValueAsync(json).ContinueWith(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                Debug.Log($"[FirebaseStatSaver] 플레이어 소환레벨 데이터 저장 성공");
+            }
+            else
+            {
+                Debug.LogError($"[FirebaseStatSaver] 플레이어 소환레벨 저장 실패, {task.Exception}");
+            }
+        });
+    }
+
+    public void LoadSummonProgressData(Action<SummonProgressData> onLoaded)
+    {
+        string userId = "test_user";
+        string path = $"users/{userId}/SummonProgress";
+
+        dbRef.Child(path).GetValueAsync().ContinueWith(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                string json = task.Result.GetRawJsonValue();
+                SummonProgressData data = JsonUtility.FromJson<SummonProgressData>(json);
+                MainThreadDispatcher(data, onLoaded);
+                Debug.Log($"[FirebaseStatSaver] 소환레벨 불러오기 완료 {data.SummonProgressList.Count}");
+            }
+            else
+            {
+                Debug.LogError($"[FirebaseStatSaver] 소환레벨 불러오기 실패, {task.Exception}");
+            }
+        });
+    }
+
+    private async void MainThreadDispatcher(SummonProgressData data, Action<SummonProgressData> onLoaded)
     {
         await UniTask.SwitchToMainThread();
         onLoaded?.Invoke(data);
@@ -454,4 +502,19 @@ public class InventoryEntry
 public class InventorySaveData
 {
     public List<InventoryEntry> inventoryEntries = new List<InventoryEntry>();
+}
+
+
+[System.Serializable]
+public class SummonProgressEntry
+{
+    public SummonSubCategory Category;
+    public int Level;
+    public int Exp;
+}
+
+[System.Serializable]
+public class SummonProgressData
+{
+    public List<SummonProgressEntry> SummonProgressList = new List<SummonProgressEntry>();
 }
