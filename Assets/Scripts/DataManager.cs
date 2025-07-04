@@ -23,6 +23,7 @@ public class DataManager : MonoBehaviour
     private Dictionary<GoldUpgradeType, GoldUpgradeData> goldUpgradeTable = new Dictionary<GoldUpgradeType, GoldUpgradeData>();
     private Dictionary<int, ItemData> itemDataTable = new Dictionary<int, ItemData>();
     private Dictionary<SummonSubCategory, List<int>> summonExpDatas = new Dictionary<SummonSubCategory, List<int>>();
+    private Dictionary<SummonSubCategory, SummonRateCategoryData> summonProbabilityTable = new Dictionary<SummonSubCategory, SummonRateCategoryData>();
 
     private void Awake()
     {
@@ -476,6 +477,67 @@ public class DataManager : MonoBehaviour
     }
 
 
+    public void LoadSummonProbabilityData()
+    {
+        TextAsset textAsset = Resources.Load<TextAsset>("CSV/SummonProbabilityTable");
+        string[] lines = textAsset.text.Split('\n');
+
+        for (int i = 1; i < lines.Length; i++)
+        {
+            if (string.IsNullOrEmpty(lines[i])) { continue; }
+
+            string[] tokens = lines[i].Split(',');
+
+            //카테고리 초기화
+            SummonSubCategory category = Enum.Parse<SummonSubCategory>(tokens[0].Trim());
+
+            //레벨 초기화
+            int level = int.Parse(tokens[1].Trim());
+
+            //확률표 초기화
+            List<float> probabilities = new List<float>();
+
+            //Enum.GetValue.Length로 하려 했으나 아직 안쓰는 단계 있음
+            //임시로 일반 ~ 전설 등급 총 5개니 5번 돌도록 하드코딩함
+            for (int h = 2; h <= 6; h++)
+            {
+                string[] prob = tokens[h].Trim().Split(';');
+
+                foreach (string probs in prob)
+                {
+                    if (float.TryParse(probs.Trim(), out float p))
+                    {
+                        probabilities.Add(p);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[DataManager] 잘못된 확률값 파싱, {p}");
+                    }
+                }
+            }
+
+            //레벨 데이터 생성
+            SummonRateLevelData levelData = new SummonRateLevelData()
+            {
+                Level = level,
+                Probabilities = probabilities
+            };
+
+            //카테고리별 래핑
+            if (summonProbabilityTable.TryGetValue(category, out SummonRateCategoryData categoryData) == false)
+            {
+                categoryData = new SummonRateCategoryData
+                {
+                    Category = category,
+                    LevelDataList = new List<SummonRateLevelData>()
+                };
+
+                summonProbabilityTable.Add(category, categoryData);
+            }
+            categoryData.LevelDataList.Add(levelData);
+        } //여기까지 외부 for문
+    }
+
     //public float GetExpData(int level)
     //{
     //    if (expTable.ContainsKey(level) == false)
@@ -642,4 +704,18 @@ public class InventoryItem
         IsEquipped = false;
         IsUnlocked = isUnlocked;
     }
+}
+
+public class SummonRateLevelData
+{
+    //레벨 1개에 대한 확률
+    public int Level;
+    public List<float> Probabilities;
+}
+
+public class SummonRateCategoryData
+{
+    //카테고리 하나에 대한 전체 레벨
+    public SummonSubCategory Category;
+    public List<SummonRateLevelData> LevelDataList;
 }

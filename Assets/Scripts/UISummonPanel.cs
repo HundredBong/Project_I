@@ -166,3 +166,15 @@ public class UISummonPanel : MonoBehaviour
 //그냥 특정 소환의 레벨이 몇이냐, 경험치가 얼마냐, 이런것만 보관하고
 //첫 실행시 GameManager가 로드 요청, 변동이 있을때 GameManager에 저장 요청만 하면 될듯??
 //근데 이게 됨?
+
+//뽑기용 확률표 작성도 해야함
+//??
+//딕셔너리<카테고리, 딕셔너리<레벨, 리스트<경험치>>>?????????????
+//Dictionry<SummonSubCategory, Dictionary<int, List<float>>>?
+//            소환종류                    레벨       경험치
+//차라리 클래스로 하는건
+//public class Test
+//{
+//    public SummonSubCategory Category;
+//    public Dictionary<int, float> ExpTable;
+//}
