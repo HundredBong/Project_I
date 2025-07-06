@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
+using Unity.Burst.Intrinsics;
 using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
@@ -531,7 +532,6 @@ public class DataManager : MonoBehaviour
 
             //내부 딕셔너리에 레벨별 데이터 추가
             table[level] = rateData;
-            summonRateTable[category][level] = rateData;
         }
         Debug.Log($"[DataManager] 소환 등급 확률 로드 됨, {summonRateTable.Count}");
     }
@@ -595,6 +595,147 @@ public class DataManager : MonoBehaviour
             Debug.LogWarning($"[DataManager] {category}, {level}에 해당하는 등급 없음");
             return GradeType.Common;
         }
+
+        Dictionary<GradeType, float> gradeProb = data.GradeProbabilities;
+        float total = 0f;
+
+        //csv에서 total이 1이 아닐수도 있으므로 따로 계산함
+        foreach (float p in gradeProb.Values)
+        {
+            total += p;
+        }
+
+        float rand = UnityEngine.Random.Range(0f, total);
+        float cumulative = 0f;
+
+        //Common: 0.5  
+        //Uncommon: 0.3
+        //Rare: 0.2
+        //0.0 ~ 0.5 → Common
+        //0.5 ~ 0.8 → Uncommon
+        //0.8 ~ 1.0 → Rare
+
+
+        foreach (KeyValuePair<GradeType, float> kvp in gradeProb)
+        {
+            //랜덤값으로 0.9떴음
+            //누적에 Common 0.5를 더함 -> if문 조건 충족 안됨 -> 다음 Uncommon 0.3 더함 -> (0.8 <= 0.9) 조건 충족 안됨
+            //다음 Rare 0.2를 더함 -> if문 조건 충족됨 -> Rare 반환
+
+            //랜덤값에 0.2떴음
+            //Common이 0.5임 -> 바로 Common 반환
+            cumulative += kvp.Value;
+            if (rand <= cumulative)
+            {
+                return kvp.Key;
+            }
+        }
+
+        Debug.LogWarning($"[DataManager] {category} {level} 확률 계산 실패함, 기본값 반환");
+        return GradeType.Common;
+    }
+
+    public int GetRandomStage(SummonSubCategory category, int level, GradeType grade)
+    {
+        if (summonRateTable.TryGetValue(category, out var table) == false || table.TryGetValue(level, out SummonRateData data) == false)
+        {
+            Debug.LogWarning($"[DataManager] {category}, {level}에 해당하는 정보 없음");
+            return 1;
+        }
+
+        if (data.StageProbabilities.TryGetValue(grade, out var stageData) == false)
+        {
+            Debug.LogWarning($"[DataManager] {grade} 등급의 확률 정보 없음");
+            return 1;
+        }
+
+        float total = 0f;
+        foreach (float p in stageData.Values)
+        {
+            total += p;
+        }
+        float rand = UnityEngine.Random.Range(0f, total);
+        float cumulative = 0f;
+
+        foreach (var kvp in stageData)
+        {
+            cumulative += kvp.Value;
+            if (rand <= cumulative)
+            {
+                return kvp.Key;
+            }
+        }
+
+        Debug.LogWarning($"[DataManager] 단계 선택 실패, 기본값 반환");
+        return 1;
+    }
+
+    public int GetRandomItemId(SummonSubCategory category, GradeType grade, int stage)
+    {
+        ItemType type = ConvertToItemType(category);
+
+        List<ItemData> items = new List<ItemData>();
+
+        foreach (var kvp in itemDataTable)
+        {
+            ItemData data = kvp.Value;
+
+            if (data.ItemType == type && data.GradeType == grade && data.Stage == stage)
+            {
+                items.Add(data);
+            }
+        }
+
+        if (items.Count == 0)
+        {
+            Debug.LogWarning("[DataManager] 조건에 맞는 아이템 없음");
+            return 0;
+        }
+
+
+        int index = UnityEngine.Random.Range(0, items.Count);
+        return items[index].Id;
+    }
+
+    private ItemType ConvertToItemType(SummonSubCategory category)
+    {
+        return category switch
+        {
+            SummonSubCategory.Weapon => ItemType.Weapon,
+            SummonSubCategory.Armor => ItemType.Armor,
+            SummonSubCategory.Necklace => ItemType.Necklace,
+            _ => throw new ArgumentException()
+        };
+    }
+
+    public SkillId GetRandomSkillId(SummonSubCategory category, GradeType grade)
+    {
+        if (category != SummonSubCategory.Skill)
+        {
+            Debug.LogWarning($"[DataManager] 카테고리가 Skill이 아님 : {category}");
+            return SkillId.None;
+        }
+
+        List<SkillData> skills = new List<SkillData>();
+
+        foreach (var kvp in skillDataTable)
+        {
+            SkillData skill = kvp.Value;
+
+            if (skill.Grade == grade)
+            {
+                skills.Add(skill);
+            }
+        }
+
+        if (skills.Count == 0)
+        {
+            Debug.Log($"[DataManage] {grade}등급의 스킬이 없음");
+            return SkillId.None;
+        }
+
+        int index = UnityEngine.Random.Range(0, skills.Count);
+        return skills[index].SkillId;
     }
 
     //public float GetExpData(int level)

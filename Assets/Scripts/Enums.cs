@@ -14,11 +14,7 @@ public enum LanguageType { KR, EN }
 
 public enum StageType { Forest, Cave }
 
-public enum SkillId
-{
-    None,
-    Lightning,
-}
+public enum SkillId { None, Lightning, }
 
 public enum ItemType { Weapon, Armor, Necklace }
 
