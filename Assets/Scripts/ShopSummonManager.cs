@@ -12,7 +12,7 @@ public class ShopSummonManager
         levels.Clear();
         exps.Clear();
 
-        foreach (SummonProgressEntry entry in data.SummonProgressList)
+        foreach (SummonProgressEntry entry in data.SummonProgressEntries)
         {
             levels[entry.Category] = entry.Level;
             exps[entry.Category] = entry.Level;
@@ -72,11 +72,11 @@ public class ShopSummonManager
 
     public SummonProgressData GetSummonProgressData()
     {
-        List<SummonProgressEntry> list = new List<SummonProgressEntry>();
+        List<SummonProgressEntry> entries = new List<SummonProgressEntry>();
 
         foreach (var kvp in levels)
         {
-            list.Add(new SummonProgressEntry
+            entries.Add(new SummonProgressEntry
             {
                 Category = kvp.Key,
                 Level = kvp.Value,
@@ -85,7 +85,7 @@ public class ShopSummonManager
             });
         }
 
-        SummonProgressData data = new SummonProgressData { SummonProgressList = list };
+        SummonProgressData data = new SummonProgressData { SummonProgressEntries = entries };
 
         return data;
     }

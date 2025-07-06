@@ -149,7 +149,7 @@ public class InventoryManager : MonoBehaviour
 
         foreach (InventoryItem item in inventory.Values)
         {
-            data.inventoryEntries.Add(new InventoryEntry
+            data.InventoryEntries.Add(new InventoryEntry
             {
                 Id = item.Data.Id,
                 Level = item.Level,
@@ -168,11 +168,11 @@ public class InventoryManager : MonoBehaviour
         Debug.Log("셋 인벤토리");
         Debug.Log(saveData);
         Debug.Log(saveData == null ? "세이브 데이터 널임" : "세이브데이터 살아있음");
-        Debug.Log(saveData.inventoryEntries == null ? "인벤엔트리 클래스 널임" : "인벤엔트리 클래스 없음");
-        Debug.Log("셋 인벤토리" + saveData.inventoryEntries.Count);
+        Debug.Log(saveData.InventoryEntries == null ? "인벤엔트리 클래스 널임" : "인벤엔트리 클래스 없음");
+        Debug.Log("셋 인벤토리" + saveData.InventoryEntries.Count);
         inventory.Clear();
 
-        foreach (InventoryEntry entry in saveData.inventoryEntries)
+        foreach (InventoryEntry entry in saveData.InventoryEntries)
         {
 
             //itemDataTable의 id에 해당하는 아이템 가져오기

@@ -384,7 +384,7 @@ public class FirebaseStatSaver : MonoBehaviour
     public void SaveSummonProgress(SummonProgressData data)
     {
         string json = JsonUtility.ToJson(data);
-        string userId = "test_uesr";
+        string userId = "test_user";
         string path = $"users/{userId}/SummonProgress";
 
         dbRef.Child(path).SetRawJsonValueAsync(json).ContinueWith(task =>
@@ -412,7 +412,7 @@ public class FirebaseStatSaver : MonoBehaviour
                 string json = task.Result.GetRawJsonValue();
                 SummonProgressData data = JsonUtility.FromJson<SummonProgressData>(json);
                 MainThreadDispatcher(data, onLoaded);
-                Debug.Log($"[FirebaseStatSaver] 소환레벨 불러오기 완료 {data.SummonProgressList.Count}");
+                Debug.Log($"[FirebaseStatSaver] 소환레벨 불러오기 완료 {data.SummonProgressEntries.Count}");
             }
             else
             {
@@ -501,7 +501,7 @@ public class InventoryEntry
 [System.Serializable]
 public class InventorySaveData
 {
-    public List<InventoryEntry> inventoryEntries = new List<InventoryEntry>();
+    public List<InventoryEntry> InventoryEntries = new List<InventoryEntry>();
 }
 
 
@@ -516,5 +516,5 @@ public class SummonProgressEntry
 [System.Serializable]
 public class SummonProgressData
 {
-    public List<SummonProgressEntry> SummonProgressList = new List<SummonProgressEntry>();
+    public List<SummonProgressEntry> SummonProgressEntries = new List<SummonProgressEntry>();
 }

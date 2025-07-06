@@ -23,7 +23,8 @@ public class DataManager : MonoBehaviour
     private Dictionary<GoldUpgradeType, GoldUpgradeData> goldUpgradeTable = new Dictionary<GoldUpgradeType, GoldUpgradeData>();
     private Dictionary<int, ItemData> itemDataTable = new Dictionary<int, ItemData>();
     private Dictionary<SummonSubCategory, List<int>> summonExpDatas = new Dictionary<SummonSubCategory, List<int>>();
-    private Dictionary<SummonSubCategory, SummonRateCategoryData> summonProbabilityTable = new Dictionary<SummonSubCategory, SummonRateCategoryData>();
+    private Dictionary<SummonSubCategory, Dictionary<int, SummonRateData>> summonRateTable = new Dictionary<SummonSubCategory, Dictionary<int, SummonRateData>>();
+
 
     private void Awake()
     {
@@ -48,6 +49,8 @@ public class DataManager : MonoBehaviour
         LoadGoldUpgradeData();
         LoadItemData();
         LoadSummonExpData();
+        LoadSummonGradeProbabilities();
+        LoadSummonStageProbabilities();
     }
 
     private void LoadSpritesData()
@@ -476,11 +479,68 @@ public class DataManager : MonoBehaviour
         return 1000;
     }
 
-
-    public void LoadSummonProbabilityData()
+    private void LoadSummonGradeProbabilities()
     {
-        TextAsset textAsset = Resources.Load<TextAsset>("CSV/SummonProbabilityTable");
+        TextAsset textAsset = Resources.Load<TextAsset>("CSV/GradeProbabilities");
         string[] lines = textAsset.text.Split('\n');
+        string[] headers = lines[0].Split(',');
+
+        for (int i = 1; i < lines.Length; i++)
+        {
+            if (string.IsNullOrEmpty(lines[i])) continue;
+
+            string[] token = lines[i].Split(',');
+
+            //카테고리, 레벨 파싱
+            SummonSubCategory category = Enum.Parse<SummonSubCategory>(token[0]);
+            int level = int.Parse(token[1]);
+
+            SummonRateData rateData = new SummonRateData()
+            {
+                Level = level,
+            };
+
+            //등급 파싱
+            for (int h = 2; h < token.Length; h++)
+            {
+                //헤더[2]가 Common
+                string grade = headers[h];
+
+                if (Enum.TryParse(grade, out GradeType gradeType))
+                {
+                    //토큰[2]는 0.5
+                    if (float.TryParse(token[h], out float probability))
+                    {
+                        //확률 딕셔너리 초기화
+                        rateData.GradeProbabilities[gradeType] = probability;
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[DataManager] 확률 파싱 실패함, {token[h]}");
+                    }
+                }
+            }
+
+            //딕셔너리에 카테고리의 레벨별 데이터가 존재하지 않는다면
+            if (summonRateTable.TryGetValue(category, out var table) == false)
+            {
+                table = new Dictionary<int, SummonRateData>();
+                //카테고리에 대한 내부 딕셔너리 추가
+                summonRateTable.Add(category, table);
+            }
+
+            //내부 딕셔너리에 레벨별 데이터 추가
+            table[level] = rateData;
+            summonRateTable[category][level] = rateData;
+        }
+        Debug.Log($"[DataManager] 소환 등급 확률 로드 됨, {summonRateTable.Count}");
+    }
+
+    private void LoadSummonStageProbabilities()
+    {
+        TextAsset asset = Resources.Load<TextAsset>("CSV/StageProbabilities");
+        string[] lines = asset.text.Split('\n');
+        string[] headers = lines[0].Split(',');
 
         for (int i = 1; i < lines.Length; i++)
         {
@@ -488,54 +548,53 @@ public class DataManager : MonoBehaviour
 
             string[] tokens = lines[i].Split(',');
 
-            //카테고리 초기화
-            SummonSubCategory category = Enum.Parse<SummonSubCategory>(tokens[0].Trim());
+            SummonSubCategory category = Enum.Parse<SummonSubCategory>(tokens[0]);
+            int level = int.Parse(tokens[1]);
 
-            //레벨 초기화
-            int level = int.Parse(tokens[1].Trim());
-
-            //확률표 초기화
-            List<float> probabilities = new List<float>();
-
-            //Enum.GetValue.Length로 하려 했으나 아직 안쓰는 단계 있음
-            //임시로 일반 ~ 전설 등급 총 5개니 5번 돌도록 하드코딩함
-            for (int h = 2; h <= 6; h++)
+            //카테고리에 해당하는 데이터가 없거나, 카테고리별 레벨에 해당하는 데이터가 없다면
+            if (summonRateTable.TryGetValue(category, out var table) == false || table.TryGetValue(level, out SummonRateData rateData) == false)
             {
-                string[] prob = tokens[h].Trim().Split(';');
+                Debug.LogWarning($"[DataManager] {category} {level} 레벨에 해당하는 소환 레벨 데이터가 없음");
+                continue;
+            }
 
-                foreach (string probs in prob)
+            for (int h = 2; h < tokens.Length; h++)
+            {
+                string grade = headers[h];
+
+                if (Enum.TryParse(grade, out GradeType gradeType) == false) { continue; }
+
+                string[] stageTokens = tokens[h].Split(';');
+
+                Dictionary<int, float> stageProb = new Dictionary<int, float>();
+
+                for (int j = 0; j < stageTokens.Length; j++) //s
                 {
-                    if (float.TryParse(probs.Trim(), out float p))
+                    if (float.TryParse(stageTokens[j], out float p))
                     {
-                        probabilities.Add(p);
+                        //1단계부터 시작하려고 +1 함
+                        stageProb[j + 1] = p;
+                        //Weapon Level 1, Common, { 0.6, 0.4 }
                     }
                     else
                     {
-                        Debug.LogWarning($"[DataManager] 잘못된 확률값 파싱, {p}");
+                        Debug.Log($"[DataManager] 잘못된 단계 파싱, {stageTokens[j]}");
                     }
                 }
+
+                rateData.StageProbabilities[gradeType] = stageProb;
             }
+        }
+        Debug.Log("[DataManager] StageProbabilities 파싱됨");
+    }
 
-            //레벨 데이터 생성
-            SummonRateLevelData levelData = new SummonRateLevelData()
-            {
-                Level = level,
-                Probabilities = probabilities
-            };
-
-            //카테고리별 래핑
-            if (summonProbabilityTable.TryGetValue(category, out SummonRateCategoryData categoryData) == false)
-            {
-                categoryData = new SummonRateCategoryData
-                {
-                    Category = category,
-                    LevelDataList = new List<SummonRateLevelData>()
-                };
-
-                summonProbabilityTable.Add(category, categoryData);
-            }
-            categoryData.LevelDataList.Add(levelData);
-        } //여기까지 외부 for문
+    public GradeType GetRandomGrade(SummonSubCategory category, int level)
+    {
+        if (summonRateTable.TryGetValue(category, out var table) == false || table.TryGetValue(level, out SummonRateData data) == false)
+        {
+            Debug.LogWarning($"[DataManager] {category}, {level}에 해당하는 등급 없음");
+            return GradeType.Common;
+        }
     }
 
     //public float GetExpData(int level)
@@ -547,6 +606,11 @@ public class DataManager : MonoBehaviour
     //    }
 
     //    return expTable[level];
+    //}
+    //private void Test()
+    //{
+    //    float a = summonRateTable[SummonSubCategory.Weapon][1].GradeProbabilities[GradeType.Uncommon];
+    //    float b = summonRateTable[SummonSubCategory.Weapon][1].StageProbabilities[GradeType.Uncommon][1];
     //}
 }
 
@@ -706,16 +770,14 @@ public class InventoryItem
     }
 }
 
-public class SummonRateLevelData
+public class SummonRateData
 {
-    //레벨 1개에 대한 확률
     public int Level;
-    public List<float> Probabilities;
-}
 
-public class SummonRateCategoryData
-{
-    //카테고리 하나에 대한 전체 레벨
-    public SummonSubCategory Category;
-    public List<SummonRateLevelData> LevelDataList;
+    //뽑을 때 등급을 정해주는 확률
+    public Dictionary<GradeType, float> GradeProbabilities = new Dictionary<GradeType, float>();
+
+    //등급 안에서 단계별 확률
+    //Common, 1단계는 40%, 2단계는 30%
+    public Dictionary<GradeType, Dictionary<int, float>> StageProbabilities = new Dictionary<GradeType, Dictionary<int, float>>();
 }

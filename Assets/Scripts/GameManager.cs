@@ -125,7 +125,7 @@ public class GameManager : MonoBehaviour
         statSaver.LoadInventoryData(data =>
         {
             //게임을 처음 시작하는 경우라면 기본 아이템 지급
-            if (data == null || data.inventoryEntries == null || data.inventoryEntries.Count == 0)
+            if (data == null || data.InventoryEntries == null || data.InventoryEntries.Count == 0)
             {
                 Debug.Log("[GameManager] 인벤토리 데이터 없음, 기본 아이템 지급");
                 foreach (var itemData in DataManager.Instance.GetItemData().Values)
@@ -146,7 +146,7 @@ public class GameManager : MonoBehaviour
 
         statSaver.LoadSummonProgressData(data => 
         { 
-            if (data == null || data.SummonProgressList.Count == 0)
+            if (data == null || data.SummonProgressEntries.Count == 0)
             {
                 Debug.Log("[GameManager] 소환레벨 데이터 없음, 기본 데이터 초기화");
                 foreach (SummonSubCategory category in Enum.GetValues(typeof(SummonSubCategory)))
