@@ -57,12 +57,13 @@ public class UIInventoryPage : UIPage
         }
 
         currentItemType = itemType;
+        //아이템 팝업 떠있으면 지워주기
         UIManager.Instance.PopupClose();
         RefreshAll();
     }
 
     [ContextMenu("테스트")]
-    private void RefreshAll()
+    public void RefreshAll()
     {
         foreach (var item in itemSlots)
         {

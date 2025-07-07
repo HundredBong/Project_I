@@ -90,6 +90,17 @@ public class UIItemSlot : MonoBehaviour
 
         itemIcon.sprite = DataManager.Instance.GetSpriteByKey(itemData.IconKey);
     }
+
+    //UISummonResultPopup용 오버로딩
+    public void Init(ItemData itemData)
+    {
+        lockedImage.gameObject.SetActive(false);
+        openPopupButton.interactable = false;
+        itemLevelText.text = $"";
+        itemStageText.text = $"";
+        itemCountText.text = $"";
+        itemIcon.sprite = DataManager.Instance.GetSpriteByKey(itemData.IconKey);
+    }
 }
 
 

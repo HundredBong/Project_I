@@ -453,4 +453,10 @@ public class PlayerStats : MonoBehaviour
         //OnStatChanged?.Invoke();
         return true;
     }
+
+    [ContextMenu("다이아부자")]
+    private void Test()
+    {
+        Diamond += 100000;
+    }
 }

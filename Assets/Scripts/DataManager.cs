@@ -1,12 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Xml.Linq;
-using Unity.Burst.Intrinsics;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 public class DataManager : MonoBehaviour
@@ -608,26 +602,27 @@ public class DataManager : MonoBehaviour
         float rand = UnityEngine.Random.Range(0f, total);
         float cumulative = 0f;
 
-        //Common: 0.5  
-        //Uncommon: 0.3
-        //Rare: 0.2
-        //0.0 ~ 0.5 → Common
-        //0.5 ~ 0.8 → Uncommon
-        //0.8 ~ 1.0 → Rare
+        //foreach (KeyValuePair<GradeType, float> kvp in gradeProb)
+        //{
+        //    if (rand <= cumulative)
+        //    {
+        //        return kvp.Key;
+        //    }
+        //}
 
+        //딕셔너리는 삽입순서를 보장하지 않으므로 따로 만들어 줘야 함.
+        //새로운 등급이 추가될시 여기도 추가해줘야 함
+        GradeType[] gradeOrder = { GradeType.Common, GradeType.Uncommon, GradeType.Rare, GradeType.Epic, GradeType.Legendary, GradeType.Mythical };
 
-        foreach (KeyValuePair<GradeType, float> kvp in gradeProb)
+        foreach (GradeType grade in gradeOrder)
         {
-            //랜덤값으로 0.9떴음
-            //누적에 Common 0.5를 더함 -> if문 조건 충족 안됨 -> 다음 Uncommon 0.3 더함 -> (0.8 <= 0.9) 조건 충족 안됨
-            //다음 Rare 0.2를 더함 -> if문 조건 충족됨 -> Rare 반환
-
-            //랜덤값에 0.2떴음
-            //Common이 0.5임 -> 바로 Common 반환
-            cumulative += kvp.Value;
-            if (rand <= cumulative)
+            if (gradeProb.TryGetValue(grade, out float p))
             {
-                return kvp.Key;
+                cumulative += p;
+                if (rand <= cumulative)
+                {
+                    return grade;
+                }
             }
         }
 
@@ -654,15 +649,26 @@ public class DataManager : MonoBehaviour
         {
             total += p;
         }
+
         float rand = UnityEngine.Random.Range(0f, total);
         float cumulative = 0f;
 
-        foreach (var kvp in stageData)
+        //foreach (var kvp in stageData)
+        //{
+        //    cumulative += kvp.Value;
+        //    if (rand <= cumulative)
+        //    {
+        //        return kvp.Key;
+        //    }
+        //}
+
+        //딕셔너리 서순 이슈로 키 정렬후 써야 함
+        foreach (int stage in stageData.Keys.OrderBy(k => k))
         {
-            cumulative += kvp.Value;
+            cumulative += stageData[stage];
             if (rand <= cumulative)
             {
-                return kvp.Key;
+                return stage;
             }
         }
 

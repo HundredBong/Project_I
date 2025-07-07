@@ -21,6 +21,7 @@ public class UIHUDMenu : MonoBehaviour
     [SerializeField] private TextMeshProUGUI menuText;
     [SerializeField] private TextMeshProUGUI goldText;
     [SerializeField] private TextMeshProUGUI diamondText;
+
     private void OnEnable()
     {
         LanguageManager.OnLanguageChanged += RefreshLanguage;
@@ -35,7 +36,7 @@ public class UIHUDMenu : MonoBehaviour
 
     private void Start()
     {
-        //shopButton.onClick.AddListener(() => UIManager.Instance.PageOpen<>());
+        shopButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UIShopPage>());
         statButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UIGoldUpgradePage>());
         skillButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UISkillPage>());
         inventoryButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UIInventoryPage>());

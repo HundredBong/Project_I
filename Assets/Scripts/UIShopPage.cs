@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIShopPage : MonoBehaviour
+public class UIShopPage : UIPage
 {
     [Header("카테고리")]
     [SerializeField] private GameObject summonCategory;
@@ -11,7 +11,7 @@ public class UIShopPage : MonoBehaviour
     [SerializeField] private GameObject skillCategory;
     [SerializeField] private GameObject scoreCategory;
     [SerializeField] private GameObject packageCategory;
-    [SerializeField] private GameObject cashCategory;
+    //[SerializeField] private GameObject cashCategory;
 
     [Header("각 카테고리 버튼")]
     [SerializeField] private Button summonButton;
@@ -19,13 +19,15 @@ public class UIShopPage : MonoBehaviour
     [SerializeField] private Button skillButton;
     [SerializeField] private Button scoreButton;
     [SerializeField] private Button packageButton;
-    [SerializeField] private Button cashButton;
+    //[SerializeField] private Button cashButton;
 
     private Dictionary<ShopCategory, GameObject> categoryObjects;
     private Dictionary<ShopCategory, Button> categoryButtons;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         //추후 상점 종류 추가되면 여기에도 추가해야 함
 
         categoryObjects = new Dictionary<ShopCategory, GameObject>
@@ -35,7 +37,7 @@ public class UIShopPage : MonoBehaviour
             { ShopCategory.Skill, skillCategory },
             { ShopCategory.Score, scoreCategory },
             { ShopCategory.Package, packageCategory },
-            { ShopCategory.Cash, cashCategory },
+            //{ ShopCategory.Cash, cashCategory },
         };
 
         categoryButtons = new Dictionary<ShopCategory, Button>
@@ -45,7 +47,7 @@ public class UIShopPage : MonoBehaviour
             { ShopCategory.Skill, skillButton },
             { ShopCategory.Score, scoreButton },
             { ShopCategory.Package, packageButton },
-            { ShopCategory.Cash, cashButton },
+            //{ ShopCategory.Cash, cashButton },
         };
 
         foreach (var kvp in categoryButtons)

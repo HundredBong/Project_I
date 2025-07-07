@@ -144,4 +144,19 @@ public class UIManager : MonoBehaviour
             PageClose();
         }
     }
+
+    public bool TryGetPage<T>(out T page) where T : UIPage
+    {
+        foreach (UIPage p in pages)
+        {
+            if (p is T target)
+            {
+                page = target;
+                return true;
+            }
+        }
+
+        page = null;
+        return false;
+    }
 }

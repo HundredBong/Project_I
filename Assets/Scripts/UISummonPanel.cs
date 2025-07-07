@@ -101,8 +101,8 @@ public class UISummonPanel : MonoBehaviour
         summon10Button.onClick.RemoveAllListeners();
         summon30Button.onClick.RemoveAllListeners();
 
-        summon10Button.onClick.AddListener(() => { Debug.Log($"{category}에 해당하는 아이템 10개 소환"); });
-        summon30Button.onClick.AddListener(() => { Debug.Log($"{category}에 해당하는 아이템 30개 소환"); });
+        summon10Button.onClick.AddListener(() => { SummonItems(10); });
+        summon30Button.onClick.AddListener(() => { SummonItems(30); });
         //소환하면 메서드 끝에 AddItem, AddExp 실행해줘야 함 둘 다 내부로직에서 저장 안함
         //GameManager.Instance.statSaver.SaveSummonProgress(GameManager.Instance.SummonManager.GetSummonProgressData());
 
@@ -116,8 +116,6 @@ public class UISummonPanel : MonoBehaviour
         summonLevelFillImage.fillAmount = (float)currentExp / maxExp; //DataManager에서 불러온 카테고리별 MaxExp랑, SummonManager에서 가져온 카테고리별 exp값
     }
 
-
-
     private void SetLocalizedText()
     {
         summonWeaponButton.GetComponentInChildren<TextMeshProUGUI>().text = DataManager.Instance.GetLocalizedText("UI_SummonWeapon");
@@ -126,6 +124,66 @@ public class UISummonPanel : MonoBehaviour
         summonSkillButton.GetComponentInChildren<TextMeshProUGUI>().text = DataManager.Instance.GetLocalizedText("UI_SummonSkill");
         summon10Button.GetComponentInChildren<TextMeshProUGUI>().text = DataManager.Instance.GetLocalizedText("UI_Summon10");
         summon30Button.GetComponentInChildren<TextMeshProUGUI>().text = DataManager.Instance.GetLocalizedText("UI_Summon30");
+    }
+
+    private void SummonItems(int count)
+    {
+        //상점 가격표 CSV 대신 임시로 설정
+        int amount = count == 10 ? 1000 : 2500;
+        Queue<ItemData> itemDatas = new Queue<ItemData>();
+        //다이아 감소
+        if (GameManager.Instance.stats.TrySpendItem(PlayerProgressType.Diamond, amount))
+        {
+            for (int i = 0; i < count; i++)
+            {
+                //현재 카테고리의 레벨 계산
+                int summonLevel = GameManager.Instance.SummonManager.GetLevel(category);
+                //현재 레벨로 뽑을 아이템의 등급 계산
+                GradeType grade = DataManager.Instance.GetRandomGrade(category, summonLevel);
+                //레벨과 등급으로 아이템의 단계 계산
+                int stage = DataManager.Instance.GetRandomStage(category, summonLevel, grade);
+                //아이템 뽑기
+                int itemId = DataManager.Instance.GetRandomItemId(category, grade, stage);
+                //ItemData 가져오기
+                ItemData itemData = DataManager.Instance.GetItemData()[itemId];
+                //인벤토리 추가
+                InventoryManager.Instance.AddItem(itemData);
+                //팝업용
+                itemDatas.Enqueue(itemData);
+            }
+
+            //count 만큼 경험치 증가
+            GameManager.Instance.SummonManager.AddExp(category, count);
+            //뽑기 정보 저장
+            GameManager.Instance.statSaver.SaveSummonProgress(GameManager.Instance.SummonManager.GetSummonProgressData());
+            //인벤토리 정보 저장
+            GameManager.Instance.statSaver.SaveInventoryData(InventoryManager.Instance.GetSaveData());
+            //재화 정보 저장
+            GameManager.Instance.statSaver.SavePlayerProgressData(GameManager.Instance.stats.GetProgressSaveData());
+            //스킬 뽑기일 경우 스킬 정보 저장
+            if (category == SummonSubCategory.Skill)
+            {
+                GameManager.Instance.statSaver.SavePlayerSkillData(SkillManager.Instance.BuildSaveData());
+            }
+
+            //UIInventoryPage, SkillPage의 RefreshAll 실행시켜 줘야함
+            //UIManager.Instance.TryGetPage<UISkillPage>().Refresh();
+            if (UIManager.Instance.TryGetPage<UISkillPage>(out UISkillPage skillPage))
+            {
+                skillPage.RefreshAll();
+            }
+
+            if (UIManager.Instance.TryGetPage<UIInventoryPage>(out UIInventoryPage inventoryPage))
+            {
+                inventoryPage.RefreshAll();
+            }
+
+            UIManager.Instance.PopupOpen<UISummonResultPopup>().StartDisplayingResult(itemDatas);
+    }
+        else
+        {
+            Debug.Log($"[UISummonPanel] 다이아가 부족함, {GameManager.Instance.stats.Diamond}");
+        }
     }
 }
 

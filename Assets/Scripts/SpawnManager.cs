@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEditor.Presets;
 using UnityEngine;
-using static Cinemachine.Editor.CinemachineLensPresets;
 
 public class SpawnManager : MonoBehaviour
 {

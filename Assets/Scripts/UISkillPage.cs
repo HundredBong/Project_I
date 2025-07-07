@@ -28,7 +28,7 @@ public class UISkillPage : UIPage
         passiveSkillButton.onClick.AddListener(ShowPassiveSkills);
         popupOpenButton.onClick.AddListener(()=>UIManager.Instance.PopupOpen<SkillEquipPopup>());
 
-        LanguageManager.OnLanguageChanged += Refresh; 
+        LanguageManager.OnLanguageChanged += RefreshAll; 
     }
 
     private void OnDisable()
@@ -36,7 +36,7 @@ public class UISkillPage : UIPage
         activeSkillButton.onClick.RemoveListener(ShowActiveSkills);
         passiveSkillButton.onClick.RemoveListener(ShowActiveSkills);
 
-        LanguageManager.OnLanguageChanged -= Refresh;
+        LanguageManager.OnLanguageChanged -= RefreshAll;
     }
 
     private void ShowActiveSkills()
@@ -70,7 +70,7 @@ public class UISkillPage : UIPage
         ShowActiveSkills(); 
     }
 
-    public void Refresh()
+    public void RefreshAll()
     {
         //언어 바뀔때 모든 스킬 슬롯 UI 새로고침
         foreach (SkillSlotUI ui in slotUIs)
