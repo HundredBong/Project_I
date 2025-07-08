@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using UnityEditor.Experimental.GraphView;
+using JetBrains.Annotations;
 
 public class FirebaseStatSaver : MonoBehaviour
 {
@@ -514,7 +515,15 @@ public class SummonProgressEntry
 }
 
 [System.Serializable]
+public class SummonRewardClaimEntry
+{
+    public SummonSubCategory Category;
+    public List<int> Levels = new List<int>();
+}
+
+[System.Serializable]
 public class SummonProgressData
 {
     public List<SummonProgressEntry> SummonProgressEntries = new List<SummonProgressEntry>();
+    public List<SummonRewardClaimEntry> SummonRewardEntries = new List<SummonRewardClaimEntry>();
 }

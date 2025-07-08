@@ -6,16 +6,23 @@ public class ShopSummonManager
 {
     private Dictionary<SummonSubCategory, int> levels = new Dictionary<SummonSubCategory, int>();
     private Dictionary<SummonSubCategory, int> exps = new Dictionary<SummonSubCategory, int>();
+    private Dictionary<SummonSubCategory, HashSet<int>> claimedLevels = new Dictionary<SummonSubCategory, HashSet<int>>();
 
     public void Init(SummonProgressData data)
     {
         levels.Clear();
         exps.Clear();
+        claimedLevels.Clear();
 
         foreach (SummonProgressEntry entry in data.SummonProgressEntries)
         {
             levels[entry.Category] = entry.Level;
-            exps[entry.Category] = entry.Level;
+            exps[entry.Category] = entry.Exp;
+        }
+
+        foreach (SummonRewardClaimEntry entry in data.SummonRewardEntries)
+        {
+            claimedLevels[entry.Category] = new HashSet<int>(entry.Levels);
         }
     }
 
@@ -73,6 +80,7 @@ public class ShopSummonManager
     public SummonProgressData GetSummonProgressData()
     {
         List<SummonProgressEntry> entries = new List<SummonProgressEntry>();
+        List<SummonRewardClaimEntry> rewardEntries = new List<SummonRewardClaimEntry>();
 
         foreach (var kvp in levels)
         {
@@ -85,9 +93,39 @@ public class ShopSummonManager
             });
         }
 
-        SummonProgressData data = new SummonProgressData { SummonProgressEntries = entries };
+        foreach (var kvp in claimedLevels)
+        {
+            rewardEntries.Add(new SummonRewardClaimEntry()
+            {
+                Category = kvp.Key,
+                Levels = new List<int>(kvp.Value)
+            });
+        }
+
+        SummonProgressData data = new SummonProgressData { SummonProgressEntries = entries, SummonRewardEntries = rewardEntries };
 
         return data;
+    }
+
+    public bool HasClaimed(SummonSubCategory category, int level)
+    {
+        if (claimedLevels.TryGetValue(category, out var levels) && levels.Contains(level))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public void ClaimReward(SummonSubCategory category, int level)
+    {
+        if (claimedLevels.TryGetValue(category, out var levels) == false)
+        {
+            levels = new HashSet<int>();
+            claimedLevels[category] = levels;
+        }
+
+        levels.Add(level);
     }
 
 }

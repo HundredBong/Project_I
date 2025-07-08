@@ -19,7 +19,7 @@ public class DataManager : MonoBehaviour
     private Dictionary<int, ItemData> itemDataTable = new Dictionary<int, ItemData>();
     private Dictionary<SummonSubCategory, List<int>> summonExpDatas = new Dictionary<SummonSubCategory, List<int>>();
     private Dictionary<SummonSubCategory, Dictionary<int, SummonRateData>> summonRateTable = new Dictionary<SummonSubCategory, Dictionary<int, SummonRateData>>();
-
+    private Dictionary<SummonSubCategory, Dictionary<int, SummonRewardData>> summonRewardTable = new Dictionary<SummonSubCategory, Dictionary<int, SummonRewardData>>();
 
     private void Awake()
     {
@@ -46,6 +46,7 @@ public class DataManager : MonoBehaviour
         LoadSummonExpData();
         LoadSummonGradeProbabilities();
         LoadSummonStageProbabilities();
+        LoadSummonRewardData();
     }
 
     private void LoadSpritesData()
@@ -744,6 +745,51 @@ public class DataManager : MonoBehaviour
         return skills[index].SkillId;
     }
 
+    private void LoadSummonRewardData()
+    {
+        TextAsset asset = Resources.Load<TextAsset>("CSV/SummonLevelRewardData");
+        string[] lines = asset.text.Split('\n');
+
+        for (int i = 1; i < lines.Length; i++)
+        {
+            if (string.IsNullOrEmpty(lines[i])) { continue; }
+
+            string[] tokens = lines[i].Split(',');
+
+            SummonSubCategory category = Enum.Parse<SummonSubCategory>(tokens[0].Trim());
+            int level = int.Parse(tokens[1].Trim());
+
+            SummonRewardData data = new SummonRewardData()
+            {
+                SubCategory = category,
+                Level = level,
+                RewardType = Enum.Parse<RewardType>(tokens[2].Trim()),
+                Id = tokens[3].Trim(),
+                Amount = int.Parse(tokens[4].Trim())
+            };
+
+            if (summonRewardTable.TryGetValue(category, out var table) == false)
+            {
+                table = new Dictionary<int, SummonRewardData>();
+                summonRewardTable[category] = table;
+            }
+
+            table[level] = data;
+        }
+
+        Debug.Log($"[DataManager] 소환 레벨 보상 데이터 로드됨, {summonRewardTable.Count}");
+    }
+
+    public SummonRewardData GetRewardData(SummonSubCategory category, int level)
+    {
+        if (summonRewardTable.TryGetValue(category, out var table) && table.TryGetValue(level, out SummonRewardData data))
+        {
+            return data;
+        }
+        Debug.LogWarning($"[DataManager] {category} {level} 레벨에 대한 보상 데이터가 없음");
+        return null;
+    }
+
     //public float GetExpData(int level)
     //{
     //    if (expTable.ContainsKey(level) == false)
@@ -927,4 +973,13 @@ public class SummonRateData
     //등급 안에서 단계별 확률
     //Common, 1단계는 40%, 2단계는 30%
     public Dictionary<GradeType, Dictionary<int, float>> StageProbabilities = new Dictionary<GradeType, Dictionary<int, float>>();
+}
+
+public class SummonRewardData
+{
+    public SummonSubCategory SubCategory;
+    public int Level;
+    public RewardType RewardType;
+    public string Id;
+    public int Amount;
 }
