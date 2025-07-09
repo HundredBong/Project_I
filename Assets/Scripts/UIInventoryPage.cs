@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 using UnityEngine.UI;
+using TMPro;
 
 public class UIInventoryPage : UIPage
 {
@@ -15,8 +16,23 @@ public class UIInventoryPage : UIPage
     [SerializeField] private Button showArmorButton;
     [SerializeField] private Button showNecklaceButton;
 
+    [Header("버튼 텍스트")]
+    [SerializeField] private TextMeshProUGUI weaponButtonText;
+    [SerializeField] private TextMeshProUGUI armorButtonText;
+    [SerializeField] private TextMeshProUGUI necklaceButtonText;
+
     private Dictionary<int, UIItemSlot> itemSlots = new Dictionary<int, UIItemSlot>();
     private ItemType currentItemType;
+
+    private void OnEnable()
+    {
+        LanguageManager.OnLanguageChanged += Refresh;   
+    }
+
+    private void OnDisable()
+    {
+        LanguageManager.OnLanguageChanged -= Refresh;
+    }
 
     private async void Start()
     {
@@ -40,6 +56,7 @@ public class UIInventoryPage : UIPage
         showWeaponButton.onClick.AddListener(() => FilteringByType(ItemType.Weapon));
         showArmorButton.onClick.AddListener(() => FilteringByType(ItemType.Armor));
         showNecklaceButton.onClick.AddListener(() => FilteringByType(ItemType.Necklace));
+        Refresh();
     }
 
     private void FilteringByType(ItemType itemType)
@@ -60,6 +77,13 @@ public class UIInventoryPage : UIPage
         //아이템 팝업 떠있으면 지워주기
         UIManager.Instance.PopupClose();
         RefreshAll();
+    }
+
+    private void Refresh()
+    {
+        weaponButtonText.text = DataManager.Instance.GetLocalizedText("UI_Weapon");
+        armorButtonText.text = DataManager.Instance.GetLocalizedText("UI_Armor");
+        necklaceButtonText.text = DataManager.Instance.GetLocalizedText("UI_Necklace");
     }
 
     [ContextMenu("테스트")]

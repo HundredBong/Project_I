@@ -97,6 +97,8 @@ public class UIItemInfoPopup : UIPopup
         negativeButton.onClick.AddListener(OnClickNegativeButton);
         maxButton.onClick.AddListener(OnClickMaxButton);
         positiveButton.onClick.AddListener(OnClickPositiveButton);
+
+        LanguageManager.OnLanguageChanged += Refresh; 
     }
 
     private void OnDisable()
@@ -105,6 +107,8 @@ public class UIItemInfoPopup : UIPopup
         negativeButton.onClick.RemoveListener(OnClickNegativeButton);
         maxButton.onClick.RemoveListener(OnClickMaxButton);
         positiveButton.onClick.RemoveListener(OnClickPositiveButton);
+
+        LanguageManager.OnLanguageChanged -= Refresh; 
     }
 
     public void Init(ItemData itemData, InventoryItem inventoryItem, Action onUpgraded, Action onSynthesisComplete)

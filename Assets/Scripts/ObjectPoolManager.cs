@@ -8,6 +8,7 @@ public class ObjectPoolManager : MonoBehaviour
 
     public EnemyPool enemyPool;
     public ProjectilePool projectilePool;
+    public ParticlePool particlePool;
 
     private void Awake()
     {

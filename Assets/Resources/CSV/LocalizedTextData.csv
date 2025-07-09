@@ -28,31 +28,63 @@ Stat_CriticalChance,크리티컬 확률,Critical Chance
 Stat_CriticalDamage,크리티컬 대미지,Critical Damage
 Stat_Health,체력,Health
 Stat_MoveSpeed,이동속도,Move Speed
-UI_UpgradeType,강화,Upgrade
-UI_Synthesis,합성,Synthesis
-UI_EquippedEffect,장착 효과,Equipped Effect
-UI_OwnedEffect,보유 효과,Owned Effect
-UI_UpgradeMaterial,강화 재료,Upgrade Material
-UI_LevelUp,레벨 업,Level Up
+UI_BatchSynthesis,일괄 합성,Batch Synthesis
 UI_Equip,장착 효과,Equip
-Weapon_Sword_01,나무칼,Wood Sword
-UI_OwnedCount,보유 수량,Quantity
-UI_LevelUp,레벨 업,Level Up
 UI_Equip,장착,Equip
 UI_Equipped,장착중,Equipped
+UI_EquippedEffect,장착 효과,Equipped Effect
 UI_Grade,단계,Stage
 UI_ItemSynthesisDesc,이 장비 5개를 소모해 다음 등급 장비를 획득합니다.,Use 5 of these equipment to obtain the next class of equipment.
-UI_Synthesis,합성,Synthesis
-UI_BatchSynthesis,일괄 합성,Batch Synthesis
-UI_Shop,상점,Shop
-UI_Summon,소환,Summon
+UI_LevelUp,레벨 업,Level Up
+UI_LevelUp,레벨 업,Level Up
 UI_Normal,일반,Normal
-UI_Skill,스킬,Skill
-UI_Score,스코어,Score
+UI_OwnedCount,보유 수량,Quantity
+UI_OwnedEffect,보유 효과,Owned Effect
 UI_Package,패키지,Package
-UI_SummonWeapon,무기 소환,Weapon
+UI_Score,스코어,Score
+UI_Shop,상점,Shop
+UI_Skill,스킬,Skill
+UI_Summon,소환,Summon
+UI_Summon10,10회 소환,Summon 10
+UI_Summon30,30회 소환,Summon 30
 UI_SummonArmor,방어구 소환,Armor
 UI_SummonNecklace,목걸이 소환,Necklace
 UI_SummonSkill,스킬 소환,Skill
-UI_Summon10,10회 소환,Summon 10
-UI_Summon30,30회 소환,Summon 30
+UI_SummonWeapon,무기 소환,Weapon
+UI_Synthesis,합성,Synthesis
+UI_Synthesis,합성,Synthesis
+UI_UpgradeMaterial,강화 재료,Upgrade Material
+UI_UpgradeType,강화,Upgrade
+Weapon_Sword_01,나무칼,Wood Sword
+Weapon_Sword_02,돌검,Stone Sword
+Weapon_Sword_03,철검,Iron Sword
+Weapon_Sword_04,은검,Silver Sword
+Weapon_Sword_05,대검,Greatsword
+Weapon_Sword_06,시미터,Scimitar
+Weapon_Sword_07,크리스,Kris
+Weapon_Sword_08,피바라기,Bloodthirster
+Weapon_Sword_09,집행검,Executioner Sword
+Weapon_Sword_10,마검,Cursed Sword
+Armor_Plate_01,일반 방어구 1형,Basic Armor I
+Armor_Plate_02,일반 방어구 2형,Basic Armor II
+Armor_Plate_03,보급형 방어구 1형,Standard Armor I
+Armor_Plate_04,보급형 방어구 2형,Standard Armor II
+Armor_Plate_05,고급 방어구 1형,Advanced Armor I
+Armor_Plate_06,고급 방어구 2형,Advanced Armor II
+Armor_Plate_07,마력 깃든 방어구,Enchanted Armor
+Armor_Plate_08,기사단 방어구,Knights' Armor
+Armor_Plate_09,상급 기사 방어구,Elite Knight Armor
+Armor_Plate_10,용비늘 방어구,Dragonscale Armor
+Necklace_01,뼈목걸이 1형,Bone Necklace I
+Necklace_02,뼈목걸이 2형,Bone Necklace II
+Necklace_03,돌목걸이 1형,Stone Necklace I
+Necklace_04,돌목걸이 2형,Stone Necklace II
+Necklace_05,루비 목걸이,Ruby Necklace
+Necklace_06,황수정 목걸이,Topaz Necklace
+Necklace_07,흑옥 목걸이,Onyx Necklace
+Necklace_08,자수정 목걸이,Amethyst Necklace
+Necklace_09,에메랄드 목걸이,Emerald Necklace
+Necklace_10,다이아몬드 목걸이,Diamond Necklace
+UI_Weapon,무기,Weapon
+UI_Armor,방어구,Armor
+UI_Necklace,목걸이,Necklace

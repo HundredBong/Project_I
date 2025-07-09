@@ -13,7 +13,7 @@ public class ProjectilePool : GenericPoolManager<Projectile>
         InitializePool();
     }
 
-    public void InitializePool(int preloadCount = 10)
+    private void InitializePool(int preloadCount = 10)
     {
         foreach (ProjectilePrefabData data in projectilePrefabs)
         {
@@ -34,12 +34,13 @@ public class ProjectilePool : GenericPoolManager<Projectile>
         Debug.Log($"[ProjectilePool] {prefabCache.Count}개 프리팹 Preload 됨");
     }
 
-    public GameObject GetPrefab(ProjectileId id)
+    public T GetPrefab<T>(ProjectileId id) where T : Projectile
     {
         //프리팹 캐시에 해당 id가 있는지 확인하고 반환함
         if (prefabCache.TryGetValue(id, out GameObject prefab))
         {
-            return prefab;
+            var projectile = base.Get(prefab);
+            return projectile as T;
         }
 
         Debug.LogError($"[ProjectilePool] {id} 프리팹이 없음");

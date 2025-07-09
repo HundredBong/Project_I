@@ -20,9 +20,7 @@ public class SkillLightning : SkillBase
             Vector3 spawnPos = enemy.transform.position + Vector3.up * 5f;
             Vector3 direction = Vector3.down;
 
-            GameObject prefab = ObjectPoolManager.Instance.projectilePool.GetPrefab(ProjectileId.Lightning);
-            ProjectileLightning lightning = ObjectPoolManager.Instance.projectilePool.Get(prefab) as ProjectileLightning;
-
+            ProjectileLightning lightning = ObjectPoolManager.Instance.projectilePool.GetPrefab<ProjectileLightning>(ProjectileId.Lightning);
             lightning.Initialize(skillData, enemy.gameObject);
         }
     }

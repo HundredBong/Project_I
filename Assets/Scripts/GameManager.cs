@@ -172,6 +172,18 @@ public class GameManager : MonoBehaviour
         return statSaver != null && stats != null && firebaseInit != null && statSaver.gameObject.activeInHierarchy;
     }
 
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector3 mousePos = Input.mousePosition;
+            Vector3 worldPos = Camera.main.ScreenToWorldPoint(mousePos);
+            worldPos.z = 0;
+
+            ObjectPoolManager.Instance.particlePool.GetPrefab<PooledParticle>(ParticleId.ClickEffect).Play(worldPos);
+        }
+    }
+
 
 #if UNITY_EDITOR
     [MenuItem("Tools/Set Language KR")]

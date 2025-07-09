@@ -153,7 +153,7 @@ public class UISummonPanel : MonoBehaviour
 
     private void SummonItems(int count)
     {
-        //상점 가격표 CSV 대신 임시로 설정
+        //TODO : 상점 가격표 CSV 대신 임시로 설정
         int amount = count == 10 ? 1000 : 2500;
         Queue<ItemData> itemDatas = new Queue<ItemData>();
         //다이아 감소
@@ -204,7 +204,7 @@ public class UISummonPanel : MonoBehaviour
 
     private void SummonSkills(int count)
     {
-        //상점 가격표 CSV 대신 임시로 설정
+        //TODO : 상점 가격표 CSV 대신 임시로 설정
         int amount = count == 10 ? 1000 : 2500;
         Queue<SkillData> skillDatas = new Queue<SkillData>();
         //다이아 감소

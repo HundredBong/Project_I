@@ -77,8 +77,11 @@ public class InventoryManager : MonoBehaviour
         }
 
         Debug.Log($"[InventoryManager] 추가된 아이템 : {inventory[data.Id].Data.NameKey}, {inventory[data.Id].IsUnlocked}, {inventory[data.Id].Count}");
-    }
 
+        //보유효과 적용용 스탯 재계산
+        GameManager.Instance.stats.RecalculateStats();
+
+    }
     public bool SubtractItem(ItemData data, int count = 1)
     {
         if (inventory.TryGetValue(data.Id, out InventoryItem item))
