@@ -20,7 +20,7 @@ public class SkillManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void AddSkill(SkillId id, int couunt)
+    public void AddSkill(SkillId id, int couunt = 1)
     {
         //만약 해당 스킬을 가지고있지 않다면 새로운 PlayerSkillState 생성하고 초기화,
         //그 후 딕셔너리에 추가함.

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,6 +21,15 @@ public class UIShopPage : UIPage
     [SerializeField] private Button scoreButton;
     [SerializeField] private Button packageButton;
     //[SerializeField] private Button cashButton;
+
+    [Header("텍스트")]
+    [SerializeField] private TextMeshProUGUI titleText;
+    [SerializeField] private TextMeshProUGUI summonButtonText;
+    [SerializeField] private TextMeshProUGUI normalButtonText;
+    [SerializeField] private TextMeshProUGUI skillButtonText;
+    [SerializeField] private TextMeshProUGUI scoreButtonText;
+    [SerializeField] private TextMeshProUGUI packageButtonText;
+    //[SerializeField] private TextMeshProUGUI cashButtonText;
 
     private Dictionary<ShopCategory, GameObject> categoryObjects;
     private Dictionary<ShopCategory, Button> categoryButtons;
@@ -57,6 +67,25 @@ public class UIShopPage : UIPage
         }
     }
 
+    private void OnEnable()
+    {
+        LanguageManager.OnLanguageChanged += RefreshTexts;
+        RefreshTexts();
+    }
+
+    private void OnDisable()
+    {
+        
+        LanguageManager.OnLanguageChanged -= RefreshTexts;
+    }
+
+    private void Start()
+    {
+        //처음 상점 들어오면 소환 먼저 보이게
+        ShowCategory(ShopCategory.Summon);
+        RefreshTexts();
+    }
+
     private void ShowCategory(ShopCategory targetCategory)
     {
         //인자로 들어온 카테고리에 해당하는 오브젝트만 활성화, 그 외 비활성화
@@ -66,9 +95,13 @@ public class UIShopPage : UIPage
         }
     }
 
-    private void Start()
+    private void RefreshTexts()
     {
-        //처음 상점 들어오면 소환 먼저 보이게
-        ShowCategory(ShopCategory.Summon);
+        titleText.text = DataManager.Instance.GetLocalizedText("UI_Shop");
+        summonButtonText.text = DataManager.Instance.GetLocalizedText("UI_Summon");
+        normalButtonText.text = DataManager.Instance.GetLocalizedText("UI_Normal");
+        skillButtonText.text = DataManager.Instance.GetLocalizedText("UI_Skill");
+        scoreButtonText.text = DataManager.Instance.GetLocalizedText("UI_Score");
+        packageButtonText.text = DataManager.Instance.GetLocalizedText("UI_Package");
     }
 }

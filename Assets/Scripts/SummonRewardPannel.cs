@@ -31,7 +31,9 @@ public class SummonRewardPannel : MonoBehaviour
 
         if (rewardData == null)
         {
+            Debug.LogWarning($"[SummonRewardPannel] 보상 데이터가 없음, {category}, {level}");
             claimButton.interactable = false;
+            claimButton.gameObject.SetActive(false);
             return;
         }
 
@@ -50,6 +52,7 @@ public class SummonRewardPannel : MonoBehaviour
         }
 
         amountText.text = rewardData.Amount.ToString();
+        claimButton.onClick.AddListener(OnClickClaim);
         claimButton.interactable = true;
     }
 

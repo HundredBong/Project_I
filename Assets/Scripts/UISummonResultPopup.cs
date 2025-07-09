@@ -32,6 +32,21 @@ public class UISummonResultPopup : UIPopup
         showResultCoroutine = StartCoroutine(StartDisplayingResultCoroutine(data));
     }
 
+    public void StartDisplayingResult(Queue<SkillData> data)
+    {
+        if (showResultCoroutine != null)
+        {
+            StopDisplayingResult();
+        }
+
+        foreach (Transform child in contentRoot)
+        {
+            Destroy(child.gameObject);
+        }
+
+        showResultCoroutine = StartCoroutine(StartDisplayingResultCoroutine(data));
+    }
+
     public void StopDisplayingResult()
     {
         if (showResultCoroutine != null)
@@ -49,6 +64,18 @@ public class UISummonResultPopup : UIPopup
             yield return wait;
             GameObject obj = Instantiate(contentPrefab, contentRoot);
             UIItemSlot slot = obj.GetComponent<UIItemSlot>();
+            slot.Init(data.Dequeue());
+        }
+    }
+
+    private IEnumerator StartDisplayingResultCoroutine(Queue<SkillData> data)
+    {
+        while (data.Count != 0)
+        {
+            //0.2√  ¥Î±‚
+            yield return wait;
+            GameObject obj = Instantiate(contentPrefab, contentRoot);
+            SkillSlotUI slot = obj.GetComponent<SkillSlotUI>();
             slot.Init(data.Dequeue());
         }
     }

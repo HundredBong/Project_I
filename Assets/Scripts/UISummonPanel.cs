@@ -24,9 +24,20 @@ public class UISummonPanel : MonoBehaviour
     [SerializeField] private TextMeshProUGUI summonExpText;
     [SerializeField] private Image summonLevelFillImage;
 
-    [Header("버튼")]
+    [Header("소환 버튼")]
     [SerializeField] private Button summon10Button;
     [SerializeField] private Button summon30Button;
+
+    [Header("로컬라이즈")]
+    [SerializeField] private TextMeshProUGUI summonWeaponButtonText;
+    [SerializeField] private TextMeshProUGUI summonArmorButtonText;
+    [SerializeField] private TextMeshProUGUI summonNecklaceButtonText;
+    [SerializeField] private TextMeshProUGUI summonSkillButtonText;
+    [SerializeField] private TextMeshProUGUI summon10ButtonText;
+    [SerializeField] private TextMeshProUGUI summon30ButtonText;
+
+    [Header("보상")]
+    [SerializeField] private SummonRewardPannel rewardPanel;
 
     private SummonSubCategory category;
 
@@ -63,6 +74,7 @@ public class UISummonPanel : MonoBehaviour
     private void OnEnable()
     {
         LanguageManager.OnLanguageChanged += SetLocalizedText;
+        SetLocalizedText();
     }
 
     private void OnDisable()
@@ -80,6 +92,7 @@ public class UISummonPanel : MonoBehaviour
         SetLocalizedText();
 
         Refresh(SummonSubCategory.Weapon);
+        rewardPanel.Refresh(SummonSubCategory.Weapon);
     }
 
     private void ShowCategory(SummonSubCategory category)
@@ -90,6 +103,7 @@ public class UISummonPanel : MonoBehaviour
         }
 
         Refresh(category);
+        rewardPanel.Refresh(category);
     }
 
     private void Refresh(SummonSubCategory category)
@@ -101,12 +115,23 @@ public class UISummonPanel : MonoBehaviour
         summon10Button.onClick.RemoveAllListeners();
         summon30Button.onClick.RemoveAllListeners();
 
-        summon10Button.onClick.AddListener(() => { SummonItems(10); });
-        summon30Button.onClick.AddListener(() => { SummonItems(30); });
+        //스킬 외에는 아이템 소환
+        if (category != SummonSubCategory.Skill)
+        {
+            summon10Button.onClick.AddListener(() => { SummonItems(10); });
+            summon30Button.onClick.AddListener(() => { SummonItems(30); });
+        }
+        //스킬이면 스킬 소환
+        else
+        {
+            summon10Button.onClick.AddListener(() => { SummonSkills(10); });
+            summon30Button.onClick.AddListener(() => { SummonSkills(30); });
+        }
+
         //소환하면 메서드 끝에 AddItem, AddExp 실행해줘야 함 둘 다 내부로직에서 저장 안함
         //GameManager.Instance.statSaver.SaveSummonProgress(GameManager.Instance.SummonManager.GetSummonProgressData());
 
-        //소환 레벨 텍스트 및 FillAmount 초기화
+        //소환 레벨 텍스트, 이미지 fill 초기화
         int level = GameManager.Instance.SummonManager.GetLevel(category);
         int currentExp = GameManager.Instance.SummonManager.GetExp(category);
         int maxExp = DataManager.Instance.GetSummonMaxExp(category, level);
@@ -118,12 +143,12 @@ public class UISummonPanel : MonoBehaviour
 
     private void SetLocalizedText()
     {
-        summonWeaponButton.GetComponentInChildren<TextMeshProUGUI>().text = DataManager.Instance.GetLocalizedText("UI_SummonWeapon");
-        summonArmorButton.GetComponentInChildren<TextMeshProUGUI>().text = DataManager.Instance.GetLocalizedText("UI_SummonArmor");
-        summonNecklaceButton.GetComponentInChildren<TextMeshProUGUI>().text = DataManager.Instance.GetLocalizedText("UI_SummonNecklace");
-        summonSkillButton.GetComponentInChildren<TextMeshProUGUI>().text = DataManager.Instance.GetLocalizedText("UI_SummonSkill");
-        summon10Button.GetComponentInChildren<TextMeshProUGUI>().text = DataManager.Instance.GetLocalizedText("UI_Summon10");
-        summon30Button.GetComponentInChildren<TextMeshProUGUI>().text = DataManager.Instance.GetLocalizedText("UI_Summon30");
+        summonWeaponButtonText.text = DataManager.Instance.GetLocalizedText("UI_SummonWeapon");
+        summonArmorButtonText.text = DataManager.Instance.GetLocalizedText("UI_SummonArmor");
+        summonNecklaceButtonText.text = DataManager.Instance.GetLocalizedText("UI_SummonNecklace");
+        summonSkillButtonText.text = DataManager.Instance.GetLocalizedText("UI_SummonSkill");
+        summon10ButtonText.text = DataManager.Instance.GetLocalizedText("UI_Summon10");
+        summon30ButtonText.text = DataManager.Instance.GetLocalizedText("UI_Summon30");
     }
 
     private void SummonItems(int count)
@@ -160,26 +185,65 @@ public class UISummonPanel : MonoBehaviour
             GameManager.Instance.statSaver.SaveInventoryData(InventoryManager.Instance.GetSaveData());
             //재화 정보 저장
             GameManager.Instance.statSaver.SavePlayerProgressData(GameManager.Instance.stats.GetProgressSaveData());
-            //스킬 뽑기일 경우 스킬 정보 저장
-            if (category == SummonSubCategory.Skill)
-            {
-                GameManager.Instance.statSaver.SavePlayerSkillData(SkillManager.Instance.BuildSaveData());
-            }
 
-            //UIInventoryPage, SkillPage의 RefreshAll 실행시켜 줘야함
-            //UIManager.Instance.TryGetPage<UISkillPage>().Refresh();
-            if (UIManager.Instance.TryGetPage<UISkillPage>(out UISkillPage skillPage))
-            {
-                skillPage.RefreshAll();
-            }
-
+            //인벤토리 페이지 새로고침
             if (UIManager.Instance.TryGetPage<UIInventoryPage>(out UIInventoryPage inventoryPage))
             {
                 inventoryPage.RefreshAll();
             }
 
             UIManager.Instance.PopupOpen<UISummonResultPopup>().StartDisplayingResult(itemDatas);
+            Refresh(category);
+            rewardPanel.Refresh(category);
+        }
+        else
+        {
+            Debug.Log($"[UISummonPanel] 다이아가 부족함, {GameManager.Instance.stats.Diamond}");
+        }
     }
+
+    private void SummonSkills(int count)
+    {
+        //상점 가격표 CSV 대신 임시로 설정
+        int amount = count == 10 ? 1000 : 2500;
+        Queue<SkillData> skillDatas = new Queue<SkillData>();
+        //다이아 감소
+        if (GameManager.Instance.stats.TrySpendItem(PlayerProgressType.Diamond, amount))
+        {
+            for (int i = 0; i < count; i++)
+            {
+                //현재 카테고리의 레벨 계산
+                int summonLevel = GameManager.Instance.SummonManager.GetLevel(category);
+                //현재 레벨로 뽑을 스킬 등급 계산
+                GradeType grade = DataManager.Instance.GetRandomGrade(category, summonLevel);
+                //스킬 등급으로 스킬 아이디 뽑기
+
+                Debug.LogError($"[UISummonPanel] 소환 카테고리 : {category}, 레벨 : {summonLevel}, 등급 : {grade}");
+
+                SkillId skillId = DataManager.Instance.GetRandomSkillId(category, grade);
+                skillDatas.Enqueue(DataManager.Instance.GetSkill(skillId));
+                SkillManager.Instance.AddSkill(skillId);
+            }
+
+            //count 만큼 경험치 증가
+            GameManager.Instance.SummonManager.AddExp(category, count);
+            //뽑기 정보 저장
+            GameManager.Instance.statSaver.SaveSummonProgress(GameManager.Instance.SummonManager.GetSummonProgressData());
+            //재화 정보 저장
+            GameManager.Instance.statSaver.SavePlayerProgressData(GameManager.Instance.stats.GetProgressSaveData());
+            //스킬 정보 저장
+            GameManager.Instance.statSaver.SavePlayerSkillData(SkillManager.Instance.BuildSaveData());
+
+            //스킬 페이지 새로고침
+            if (UIManager.Instance.TryGetPage<UISkillPage>(out UISkillPage skillPage))
+            {
+                skillPage.RefreshAll();
+            }
+
+            UIManager.Instance.PopupOpen<UISummonResultPopup>().StartDisplayingResult(skillDatas);
+            Refresh(category);
+            rewardPanel.Refresh(category);
+        }
         else
         {
             Debug.Log($"[UISummonPanel] 다이아가 부족함, {GameManager.Instance.stats.Diamond}");
@@ -235,4 +299,5 @@ public class UISummonPanel : MonoBehaviour
 //{
 //    public SummonSubCategory Category;
 //    public Dictionary<int, float> ExpTable;
+
 //}

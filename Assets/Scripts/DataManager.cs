@@ -729,7 +729,7 @@ public class DataManager : MonoBehaviour
         {
             SkillData skill = kvp.Value;
 
-            if (skill.Grade == grade)
+            if (skill.Grade == grade && skill.SkillId != SkillId.None)
             {
                 skills.Add(skill);
             }
@@ -753,7 +753,7 @@ public class DataManager : MonoBehaviour
         for (int i = 1; i < lines.Length; i++)
         {
             if (string.IsNullOrEmpty(lines[i])) { continue; }
-
+            Debug.Log($"[¶óÀÎ{i}] {lines[i]}");
             string[] tokens = lines[i].Split(',');
 
             SummonSubCategory category = Enum.Parse<SummonSubCategory>(tokens[0].Trim());

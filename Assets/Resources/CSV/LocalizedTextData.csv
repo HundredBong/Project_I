@@ -44,3 +44,15 @@ UI_Grade,단계,Stage
 UI_ItemSynthesisDesc,이 장비 5개를 소모해 다음 등급 장비를 획득합니다.,Use 5 of these equipment to obtain the next class of equipment.
 UI_Synthesis,합성,Synthesis
 UI_BatchSynthesis,일괄 합성,Batch Synthesis
+UI_Shop,상점,Shop
+UI_Summon,소환,Summon
+UI_Normal,일반,Normal
+UI_Skill,스킬,Skill
+UI_Score,스코어,Score
+UI_Package,패키지,Package
+UI_SummonWeapon,무기 소환,Weapon
+UI_SummonArmor,방어구 소환,Armor
+UI_SummonNecklace,목걸이 소환,Necklace
+UI_SummonSkill,스킬 소환,Skill
+UI_Summon10,10회 소환,Summon 10
+UI_Summon30,30회 소환,Summon 30
