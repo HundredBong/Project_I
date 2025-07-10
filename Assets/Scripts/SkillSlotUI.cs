@@ -4,7 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class SkillSlotUI : MonoBehaviour
+public class UISkillSlot : MonoBehaviour
 {
     //SKillPage로 생성될 프리팹
     [SerializeField] private TextMeshProUGUI skillNameText; //스킬 이름
@@ -34,7 +34,7 @@ public class SkillSlotUI : MonoBehaviour
         skillNameText.text = DataManager.Instance.GetLocalizedText(skillData.NameKey);
         skillIcon.sprite = DataManager.Instance.GetSpriteByKey(skillData.SkillIcon);
 
-        if(SkillManager.Instance.GetSkillState(skillData.SkillId) != null)
+        if(skillState != null)
         {
             currentLevelText.text = $"Lv.{skillState.Level}";
             requiredCount.text = $"{skillState.OwnedCount} / {skillData.AwakenRequiredCount[skillState.AwakenLevel]}";
@@ -42,6 +42,7 @@ public class SkillSlotUI : MonoBehaviour
 
         //스킬 매니저에서 스킬 아이디가 있는지 확인하고, 없다면 해당 스킬은 잠금 상태로 표시
         lockOverlay.SetActive(SkillManager.Instance.IsUnlocked(skillData.SkillId) == false);
+        selectButton.interactable = SkillManager.Instance.IsUnlocked(skillData.SkillId);
     }
 
     private void OnClick()

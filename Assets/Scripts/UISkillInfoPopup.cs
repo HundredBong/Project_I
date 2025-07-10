@@ -51,8 +51,11 @@ public class UISkillInfoPopup : UIPopup
         skillEffectValueText.text = $"{data.PassiveValue}%"; //TODO : 스킬 레벨별 Increase 공식 적용, 인데 우선도는 낮음, 사유 : 수학이라서
 
         //버튼
+        upgradeButton.onClick.RemoveAllListeners();
         upgradeButton.onClick.AddListener(ShowUpgradePanel);
+        awakenButton.onClick.RemoveAllListeners();
         awakenButton.onClick.AddListener(ShowAwakenPanel);
+        decompositionButton.onClick.RemoveAllListeners();
         decompositionButton.onClick.AddListener(ShowDecompositionPanel);
 
         ShowUpgradePanel();

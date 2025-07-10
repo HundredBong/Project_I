@@ -14,7 +14,7 @@ public static class SkillFactory
     static SkillFactory()
     {
         //스킬타입에 따라 생성자
-        Register(SkillId.Lightning, data => new SkillLightning(data));
+        Register(SkillId.Lightning, data => { return new SkillLightning(data); });
 
         //스킬이 생기면 여기에 추가로 등록
     }
@@ -38,7 +38,7 @@ public static class SkillFactory
         //딕셔너리에 있는 SkillId에 해당하는 생성자를 찾아서 실행함
         //SkillId.Lightning이 들어왔다고 가정하면 data => new SkillLightning(data) 함수를 정의함
         //constructor.Invoke(data)로 실행해야 SkillLightning의 생성자가 호출됨, 꺼낸다고 해서 자동으로 실행되는게 아님
-        if (skillCreators.TryGetValue(id, out var constructor))
+        if (skillCreators.TryGetValue(id, out Func<SkillData, SkillBase> constructor))
         {
             return constructor.Invoke(data);
         }

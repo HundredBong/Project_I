@@ -174,14 +174,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Vector3 mousePos = Input.mousePosition;
-            Vector3 worldPos = Camera.main.ScreenToWorldPoint(mousePos);
-            worldPos.z = 0;
 
-            ObjectPoolManager.Instance.particlePool.GetPrefab<PooledParticle>(ParticleId.ClickEffect).Play(worldPos);
-        }
     }
 
 

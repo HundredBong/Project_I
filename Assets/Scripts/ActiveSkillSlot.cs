@@ -45,6 +45,7 @@ public class ActiveSkillSlot : MonoBehaviour
 
         skillIcon.sprite = DataManager.Instance.GetSpriteByKey(data.SkillIcon);
         skillIcon.enabled = true;
+        skillButton.onClick.RemoveAllListeners();
         skillButton.onClick.AddListener(OnSkillButtonClicked);
     }
 
@@ -87,6 +88,11 @@ public class ActiveSkillSlot : MonoBehaviour
         globalCooldownImage.fillAmount = 1f;
     }
 
+    public SkillBase GetEquippedSkill()
+    {
+        return equippedSkill;
+    }
+
     private void Update()
     {
         if (cooldownRemain > 0f)
@@ -108,5 +114,7 @@ public class ActiveSkillSlot : MonoBehaviour
 
         cooldownText.text = cooldownRemain > 0f ? $"{cooldownRemain:F1}" : "";
     }
+
+    
 
 }

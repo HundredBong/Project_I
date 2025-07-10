@@ -25,7 +25,7 @@ public class ActiveSkillPanel : MonoBehaviour
     {
         foreach (ActiveSkillSlot slot in skillSlots)
         {
-            if (slot == null)
+            if (slot == null || slot.GetEquippedSkill() == null)
             {
                 Debug.Log("[ActiveSkillPanel] ºñ¾îÀÖ´Â ½½·Ô ¹«½ÃµÊ");
                 continue;

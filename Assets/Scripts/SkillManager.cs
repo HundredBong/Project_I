@@ -102,6 +102,7 @@ public class SkillManager : MonoBehaviour
             SkillStateSaveData data = new SkillStateSaveData()
             {
                 skillId = kvp.Key,
+                level = kvp.Value.Level,
                 ownedCount = kvp.Value.OwnedCount,
                 awakenLevel = kvp.Value.AwakenLevel
             };

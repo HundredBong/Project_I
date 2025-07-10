@@ -20,7 +20,7 @@ public class UISkillPage : UIPage
     [SerializeField]private Color unselectedColor;
     [SerializeField] private Button popupOpenButton;
 
-    private List<SkillSlotUI> slotUIs = new List<SkillSlotUI>();
+    private List<UISkillSlot> slotUIs = new List<UISkillSlot>();
 
     private void OnEnable()
     {
@@ -28,6 +28,7 @@ public class UISkillPage : UIPage
         passiveSkillButton.onClick.AddListener(ShowPassiveSkills);
         popupOpenButton.onClick.AddListener(()=>UIManager.Instance.PopupOpen<SkillEquipPopup>());
 
+        RefreshAll();
         LanguageManager.OnLanguageChanged += RefreshAll; 
     }
 
@@ -35,6 +36,7 @@ public class UISkillPage : UIPage
     {
         activeSkillButton.onClick.RemoveListener(ShowActiveSkills);
         passiveSkillButton.onClick.RemoveListener(ShowActiveSkills);
+        popupOpenButton.onClick.RemoveAllListeners();
 
         LanguageManager.OnLanguageChanged -= RefreshAll;
     }
@@ -60,7 +62,7 @@ public class UISkillPage : UIPage
         foreach (SkillData data in DataManager.Instance.GetAllSkillData())
         {
             GameObject obj = Instantiate(skillSlotPrefab, data.Type == SkillType.Active ? activeContentRoot : passiveContentRoot);
-            SkillSlotUI ui = obj.GetComponent<SkillSlotUI>();
+            UISkillSlot ui = obj.GetComponent<UISkillSlot>();
             ui.Init(data);
             slotUIs.Add(ui);
         }
@@ -73,7 +75,7 @@ public class UISkillPage : UIPage
     public void RefreshAll()
     {
         //언어 바뀔때 모든 스킬 슬롯 UI 새로고침
-        foreach (SkillSlotUI ui in slotUIs)
+        foreach (UISkillSlot ui in slotUIs)
         {
             ui.Refresh();
         }

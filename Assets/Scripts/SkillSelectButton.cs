@@ -11,20 +11,19 @@ public class SkillSelectButton : MonoBehaviour
     [SerializeField] private TextMeshProUGUI skillNameText;
     [SerializeField] private GameObject lockOverlay;
 
-    private SkillData skillData; //이 버튼이 담당하는 스킬
-
     public void SetSkill(SkillData skillData, Action<SkillData> onClick)
     {
         Button button = GetComponentInChildren<Button>();
 
         //어떤 스킬인지 기억하고, 아이콘 교체하고 전달반은 콜백을 실행함.
         //버튼은 클릭될 때 뭔가를 해야하는데 그걸 외부에서 정의할 수 있도록 함.
-        this.skillData = skillData;
         skillNameText.text = DataManager.Instance.GetLocalizedText(skillData.NameKey);
         skillIcon.sprite = DataManager.Instance.GetSpriteByKey(skillData.SkillIcon);
 
         lockOverlay.SetActive(SkillManager.Instance.IsUnlocked(skillData.SkillId) == false);
+        button.interactable = SkillManager.Instance.IsUnlocked(skillData.SkillId);
 
+        button.onClick.RemoveAllListeners(); 
         button.onClick.AddListener(() =>
         {
             //잠금 해제된 스킬만 클릭 이벤트를 실행함.
