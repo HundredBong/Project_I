@@ -27,6 +27,13 @@ public class ActiveSkillSlot : MonoBehaviour
 
     private bool isGlobalCooldown = false;
 
+    public bool IsGlobalCooldown
+    {
+        get { return isGlobalCooldown; } 
+    }
+
+    public float Cooldown => equippedSkill.Cooldown;
+
     //ActiveSkillPanel에 스킬을 사용했다고 알리는 용도
     //ActiveSkillSlot타입을 지정할 필요는 없지만 디버깅용으로, 어디서 호출한 콜백인지 알아보는 용도 등으로 쓰기위해 타입 지정
     public Action<ActiveSkillSlot> OnSkillExecuted;

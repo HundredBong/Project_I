@@ -8,23 +8,39 @@ public class UIAutoSkill : MonoBehaviour
 {
     [SerializeField] private Button autoSkillButton;
     [SerializeField] private TextMeshProUGUI autoSkillText;
+    [SerializeField] private ActiveSkillPanel activeSkillPanel;
 
     private bool autoSkillEnabled = false;
     private Coroutine autoSkillCoroutine;
     private WaitForSeconds wait;
 
 
-    private void Start()
+    private void Awake()
+    {
+        wait = new WaitForSeconds(0.2f);
+    }
+
+    private void OnEnable()
     {
         autoSkillButton.onClick.AddListener(ToggleAutoSkill);
-        wait = new WaitForSeconds(0.2f);    
+    }
+
+    private void OnDisable()
+    {
+        autoSkillButton.onClick.RemoveListener(ToggleAutoSkill);
+
+        if (autoSkillCoroutine != null)
+        {
+            StopCoroutine(autoSkillCoroutine);
+            autoSkillCoroutine = null;
+        }
     }
 
     private void ToggleAutoSkill()
     {
 
         autoSkillEnabled = !autoSkillEnabled;
-        autoSkillText.text = autoSkillEnabled ? "AUTO On" : "AUTO OFF";
+        autoSkillText.text = autoSkillEnabled ? "AUTO ON" : "AUTO OFF";
 
         if (autoSkillEnabled)
         {
@@ -40,7 +56,23 @@ public class UIAutoSkill : MonoBehaviour
     {
         while (true)
         {
+            yield return wait;
 
+            foreach (ActiveSkillSlot slot in activeSkillPanel.GetSlots())
+            {
+                if(slot.GetEquippedSkill() != null && slot.IsGlobalCooldown == false)
+                {
+                    bool success = slot.GetEquippedSkill().TryExecute(GameManager.Instance.player.gameObject);
+
+                    if (success)
+                    {
+                        //개별 스킬 쿨타임 적용 및 글로벌 쿨타임 적용
+                        slot.StartCooldown(slot.Cooldown);
+                        slot.OnSkillExecuted?.Invoke(slot);
+                        break;
+                    }
+                }
+            }
         }
     }
 

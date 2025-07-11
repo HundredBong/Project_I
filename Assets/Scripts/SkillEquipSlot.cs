@@ -22,8 +22,9 @@ public class SkillEquipSlot : MonoBehaviour
         removeButton.onClick.RemoveListener(ClearSkill);
     }
 
-    private void Start()
+    private void Awake()
     {
+        //기존 Start에서 Awake로 변경, SetSkill을 호출하기 전에 ClearSkill이 호출될 수 있음
         ClearSkill();
     }
 
