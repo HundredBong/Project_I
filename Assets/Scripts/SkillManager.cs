@@ -9,6 +9,8 @@ public class SkillManager : MonoBehaviour
     private Dictionary<SkillId, PlayerSkillState> skillStates = new Dictionary<SkillId, PlayerSkillState>();
     private SkillId[] equippedSkills = new SkillId[6];
 
+    public LayerMask targetMask;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)

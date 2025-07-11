@@ -24,7 +24,7 @@ public abstract class SkillBase
 
     public bool TryExecute(GameObject owner)
     {
-        if (IsReady == true)
+        if (IsReady == true && IsTargetInRange(owner) == true)
         {
             Execute(owner);
             lastUsedTime = Time.time;
@@ -47,4 +47,13 @@ public abstract class SkillBase
     //스킬 실행 로직, owner는 스킬을 사용하는 주체
     //지금은 플레이어만 스킬을 사용하지만, 추후 확장될 수도 있으므로 인자로 받도록 함
     public abstract void Execute(GameObject owner);
+
+    public bool IsTargetInRange(GameObject owner)
+    {
+        float range = 10f;//skillData.Range 없음, 추가해야 함 -> 응애 
+        LayerMask mask = SkillManager.Instance.targetMask;
+
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(owner.transform.position, range, mask);
+        return hitColliders.Length > 0;
+    }
 }

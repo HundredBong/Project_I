@@ -119,7 +119,15 @@ public class ActiveSkillSlot : MonoBehaviour
             }
         }
 
-        cooldownText.text = cooldownRemain > 0f ? $"{cooldownRemain:F1}" : "";
+        if (equippedSkill != null && equippedSkill.IsTargetInRange(GameManager.Instance.player.gameObject) == false)
+        {
+            //범위 밖에있으면 쿨타임 텍스트 대신 다른 텍스트 출력
+            cooldownText.text = "Out of Range";
+        }
+        else
+        {
+            cooldownText.text = cooldownRemain > 0f ? $"{cooldownRemain:F1}" : "";
+        }
     }
 
     

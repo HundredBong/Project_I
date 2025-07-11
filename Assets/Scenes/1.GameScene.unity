@@ -12378,6 +12378,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoSkillButton: {fileID: 1283439383}
   autoSkillText: {fileID: 915240093}
+  activeSkillPanel: {fileID: 1867187674}
 --- !u!1 &677700424
 GameObject:
   m_ObjectHideFlags: 0
