@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Transactions;
 using UnityEngine;
 
 public class ProjectileLightning : Projectile
@@ -54,6 +55,9 @@ public class ProjectileLightning : Projectile
 
         if (other.TryGetComponent<Enemy>(out Enemy enemy) == true && hasHit == false)
         {
+            //파티클 재생
+            ObjectPoolManager.Instance.particlePool.GetPrefab<PooledParticle>(ParticleId.Lightning).Play(other.transform.position);
+
             //플레이어 스킬 정보 가져오기
             PlayerSkillState state = SkillManager.Instance.GetSkillState(skillData.SkillId);
             //여기서 GameManager.Instance.stats.GetDamage()같은걸로 스킬 개별이 아닌 플레이어 대미지 기반 스킬도 만들 수 있음 

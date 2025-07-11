@@ -28,7 +28,7 @@ public enum StatusEffectType { ElectricShock }
 
 public enum ProjectileId { Lightning, }
 
-public enum ParticleId { ClickEffect, }
+public enum ParticleId { ClickEffect, Lightning}
 
 public enum ShopCategory { Summon, Normal, Skill, Score, Package, Cash }
 
