@@ -2702,6 +2702,7 @@ GameObject:
   - component: {fileID: 340531714638236540}
   - component: {fileID: 7199234014035667212}
   - component: {fileID: 4790093888645126014}
+  - component: {fileID: -5330824620745035584}
   m_Layer: 0
   m_Name: Skeleton
   m_TagString: Untagged
@@ -2782,6 +2783,8 @@ MonoBehaviour:
   attackRange: 0
   attackInterval: 0
   expValue: 1
+  goldValue: 0
+  chaseRange: 0
 --- !u!61 &4790093888645126014
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2827,6 +2830,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &-5330824620745035584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4226252806443906045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd0e56bebfa7a04499f5fcb2a3842a83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4410161974239707527
 GameObject:
   m_ObjectHideFlags: 0

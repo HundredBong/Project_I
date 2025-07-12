@@ -17,8 +17,12 @@ public class Player : MonoBehaviour
     private Vector3 originScale;
     private Vector3 flipScale;
 
+    public bool IsDead { get; set; }
+
     private void Awake()
     {
+        IsDead = false;
+
         anim = GetComponent<Animator>();
         stats = GetComponent<PlayerStats>();
 
@@ -181,6 +185,18 @@ public class Player : MonoBehaviour
         {
             Gizmos.color = Color.red;
             Gizmos.DrawLine(transform.position, targetEnemy.transform.position);
+        }
+    }
+
+    public void TakeDamage(float damage)
+    {
+
+        stats.TakeDamage(damage); //내부 코드 -> health -= damage
+
+        if (stats.health <= 0)
+        {
+            IsDead = true;
+            //상태머신 추가하면 ChangeState(StateType.Dead)
         }
     }
 }

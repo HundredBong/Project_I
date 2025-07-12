@@ -454,6 +454,11 @@ public class PlayerStats : MonoBehaviour
         return true;
     }
 
+    public void TakeDamage(float damage)
+    {
+        health -= damage;
+    }
+
     [ContextMenu("다이아부자")]
     private void Test()
     {

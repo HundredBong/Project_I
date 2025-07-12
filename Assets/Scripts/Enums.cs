@@ -36,4 +36,4 @@ public enum SummonSubCategory { Weapon, Armor, Necklace, Skill }
 
 public enum RewardType { Item, Currency }
 
-public enum StateType { Idle, Attack, Chase, Dead }
+public enum StateType { None, Idle, Attack, Chase, Dead }

@@ -31,13 +31,19 @@ public class EnemyIdleState : IState
 
     public void Update()
     {
-        float distanceToPlayer = Vector2.Distance(owner.transform.position, GameManager.Instance.player.transform.position);
+        //Debug.Log("Enemy Idle State Update");  
+        float distanceToPlayer = Vector2.Distance(owner.transform.position, owner.enemy.PlayerReference.transform.position);
 
         //플레이어와의 거리가 추적 범위 이내인지 확인
         if (distanceToPlayer <= owner.enemy.chaseRange)
         {
             //플레이어가 공격 범위에 들어오면 공격 상태로 전이
             owner.ChangeState(StateType.Chase);
+        }
+
+        if (owner.enemy.health <= 0)
+        {
+            owner.ChangeState(StateType.Dead);
         }
     }
 }

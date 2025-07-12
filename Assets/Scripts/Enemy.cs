@@ -25,23 +25,43 @@ public class Enemy : MonoBehaviour, IPooledObject
 
     public GameObject prefabReference { get; set; }
 
-    public Animator animator { get; private set; }
+    public Animator Animator { get; private set; }
+
+    public Player PlayerReference { get; private set; }
+
+    private EnemyStateMachine stateMachine;
 
     private void Awake()
     {
-        animator = GetComponent<Animator>();
+        PlayerReference = GameManager.Instance.player;
 
-        if (animator == null)
+        if (PlayerReference == null)
+        {
+            Debug.LogError("[Enemy] Player가 Null임");
+        }
+
+        Animator = GetComponent<Animator>();
+
+        if (Animator == null)
         {
             Debug.LogError("[Enemy] Animator 컴포넌트가 없음.");
+        }
+
+        stateMachine = GetComponent<EnemyStateMachine>();
+
+        if(stateMachine == null)
+        {
+            Debug.LogError("[Enemy] EnemyStateMachine 컴포넌트가 없음.");
         }
     }
 
 
     private void OnEnable()
     {
-        //유니태스크 쓰니 OnDisable 순서문제인지는 몰라도 isDead를 Init안에서 하니 안먹음, 위치 옮김
-        isDead = false;
+        stateMachine?.ChangeState(StateType.Idle);
+
+        ////유니태스크 쓰니 OnDisable 순서문제인지는 몰라도 isDead를 Init안에서 하니 안먹음, 위치 옮김
+        //isDead = false;
 
         Initialize();
 
