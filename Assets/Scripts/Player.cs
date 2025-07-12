@@ -4,12 +4,9 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    //이 클래스는 변수에 따라 행동만 하도록, 변수는 다른곳에서 불러서 쓰기
-
-    //Private Field, 원활한 디버그를 위해 public으로 해놓고 추후 전부 private으로 바꿀거임
     private Enemy targetEnemy;
     private float distanceToTarget;
-    private Animator anim;
+
     private bool isAttacking;
     private bool isFlip;
 
@@ -19,11 +16,13 @@ public class Player : MonoBehaviour
 
     public bool IsDead { get; set; }
 
+    public Animator Animator { get; private set; }
+
     private void Awake()
     {
         IsDead = false;
 
-        anim = GetComponent<Animator>();
+        Animator = GetComponent<Animator>();
         stats = GetComponent<PlayerStats>();
 
         originScale = transform.localScale;
@@ -42,17 +41,16 @@ public class Player : MonoBehaviour
 
         if (targetEnemy != null)
         {
-            TryTeleport(); //추가
+            TryTeleport(); 
             Move();
             TryStartAttack();
             FlipSprite();
-            //Debug.Log(targetEnemy.name);
         }
         else
         {
-            anim.SetBool("1_Move", false);
-            anim.SetBool("2_Attack", false);
-            anim.speed = 1;
+            Animator.SetBool("1_Move", false);
+            Animator.SetBool("2_Attack", false);
+            Animator.speed = 1;
         }
     }
 
@@ -107,11 +105,11 @@ public class Player : MonoBehaviour
         if (distanceToTarget <= stats.chaseRange && isAttacking == false)
         {
             transform.position = Vector3.MoveTowards(transform.position, targetEnemy.transform.position, stats.moveSpeed * Time.deltaTime);
-            anim.SetBool("1_Move", true);
+            Animator.SetBool("1_Move", true);
         }
         else
         {
-            anim.SetBool("1_Move", false);
+            Animator.SetBool("1_Move", false);
         }
     }
     private void TryTeleport()
@@ -121,11 +119,10 @@ public class Player : MonoBehaviour
         {
             //텔레포트 위치는 타겟과의 거리 유지하면서 앞쪽으로
             Vector3 direction = (targetEnemy.transform.position - transform.position).normalized;
-            //TODO : 계산식이 무슨 뜻인지 알아보기
             Vector3 newPos = targetEnemy.transform.position - direction * stats.attackRange * 0.8f; //공격범위 조금 안쪽
 
             transform.position = newPos;
-            //Debug.Log("텔레포트");
+            Debug.LogError("텔레포트");
         }
     }
     private void TryStartAttack()
@@ -134,14 +131,14 @@ public class Player : MonoBehaviour
         if (distanceToTarget <= stats.attackRange && targetEnemy.isDead == false)
         {
             isAttacking = true;
-            anim.SetBool("2_Attack", true);
-            anim.speed = anim.speed = stats.attackSpeed;
+            Animator.SetBool("2_Attack", true);
+            Animator.speed = Animator.speed = stats.attackSpeed;
         }
         else
         {
             isAttacking = false;
-            anim.SetBool("2_Attack", false);
-            anim.speed = 1;
+            Animator.SetBool("2_Attack", false);
+            Animator.speed = 1;
         }
     }
 
@@ -180,10 +177,9 @@ public class Player : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        //저는 기즈모 그리는게 제일 재밌어요 
         if (targetEnemy != null)
         {
-            Gizmos.color = Color.red;
+            Gizmos.color = Color.blue;
             Gizmos.DrawLine(transform.position, targetEnemy.transform.position);
         }
     }
@@ -192,11 +188,10 @@ public class Player : MonoBehaviour
     {
 
         stats.TakeDamage(damage); //내부 코드 -> health -= damage
-
-        if (stats.health <= 0)
-        {
-            IsDead = true;
-            //상태머신 추가하면 ChangeState(StateType.Dead)
-        }
+        //if (stats.health <= 0)
+        //{
+        //    //IsDead = true;
+        //    //상태머신 추가하면 ChangeState(StateType.Dead)
+        //}
     }
 }

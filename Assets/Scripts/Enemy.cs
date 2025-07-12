@@ -7,7 +7,7 @@ public class Enemy : MonoBehaviour, IPooledObject
 {
     [Header("기본 데이터")]
     [SerializeField] private EnemyId enemyId;
-    public bool isDead = true;
+    public bool isDead = false;
 
     //private필드, 원활한 디버깅을 위해 public으로 함
     //TODO : private으로 변경
@@ -23,6 +23,8 @@ public class Enemy : MonoBehaviour, IPooledObject
     public float goldValue;
     public float chaseRange;
 
+    private bool isFlip;
+
     public GameObject prefabReference { get; set; }
 
     public Animator Animator { get; private set; }
@@ -31,9 +33,16 @@ public class Enemy : MonoBehaviour, IPooledObject
 
     private EnemyStateMachine stateMachine;
 
+    private Vector3 originScale;
+    private Vector3 flipScale;
+
     private void Awake()
     {
         PlayerReference = GameManager.Instance.player;
+
+        originScale = transform.localScale;
+        Vector3 flipVector = new Vector3(-1f, 1f, 1f);
+        flipScale = Vector3.Scale(transform.localScale, flipVector);
 
         if (PlayerReference == null)
         {
@@ -53,15 +62,14 @@ public class Enemy : MonoBehaviour, IPooledObject
         {
             Debug.LogError("[Enemy] EnemyStateMachine 컴포넌트가 없음.");
         }
+
+
     }
 
 
     private void OnEnable()
     {
-        stateMachine?.ChangeState(StateType.Idle);
-
-        ////유니태스크 쓰니 OnDisable 순서문제인지는 몰라도 isDead를 Init안에서 하니 안먹음, 위치 옮김
-        //isDead = false;
+        isDead = false;
 
         Initialize();
 
@@ -77,10 +85,15 @@ public class Enemy : MonoBehaviour, IPooledObject
 
     private void OnDisable()
     {
-        //이거 없으니 풀에서 나온 비활성화된 오브젝트가 공격당함
-        //근데 플레이어에서 activeInHierarchy == false일 때 공격 안하면 되지 않나
-        //아니지, 나중에 Die 애니메이션 작업할 때 필요함
         isDead = true;
+    }
+
+    private void Update()
+    {
+        if (PlayerReference != null)
+        {
+            FlipSprite();
+        }
     }
 
     private async void Initialize()
@@ -120,24 +133,6 @@ public class Enemy : MonoBehaviour, IPooledObject
     public void TakeDamage(float damage)
     {
         health -= damage;
-
-        //Debug.Log($"[Enemy] {damage}의 피해를 받음, 남은 체력 : {health}");
-
-        if (health <= 0)
-        {
-            Die();
-        }
-    }
-
-    private void Die()
-    {
-        GameManager.Instance.player.GetExp(expValue);
-        GameManager.Instance.player.GetGold(goldValue);
-        GameManager.Instance.enemyList.Remove(this);
-        StageManager.Instance.NotifyKill();
-
-        isDead = true;
-        ObjectPoolManager.Instance.enemyPool.Return(this);
     }
 
     private void OnDrawGizmos()
@@ -162,5 +157,12 @@ public class Enemy : MonoBehaviour, IPooledObject
     public void OnAttackEnd()
     {
         stateMachine?.CurrentAttackState?.OnAttackEnd();
+    }
+
+    private void FlipSprite()
+    {
+        isFlip = PlayerReference?.transform.position.x - transform.position.x > 0 ? true : false;
+
+        transform.localScale = isFlip ? flipScale : originScale;
     }
 }

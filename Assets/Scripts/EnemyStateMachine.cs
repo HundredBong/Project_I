@@ -6,7 +6,7 @@ using UnityEngine;
 public class EnemyStateMachine : MonoBehaviour
 {
     private IState currentState;
-    [SerializeField] private StateType currentKey = StateType.None;
+    [SerializeField] private StateType currentKey = StateType.None; //디버깅용 SerializedField
 
     public Enemy enemy { get; private set; }
 
@@ -68,7 +68,7 @@ public class EnemyStateMachine : MonoBehaviour
     {
         get
         {
-            return currentState as EnemyAttackState;
+            return currentState as EnemyAttackState; //IState 상속
         }
     }
 
