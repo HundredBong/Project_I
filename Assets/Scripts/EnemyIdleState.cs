@@ -34,10 +34,9 @@ public class EnemyIdleState : IState
         //Debug.Log("Enemy Idle State Update");  
         float distanceToPlayer = Vector2.Distance(owner.transform.position, owner.enemy.PlayerReference.transform.position);
 
-        //플레이어와의 거리가 추적 범위 이내인지 확인
-        if (distanceToPlayer <= owner.enemy.chaseRange)
+        //플레이어와의 거리가 추적 범위 이내인지 확인, 플레이어가 Dead상태가 아니라면 추적 상태로 전이
+        if (distanceToPlayer <= owner.enemy.chaseRange && owner.enemy.PlayerReference.IsDead == false)
         {
-            //플레이어가 공격 범위에 들어오면 공격 상태로 전이
             owner.ChangeState(StateType.Chase);
         }
 

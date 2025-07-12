@@ -6,7 +6,7 @@ using UnityEngine;
 public class EnemyStateMachine : MonoBehaviour
 {
     private IState currentState;
-    private StateType currentKey = StateType.None;
+    [SerializeField] private StateType currentKey = StateType.None;
 
     public Enemy enemy { get; private set; }
 
@@ -62,6 +62,14 @@ public class EnemyStateMachine : MonoBehaviour
             StateType.Dead => new EnemyDeadState(this),
             _ => null
         };
+    }
+
+    public EnemyAttackState CurrentAttackState
+    {
+        get
+        {
+            return currentState as EnemyAttackState;
+        }
     }
 
     //[ContextMenu("Å×½ºÆ®")]

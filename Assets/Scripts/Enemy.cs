@@ -139,4 +139,28 @@ public class Enemy : MonoBehaviour, IPooledObject
         isDead = true;
         ObjectPoolManager.Instance.enemyPool.Return(this);
     }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, chaseRange);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
+    }
+
+    public void OnAttackStart()
+    {
+        stateMachine?.CurrentAttackState?.OnAttackHit();
+    }
+
+    public void OnAttackHit()
+    {
+        stateMachine?.CurrentAttackState?.OnAttackHit();
+    }
+
+    public void OnAttackEnd()
+    {
+        stateMachine?.CurrentAttackState?.OnAttackEnd();
+    }
 }
