@@ -35,3 +35,5 @@ public enum ShopCategory { Summon, Normal, Skill, Score, Package, Cash }
 public enum SummonSubCategory { Weapon, Armor, Necklace, Skill }
 
 public enum RewardType { Item, Currency }
+
+public enum StateType { Idle, Attack, Chase, Dead }

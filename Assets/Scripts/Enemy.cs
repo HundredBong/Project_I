@@ -21,9 +21,22 @@ public class Enemy : MonoBehaviour, IPooledObject
     public float attackInterval;
     public float expValue = 1f;
     public float goldValue;
-
+    public float chaseRange;
 
     public GameObject prefabReference { get; set; }
+
+    public Animator animator { get; private set; }
+
+    private void Awake()
+    {
+        animator = GetComponent<Animator>();
+
+        if (animator == null)
+        {
+            Debug.LogError("[Enemy] Animator 컴포넌트가 없음.");
+        }
+    }
+
 
     private void OnEnable()
     {
@@ -80,6 +93,7 @@ public class Enemy : MonoBehaviour, IPooledObject
         attackInterval = enemyData.AttackInterval;
         expValue = enemyData.EXP * stageData.RewardRate;
         goldValue = enemyData.Gold * stageData.RewardRate;
+        chaseRange = enemyData.ChaseRange;
 
     }
 

@@ -226,6 +226,7 @@ public class DataManager : MonoBehaviour
                 AttackInterval = float.Parse(tokens[7]),
                 EXP = float.Parse(tokens[8]),
                 Gold = float.Parse(tokens[9]),
+                ChaseRange = float.Parse(tokens[10]),
             };
 
             enemyDataTable[data.Id] = data;
@@ -317,7 +318,7 @@ public class DataManager : MonoBehaviour
                 StatucChance = float.Parse(tokens[18]),
                 HitCount = int.Parse(tokens[19]),
                 TargetCount = int.Parse(tokens[20]),
-                isUnlocked = false
+                //isUnlocked = false
             };
             skillDataTable[data.SkillId] = data;
         }
@@ -854,6 +855,7 @@ public class EnemyData
     public float AttackInterval;
     public float EXP;
     public float Gold;
+    public float ChaseRange;
 }
 
 [System.Serializable]
@@ -895,7 +897,9 @@ public class SkillData
     public float StatucChance;
     public int HitCount;
     public int TargetCount;
-    public bool isUnlocked;
+    //public bool isUnlocked; //여긴 불변데이터 모아놓는 곳인데용, 이게 왜 들어갔을까, PlayerSkillState에서 관리함
+    //추후 추가해야 할거 : 스킬 범위
+   
 }
 
 public class LocalizedText
