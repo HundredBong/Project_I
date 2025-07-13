@@ -2701,10 +2701,10 @@ GameObject:
   - component: {fileID: 5119803208274705187}
   - component: {fileID: 340531714638236540}
   - component: {fileID: 7199234014035667212}
-  - component: {fileID: 4657255894860469725}
-  - component: {fileID: -7810446789595077126}
+  - component: {fileID: 4790093888645126014}
+  - component: {fileID: -5330824620745035584}
   m_Layer: 0
-  m_Name: Slime
+  m_Name: Skeleton_Knight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2719,7 +2719,7 @@ Transform:
   m_GameObject: {fileID: 4226252806443906045}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.7, y: -0.1, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -2785,7 +2785,7 @@ MonoBehaviour:
   expValue: 1
   goldValue: 0
   chaseRange: 0
---- !u!61 &4657255894860469725
+--- !u!61 &4790093888645126014
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2817,7 +2817,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.3}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -2830,7 +2830,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &-7810446789595077126
+--- !u!114 &-5330824620745035584
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2842,6 +2842,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd0e56bebfa7a04499f5fcb2a3842a83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentKey: 0
 --- !u!1 &4410161974239707527
 GameObject:
   m_ObjectHideFlags: 0

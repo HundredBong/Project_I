@@ -32,7 +32,7 @@ public abstract class SkillBase
         }
         else
         {
-            Debug.Log($"[SkillBase] {skillData.SkillId} 쿨타임 중, 남은 시간 : {GetRemainingCooldown():F2}초");
+            //Debug.Log($"[SkillBase] {skillData.SkillId} 쿨타임 중, 남은 시간 : {GetRemainingCooldown():F2}초");
             return false;
         }
     }

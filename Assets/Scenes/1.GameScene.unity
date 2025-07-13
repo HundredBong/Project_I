@@ -22339,6 +22339,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8a0025038fcd1d43880bb1aed020c71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyPrefabs:
+  - id: 0
+    prefab: {fileID: 4226252806443906045, guid: cb4b87fc6b5645c48a273b3205420324, type: 3}
+  - id: 1
+    prefab: {fileID: 2392089205412942775, guid: bab5a3a5d09530547b571887ce065e04, type: 3}
+  - id: 2
+    prefab: {fileID: 7549677768757773776, guid: 763d0cd6374800c4fa6ef36f6f268f82, type: 3}
+  - id: 3
+    prefab: {fileID: 5672145496193359915, guid: af3b5c6ebe98d244385da4ccf5188195, type: 3}
 --- !u!1 &1164026288
 GameObject:
   m_ObjectHideFlags: 0
@@ -47711,6 +47720,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f0e01c3d83a4e447b8dd7e86ccb8113, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  targetLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!114 &7839719640084920752
 MonoBehaviour:
   m_ObjectHideFlags: 0

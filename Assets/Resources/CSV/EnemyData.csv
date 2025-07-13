@@ -1,2 +1,5 @@
 Id,Type,HP,ATK,DEF,SPD,Range,AttackInterval,exp,Gold,ChaseRange
-Skeleton,Melee,100,10,5,3,1.5,1.2,1,10,5
+Skeleton_Knight,Melee,100,10,5,3,1.5,1,1,10,5
+Skeleton_Archer,Range,50,8,3,3,4.5,1,1,10,5
+Skeleton_Warrior,Melee,80,15,8,3,1.5,1,1,10,5
+Skeleton_Shield,Melee,150,5,10,3,1.5,1,1,10,5

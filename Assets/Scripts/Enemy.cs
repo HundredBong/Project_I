@@ -11,7 +11,7 @@ public class Enemy : MonoBehaviour, IPooledObject
 
     //private필드, 원활한 디버깅을 위해 public으로 함
     //TODO : private으로 변경
-    public EnemyType enemyType;
+    //public EnemyType enemyType;
     public float health;
     public float maxHealth;
     public float damage;

@@ -4,14 +4,8 @@ using UnityEngine;
 
 public class EnemyPool : GenericPoolManager<Enemy>
 {
-    //Enemy 전용 풀링 시스템
-    //EnemyPool을 미리 초기화해두고 , EnemyId를 기반으로 프리팹을 로드하여 관리함
+    [SerializeField] private List<EnemyPrefabData> enemyPrefabs;
 
-    private HashSet<EnemyId> loadedEnemyIds = new HashSet<EnemyId>(); //로드된 EnemyId를 저장하여 중복 로드를 방지
-    //이게 꼭 있어야 하나, 밑에 딕셔너리도 ContainsKey로 확인할 수 있는데
-
-    //실제 프리팹 객체 매핑용 캐시, 없으면 SpawnManager에서 로드할 때마다 Resources.Load를 호출해야함
-    //EnemyId가 어떤 프리팹을 가리키는지 매핑하는 딕셔너리
     private Dictionary<EnemyId, GameObject> prefabCache = new Dictionary<EnemyId, GameObject>();
 
     private void Awake()
@@ -44,6 +38,7 @@ public class EnemyPool : GenericPoolManager<Enemy>
         {
             foreach (var enemy in stack)
             {
+
                 enemy.isDead = true;
             }
         }
@@ -63,37 +58,20 @@ public class EnemyPool : GenericPoolManager<Enemy>
 
     public void InitializePool(int preloadCount = 30)
     {
-        //데이터매니저의 스테이지 정보에 있는 Enemy만 추적
-        foreach (KeyValuePair<int,StageData> stageEntry in DataManager.Instance.stageDataTable)
+        foreach (EnemyPrefabData data in enemyPrefabs)
         {
-            StageData stageData = stageEntry.Value;
-            
-            //StageData내부의 EnemyId리스트 순회
-            foreach (EnemyId enemyId in stageData.Enemies)
+            if (data.prefab == null)
             {
-                //중복된 EnemyId는 무시
-                if (loadedEnemyIds.Contains(enemyId)) { continue; }
-
-
-                //프리팹 로드
-                GameObject enemyPrefab = Resources.Load<GameObject>($"Prefabs/Enemies/{enemyId}");
-
-                if (enemyPrefab == null)
-                {
-                    Debug.LogError($"[EnemyPool] Enemy 프리팹 로드 실패함, {enemyId}");
-                    continue;
-                }
-
-                prefabCache[enemyId] = enemyPrefab; //프리팹 캐시에 저장, SpawnManager에서 사용 가능
-
-                //preloadCount만큼 미리 프리로드
-                Preload(enemyPrefab, preloadCount);
-
-                //중복 방지용 해쉬셋 저장
-                loadedEnemyIds.Add(enemyId);
+                Debug.LogWarning($"[EnemyPool] {data.id} 프리팹이 null임");
+                continue;
             }
+
+            //이미 로드한 프리팹은 넘기기
+            if(prefabCache.ContainsKey(data.id)) { continue; }
+
+            prefabCache[data.id] = data.prefab;
+            Preload(data.prefab, preloadCount);
         }
-        Debug.Log($"[EnemyPool] Enemy 풀 초기화 됨, {loadedEnemyIds.Count}종류");
     }
 
     public GameObject GetPrefab(EnemyId enemyId)
@@ -108,4 +86,11 @@ public class EnemyPool : GenericPoolManager<Enemy>
             return null;
         }
     }
+}
+
+[System.Serializable]
+public class EnemyPrefabData
+{
+    public EnemyId id;
+    public GameObject prefab;
 }

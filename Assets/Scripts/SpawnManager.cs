@@ -39,7 +39,7 @@ public class SpawnManager : MonoBehaviour
 
             if (prefab == null)
             {
-                Debug.LogError($"[SpawnManager] 프리팹 로드 실패: Prefabs/Enemies/{enemyId}");
+                Debug.LogError($"[SpawnManager] 프리팹 로드 실패 : Prefabs/Enemies/{enemyId}");
                 continue; //null이면 생성하지 않고 다음 반복 진행
             }
 

@@ -259,7 +259,9 @@ public class DataManager : MonoBehaviour
             int stageId = int.Parse(tokens[0]);
 
             string[] enemyIds = tokens[3].Trim().Split(';');
+
             List<EnemyId> enemyIdList = new List<EnemyId>();
+
             for (int h = 0; h < enemyIds.Length; h++)
             {
                 enemyIdList.Add(Enum.Parse<EnemyId>(enemyIds[h].Trim()));

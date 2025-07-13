@@ -17,7 +17,7 @@ public class EnemyStateMachine : MonoBehaviour
 
     private void OnEnable()
     {
-        Debug.Log("EnemyStateMachine OnEnable 진입"); 
+        //Debug.Log("EnemyStateMachine OnEnable 진입"); 
         ChangeState(StateType.Idle);
     }
 
@@ -30,7 +30,7 @@ public class EnemyStateMachine : MonoBehaviour
     //상태 전이 담당, 이전 상태의 OnExit호출, 새로운 상태를 만들고 OnEnter 호출
     public void ChangeState(StateType nextState)
     {
-        Debug.Log($"ChangeState 진입 : {nextState}");
+        //Debug.Log($"ChangeState 진입 : {nextState}");
 
         //전이할 상태가 현재 상태와 같다면 아무것도 하지 않음
         if (currentKey == nextState)

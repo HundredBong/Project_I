@@ -1,6 +1,6 @@
 public enum EnemyType { None = -1, Melee = 0, Range = 1, Boss = 2 } //None = -1 : 디폴트값으로 사용하기 좋음, 나중에 설정이 안된 상태 체크할 때 유용함.
 
-public enum EnemyId { Skeleton, Slime, Bat, Goblin }
+public enum EnemyId { Skeleton_Knight, Skeleton_Archer, Skeleton_Warrior, Skeleton_Shield }
 
 public enum StatUpgradeType { Attack, Health, AttackSpeed, MoveSpeed, }
 
@@ -28,7 +28,7 @@ public enum StatusEffectType { ElectricShock }
 
 public enum ProjectileId { Lightning, }
 
-public enum ParticleId { ClickEffect, Lightning}
+public enum ParticleId { ClickEffect, Lightning }
 
 public enum ShopCategory { Summon, Normal, Skill, Score, Package, Cash }
 
