@@ -10,7 +10,7 @@ public class UIAutoSkill : MonoBehaviour
     [SerializeField] private TextMeshProUGUI autoSkillText;
     [SerializeField] private ActiveSkillPanel activeSkillPanel;
 
-    private bool autoSkillEnabled = false;
+    private bool autoSkillEnabled;
     private Coroutine autoSkillCoroutine;
     private WaitForSeconds wait;
 
@@ -36,11 +36,28 @@ public class UIAutoSkill : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        autoSkillEnabled = LocalSetting.LoadAutoSkillActivate();
+
+        if (autoSkillEnabled)
+        {
+            if (autoSkillCoroutine != null)
+            {
+                StopCoroutine(autoSkillCoroutine);
+                autoSkillCoroutine = null;
+            }
+            autoSkillText.text = "AUTO ON";
+            autoSkillCoroutine = StartCoroutine(AutoSkillCoroutine());
+        }
+    }
+
     private void ToggleAutoSkill()
     {
-
         autoSkillEnabled = !autoSkillEnabled;
         autoSkillText.text = autoSkillEnabled ? "AUTO ON" : "AUTO OFF";
+
+        LocalSetting.SaveAutoSkillActivate(autoSkillEnabled);
 
         if (autoSkillEnabled)
         {
@@ -49,6 +66,7 @@ public class UIAutoSkill : MonoBehaviour
         else
         {
             StopCoroutine(autoSkillCoroutine);
+            autoSkillCoroutine = null;
         }
     }
 
@@ -60,7 +78,7 @@ public class UIAutoSkill : MonoBehaviour
 
             foreach (ActiveSkillSlot slot in activeSkillPanel.GetSlots())
             {
-                if(slot.GetEquippedSkill() != null && slot.IsGlobalCooldown == false)
+                if (slot.GetEquippedSkill() != null && slot.IsGlobalCooldown == false)
                 {
                     bool success = slot.GetEquippedSkill().TryExecute(GameManager.Instance.player.gameObject);
 

@@ -4,26 +4,37 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private Enemy targetEnemy;
-    private float distanceToTarget;
+
+
 
     private bool isAttacking;
     private bool isFlip;
 
-    private PlayerStats stats;
+
     private Vector3 originScale;
     private Vector3 flipScale;
 
     public bool IsDead { get; set; }
 
+    public Enemy TargetEnemy { get; private set; }
+
     public Animator Animator { get; private set; }
+
+    public float DistanceToTarget { get; private set; }
+
+    public PlayerStats Stat { get; private set; }
+
+    public LayerMask targetLayerMask;
+
+    private PlayerStateMachine stateMachine;
 
     private void Awake()
     {
         IsDead = false;
 
         Animator = GetComponent<Animator>();
-        stats = GetComponent<PlayerStats>();
+        Stat = GetComponent<PlayerStats>();
+        stateMachine = GetComponent<PlayerStateMachine>();
 
         originScale = transform.localScale;
         Vector3 flipVector = new Vector3(-1f, 1f, 1f);
@@ -32,162 +43,103 @@ public class Player : MonoBehaviour
 
     private void OnEnable()
     {
-        stats.health = stats.maxHealth;
+        Stat.health = Stat.maxHealth;
     }
 
     private void Update()
     {
-        UpdateTarget();
-
-        if (targetEnemy != null)
+        if (TargetEnemy != null)
         {
-            TryTeleport(); 
-            Move();
-            TryStartAttack();
             FlipSprite();
         }
-        else
-        {
-            Animator.SetBool("1_Move", false);
-            Animator.SetBool("2_Attack", false);
-            Animator.speed = 1;
-        }
-    }
 
-    private void UpdateTarget()
-    {
-        //이미 타겟이 있고, 살아있다면 그대로 유지
-        if (targetEnemy != null)
-        {
-            if (targetEnemy.isDead == false)
-            {
-                distanceToTarget = Vector3.Distance(transform.position, targetEnemy.transform.position);
-
-                return;
-            }
-        }
-
-        //타겟이 없거나 죽었을 경우 새 타겟 찾기
-        float shortest = float.MaxValue;
+        float shortestDistance = float.MaxValue;
         Enemy closestEnemy = null;
 
         foreach (Enemy enemy in GameManager.Instance.enemyList)
         {
-            if (enemy == null || enemy.isDead == true) continue;
-
-            float distance = Vector3.Distance(transform.position, enemy.transform.position);
-
-            //현재 거리보다 test가 크다면 
-            if (distance < shortest)
+            if (enemy == null || enemy.isDead)
             {
-                //test를 현재 거리로 설정함. 추후 반복문 돌다가 더 짧은거리가 있으면 그걸 타겟으로 따라가게 됨.
-                shortest = distance;
+                continue;
+            }
+
+            float distance = Vector2.Distance(transform.position, enemy.transform.position);
+
+            if (distance < shortestDistance)
+            {
+                shortestDistance = distance;
                 closestEnemy = enemy;
             }
         }
 
-        targetEnemy = closestEnemy;
-
-        if (targetEnemy != null)
-        {
-            distanceToTarget = Vector3.Distance(transform.position, targetEnemy.transform.position);
-        }
-        else
-        {
-            distanceToTarget = Mathf.Infinity;
-        }
-
+        TargetEnemy = closestEnemy;
+        DistanceToTarget = shortestDistance;
     }
 
-    private void Move()
+    public void OnAttackStart()
     {
-        //타겟까지의 거리가 추적 가능한 거리라면, 적이 충분히 가깝다면 이동함
-        if (distanceToTarget <= stats.chaseRange && isAttacking == false)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, targetEnemy.transform.position, stats.moveSpeed * Time.deltaTime);
-            Animator.SetBool("1_Move", true);
-        }
-        else
-        {
-            Animator.SetBool("1_Move", false);
-        }
-    }
-    private void TryTeleport()
-    {
-        //타겟까지의 거리가 추적가능한 범위를 벗어나면 
-        if (distanceToTarget > stats.chaseRange)
-        {
-            //텔레포트 위치는 타겟과의 거리 유지하면서 앞쪽으로
-            Vector3 direction = (targetEnemy.transform.position - transform.position).normalized;
-            Vector3 newPos = targetEnemy.transform.position - direction * stats.attackRange * 0.8f; //공격범위 조금 안쪽
-
-            transform.position = newPos;
-            Debug.LogError("텔레포트");
-        }
-    }
-    private void TryStartAttack()
-    {
-        //타겟까지의 거리가 공격 가능한 범위 내라면
-        if (distanceToTarget <= stats.attackRange && targetEnemy.isDead == false)
-        {
-            isAttacking = true;
-            Animator.SetBool("2_Attack", true);
-            Animator.speed = Animator.speed = stats.attackSpeed;
-        }
-        else
-        {
-            isAttacking = false;
-            Animator.SetBool("2_Attack", false);
-            Animator.speed = 1;
-        }
+        stateMachine?.CurrentAttackState?.OnAttackStart();
     }
 
-
-    public void Attack()
+    public void OnAttackEnd()
     {
-        //Attack 애니메이션의 이벤트로 실행됨
+        stateMachine?.CurrentAttackState?.OnAttackEnd();
+    }
 
-        if (targetEnemy != null && !targetEnemy.isDead)
-        {
-            targetEnemy.TakeDamage(stats.damage);
-
-            if (targetEnemy.isDead)
-            {
-                isAttacking = false;
-            }
-        }
+    public void OnAttackHit()
+    {
+        stateMachine?.CurrentAttackState?.OnAttackHit();
     }
 
     private void FlipSprite()
     {
-        isFlip = targetEnemy.transform.position.x - transform.position.x > 0 ? true : false;
+        isFlip = TargetEnemy.transform.position.x - transform.position.x > 0 ? true : false;
 
         transform.localScale = isFlip ? flipScale : originScale;
     }
 
     public void GetExp(float exp)
     {
-        stats.GetExp(exp);
+        Stat.GetExp(exp);
     }
 
     public void GetGold(float gold)
     {
-        stats.GetGold(gold);
+        Stat.GetGold(gold);
     }
 
     private void OnDrawGizmos()
     {
-        if (targetEnemy != null)
+        if (TargetEnemy != null)
         {
             Gizmos.color = Color.blue;
-            Gizmos.DrawLine(transform.position, targetEnemy.transform.position);
+            Gizmos.DrawLine(transform.position, TargetEnemy.transform.position);
         }
+
+        //공격 범위 시각화
+        //Vector3 dir = (TargetEnemy.transform.position - transform.position).normalized;
+        //Vector3 center = transform.position + (dir * Stat.attackRange);
+
+        //Gizmos.color = Color.red;
+        //Gizmos.DrawWireSphere(center, Stat.attackRange);
+
+        if (TargetEnemy != null)
+        {
+            Vector3 rawDir = TargetEnemy.transform.position - transform.position;
+            Vector3 dir = new Vector3(rawDir.x, 0f, 0f).normalized;
+            Vector3 center = transform.position + dir * Stat.attackRange;
+
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(center, Stat.attackRange);
+        }
+
     }
 
     public void TakeDamage(float damage)
     {
 
-        stats.TakeDamage(damage); //내부 코드 -> health -= damage
+        Stat.TakeDamage(damage); //내부 코드 -> health -= damage
+
         //if (stats.health <= 0)
         //{
         //    //IsDead = true;

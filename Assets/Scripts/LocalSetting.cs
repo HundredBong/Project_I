@@ -6,6 +6,8 @@ public static class LocalSetting
 {
     private const string UpgradeAmountKey = "UpgradeAmount";
     private const string LanguageKey = "Language";
+    private const string AutoSkillKey = "AutoSkillActivate";
+
 
     public static void SaveLanguage(string language)
     {
@@ -28,6 +30,18 @@ public static class LocalSetting
     public static int LoadUpgradeAmount()
     {
         return PlayerPrefs.GetInt(UpgradeAmountKey, 1);
+    }
+
+    public static void SaveAutoSkillActivate(bool active)
+    {
+        PlayerPrefs.SetInt(AutoSkillKey, active ? 1 : 0);
+        PlayerPrefs.Save();
+    }
+
+    public static bool LoadAutoSkillActivate()
+    {
+        //µðÆúÆ® OFF
+        return PlayerPrefs.GetInt(AutoSkillKey, 0) == 1;
     }
 
 }

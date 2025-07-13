@@ -167,12 +167,6 @@ public class InventoryManager : MonoBehaviour
 
     public void SetInventoryData(InventorySaveData saveData)
     {
-
-        Debug.Log("셋 인벤토리");
-        Debug.Log(saveData);
-        Debug.Log(saveData == null ? "세이브 데이터 널임" : "세이브데이터 살아있음");
-        Debug.Log(saveData.InventoryEntries == null ? "인벤엔트리 클래스 널임" : "인벤엔트리 클래스 없음");
-        Debug.Log("셋 인벤토리" + saveData.InventoryEntries.Count);
         inventory.Clear();
 
         foreach (InventoryEntry entry in saveData.InventoryEntries)

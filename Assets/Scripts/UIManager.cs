@@ -67,28 +67,6 @@ public class UIManager : MonoBehaviour
         }
       
         return page;
-        #region 예전에 쓴거
-        //T target = null;
-
-        //foreach (UIPage p in pages)
-        //{
-        //    //내가 열려는 페이지인지 확인함, 지금 페이지가 UIHome이면 true, 아니면 false를 반환
-        //    //XRRayInteractor 확장했을때 생각하면 헷갈릴 일 없음
-        //    //if(p.GetType() == typeof(UIHome)) 
-        //    bool isActive = p is T;
-
-        //    //맞으면 켜고, 아니면 닫음
-        //    p.gameObject.SetActive(isActive);
-
-        //    if (isActive == true)
-        //    {
-        //        //다운캐스팅 Page를 T로 변환
-        //        target = p as T;
-        //    }
-        //}
-
-        //return target;
-        #endregion
     }
 
     public void PageClose()

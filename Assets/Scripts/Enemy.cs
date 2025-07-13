@@ -90,7 +90,7 @@ public class Enemy : MonoBehaviour, IPooledObject
 
     private void Update()
     {
-        if (PlayerReference != null)
+        if (PlayerReference != null && isDead == false)
         {
             FlipSprite();
         }
@@ -135,7 +135,7 @@ public class Enemy : MonoBehaviour, IPooledObject
         health -= damage;
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, chaseRange);

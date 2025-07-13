@@ -4,6 +4,7 @@ public class EnemyAttackState : IState
 {
     private EnemyStateMachine owner;
     private Animator anim;
+
     public bool IsAttacking { get; private set; } 
 
     public EnemyAttackState(EnemyStateMachine owner)

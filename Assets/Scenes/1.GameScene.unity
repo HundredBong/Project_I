@@ -44032,6 +44032,7 @@ GameObject:
   - component: {fileID: 3042244517781760594}
   - component: {fileID: 7839719640084920751}
   - component: {fileID: 7839719640084920752}
+  - component: {fileID: 7839719640084920753}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -47740,6 +47741,19 @@ MonoBehaviour:
   enhanceStone: 0
   goldBonus: 1
   expBonus: 1
+--- !u!114 &7839719640084920753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3562038908448193568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78f5e3c86dc81b5499894d309cb478a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentKey: 0
 --- !u!4 &7867030270435134394
 Transform:
   m_ObjectHideFlags: 0

@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerStateMachine : MonoBehaviour
 {
     private IState currentState;
-    private StateType currentKey = StateType.None;
+    [SerializeField] private StateType currentKey = StateType.None; //디버그용 SerializedField
 
     public Player player { get; private set; }
 
@@ -44,7 +44,18 @@ public class PlayerStateMachine : MonoBehaviour
         return type switch
         {
             StateType.Idle => new PlayerIdleState(this),
+            StateType.Chase => new PlayerChaseState(this),
+            StateType.Attack => new PlayerAttackState(this),
+            StateType.Dead => new PlayerDeadState(this),
             _ => null
         };
+    }
+
+    public PlayerAttackState CurrentAttackState
+    {
+        get
+        {
+            return currentState as PlayerAttackState;
+        }
     }
 }
