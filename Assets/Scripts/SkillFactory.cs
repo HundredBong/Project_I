@@ -15,6 +15,7 @@ public static class SkillFactory
     {
         //스킬타입에 따라 생성자
         Register(SkillId.Lightning, data => { return new SkillLightning(data); });
+        Register(SkillId.DarkBoom, data => { return new SkillDarkBoom(data); });
 
         //스킬이 생기면 여기에 추가로 등록
     }

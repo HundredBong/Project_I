@@ -56,7 +56,7 @@ public class ProjectileLightning : Projectile
         if (other.TryGetComponent<Enemy>(out Enemy enemy) == true && hasHit == false)
         {
             //파티클 재생
-            ObjectPoolManager.Instance.particlePool.GetPrefab<PooledParticle>(ParticleId.Lightning).Play(other.transform.position);
+            ObjectPoolManager.Instance.particlePool.GetPrefab(ParticleId.Lightning).Play(other.transform.position);
 
             //플레이어 스킬 정보 가져오기
             PlayerSkillState state = SkillManager.Instance.GetSkillState(skillData.SkillId);

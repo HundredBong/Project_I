@@ -114,6 +114,26 @@ public class SkillManager : MonoBehaviour
 
         return saveData;
     }
+
+    public float CalculateSkillDamage(SkillData skillData)
+    {
+        PlayerSkillState state = GetSkillState(skillData.SkillId);
+
+        float playerDamage = GameManager.Instance.stats.damage;
+
+        float multiplier = (skillData.BaseValue + (skillData.BaseValueIncrease * state.Level)) / 100f;
+
+        float finalDamage = playerDamage * multiplier;
+
+        return finalDamage;
+    }
+
+    [ContextMenu("Add Dark Boom")]
+    private void AddDarkBoom()
+    {
+        AddSkill(SkillId.DarkBoom, 1);
+        GameManager.Instance.statSaver.SavePlayerSkillData(BuildSaveData());
+    }
 }
 
 [SerializeField]

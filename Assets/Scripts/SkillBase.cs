@@ -50,7 +50,7 @@ public abstract class SkillBase
 
     public bool IsTargetInRange(GameObject owner)
     {
-        float range = 10f;//skillData.Range 없음, 추가해야 함 -> 응애 
+        float range = skillData.Range;
         LayerMask mask = SkillManager.Instance.targetMask;
 
         Collider2D[] hitColliders = Physics2D.OverlapCircleAll(owner.transform.position, range, mask);

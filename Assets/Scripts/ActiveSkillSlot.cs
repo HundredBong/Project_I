@@ -39,7 +39,8 @@ public class ActiveSkillSlot : MonoBehaviour
     public Action<ActiveSkillSlot> OnSkillExecuted;
 
     public void Init(SkillId id)
-    {
+    { 
+
         if (id == SkillId.None)
         {
             gameObject.SetActive(false);

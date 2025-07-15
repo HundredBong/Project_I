@@ -320,6 +320,7 @@ public class DataManager : MonoBehaviour
                 StatucChance = float.Parse(tokens[18]),
                 HitCount = int.Parse(tokens[19]),
                 TargetCount = int.Parse(tokens[20]),
+                Range = float.Parse(tokens[21]),
                 //isUnlocked = false
             };
             skillDataTable[data.SkillId] = data;
@@ -899,6 +900,7 @@ public class SkillData
     public float StatucChance;
     public int HitCount;
     public int TargetCount;
+    public float Range;
     //public bool isUnlocked; //여긴 불변데이터 모아놓는 곳인데용, 이게 왜 들어갔을까, PlayerSkillState에서 관리함
     //추후 추가해야 할거 : 스킬 범위
    

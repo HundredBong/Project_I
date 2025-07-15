@@ -14,7 +14,7 @@ public enum LanguageType { KR, EN }
 
 public enum StageType { Forest, Cave }
 
-public enum SkillId { None, Lightning, }
+public enum SkillId { None, Lightning, DarkBoom }
 
 public enum ItemType { Weapon, Armor, Necklace }
 
@@ -24,11 +24,11 @@ public enum SkillType { Active, Buff, Passive }
 
 public enum SkillEffectType { GoldBonus, ExpBonus, DamageBonus, HealthBonus, CriticalDamageBonus, CriticalChanceBonus }
 
-public enum StatusEffectType { ElectricShock }
+public enum StatusEffectType { None,ElectricShock }
 
-public enum ProjectileId { Lightning, }
+public enum ProjectileId { Lightning, DarkBoom }
 
-public enum ParticleId { ClickEffect, Lightning }
+public enum ParticleId { ClickEffect, Lightning, DarkBoom, }
 
 public enum ShopCategory { Summon, Normal, Skill, Score, Package, Cash }
 

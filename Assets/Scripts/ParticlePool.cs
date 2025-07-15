@@ -30,14 +30,14 @@ public class ParticlePool : GenericPoolManager<PooledParticle>
         Debug.Log($"[ParticlePool] {prefabCache.Count}∞≥ «¡∏Æ∆’ Preload µ ");
     }
 
-    public T GetPrefab<T>(ParticleId id) where T : PooledParticle
+    public PooledParticle GetPrefab(ParticleId id)
     {
         if (prefabCache.TryGetValue(id, out GameObject prefab))
         {
-            var particle = base.Get(prefab);
-            return particle as T;
+            return base.Get(prefab);
         }
         Debug.LogError($"[ParticlePool] {id} «¡∏Æ∆’¿Ã æ¯¿Ω");
+
         return null;
     }
 }
