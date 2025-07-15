@@ -9,6 +9,7 @@ public static class SkillFactory
     //내부에 필드도 없고 단순히 Create로 입력을 받고 결과만 반환함 -> 스태틱 클래스
 
     //SkillData를 넣으면 SkillBase를 반환함
+    //T, TResult타입
     private static readonly Dictionary<SkillId, Func<SkillData, SkillBase>> skillCreators = new Dictionary<SkillId, Func<SkillData, SkillBase>>();
 
     static SkillFactory()
@@ -16,6 +17,7 @@ public static class SkillFactory
         //스킬타입에 따라 생성자
         Register(SkillId.Lightning, data => { return new SkillLightning(data); });
         Register(SkillId.DarkBoom, data => { return new SkillDarkBoom(data); });
+        Register(SkillId.HolyBurst, data => { return new SkillHolyBurst(data); });
 
         //스킬이 생기면 여기에 추가로 등록
     }

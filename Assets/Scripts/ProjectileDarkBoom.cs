@@ -25,13 +25,13 @@ public class ProjectileDarkBoom : Projectile
     {
         this.skillData = data;
 
-        transform.position = owner.transform.position;
+        transform.position = owner.transform.position + new Vector3(0, 0.5f, 0);
 
         float duration = par.main.duration;
 
         //파티클 재생후 풀에 되돌리고
-        //DelayCallManager.Instance.CallLater(duration - 0.1f, () => { ObjectPoolManager.Instance.projectilePool.Return(this); });
-        DelayCallManager.Instance.CallLater(duration - 0.2f, () => { Explode(); });
+        DelayCallManager.Instance.CallLater(duration, () => { ObjectPoolManager.Instance.projectilePool.Return(this); });
+        DelayCallManager.Instance.CallLater(duration - 0.1f, () => { Explode(); });
     }
 
     private void Explode()
@@ -51,10 +51,5 @@ public class ProjectileDarkBoom : Projectile
                 ObjectPoolManager.Instance.particlePool.GetPrefab(ParticleId.DarkBoom).Play(enemy.transform.position);
             }
         }
-    }
-
-    private void OnDestroy()
-    {
-        Debug.LogError("파괴됨?");
     }
 }

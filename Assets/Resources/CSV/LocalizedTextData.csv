@@ -90,3 +90,6 @@ UI_Armor,방어구,Armor
 UI_Necklace,목걸이,Necklace
 Skill_DarkBoom_Name,검은 폭탄,Dark Boom
 Skill_DarkBoom_Desc,어두운 기운이 폭발하며 주변의 적들에게 <color=white>{0}</color>의 피해를 {1}회 입힙니다. <color=yellow>(쿨타임 {2}초)</color>,"Dark energy erupts, dealing <color=white>{0}</color> damage to nearby enemies {1} times. <color=yellow>(Cooldown: {2} seconds)</color> "
+Skill_HolyBurst_Name,홀리 버스트,Holy Burst
+Skill_HolyBurst_Desc,빛의 에너지를 소환해 주변 최대 7명의 적에게 <color=white>{0}</color>의 대미지로 5번 피해를 입힙니다. <color=yellow>(쿨타임 {1}초)</color>,"Summons the energy of light to deal damage to up to 7 nearby enemies 5 times, each hit inflicting <color=white>{0}</color> damage. <color=yellow>(Cooldown: {1} seconds)</color>"
+Skill_Effect_ExpBonus,경험치 획득량 증가,Exp Bonus

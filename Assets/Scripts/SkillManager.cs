@@ -134,6 +134,13 @@ public class SkillManager : MonoBehaviour
         AddSkill(SkillId.DarkBoom, 1);
         GameManager.Instance.statSaver.SavePlayerSkillData(BuildSaveData());
     }
+
+    [ContextMenu("Add Holy Burst")]
+    private void AddHolyBurst()
+    {
+        AddSkill(SkillId.HolyBurst, 1);
+        GameManager.Instance.statSaver.SavePlayerSkillData(BuildSaveData());
+    }
 }
 
 [SerializeField]

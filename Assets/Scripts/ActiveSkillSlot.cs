@@ -76,8 +76,7 @@ public class ActiveSkillSlot : MonoBehaviour
         if (success == true)
         {
             StartCooldown(equippedSkill.Cooldown);
-            //StartGlobalCooldown(1f);
-            OnSkillExecuted?.Invoke(this);
+            OnSkillExecuted?.Invoke(this); //±Û·Î¹ú ÄðÅ¸ÀÓ Àû¿ë
         }
     }
 
