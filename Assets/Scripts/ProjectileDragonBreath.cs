@@ -8,9 +8,38 @@ public class ProjectileDragonBreath : Projectile
     private float _timer;
     private const float TickInterval = 0.2f;
 
-    public void Initialize(SkillData data)
+    private Vector3 originScale;
+
+    private void Awake()
+    {
+        originScale = transform.localScale;
+    }
+
+    public void Initialize(GameObject owner, SkillData data)
     {
         _skillData = data;
+
+        Vector3 dir = owner.transform.right;
+
+        Vector3 spawnPos = owner.transform.position + dir;
+        Quaternion rot = Quaternion.FromToRotation(Vector3.right, dir);
+
+        bool isFlip = transform.position.x - spawnPos.x > 0 ? false : true;
+        Debug.LogWarning($"isFlip : {isFlip}, result : {transform.position.x - spawnPos.x}");
+
+        transform.position = spawnPos;
+        transform.rotation = rot;
+
+        Vector3 flipScale = new Vector3(-1f, 1f, 1f);
+
+        PooledParticle par = ObjectPoolManager.Instance.particlePool.GetPrefab(ParticleId.DragonBreath);
+
+        par.transform.localScale = isFlip ? flipScale : Vector3.one;
+        transform.localScale = isFlip ? Vector3.Scale(originScale, flipScale) : originScale;
+
+        par.Play(transform.position);
+
+        DelayCallManager.Instance.CallLater(2f, () => { ObjectPoolManager.Instance.projectilePool.Return(this); });
     }
 
     private void OnEnable()
@@ -38,7 +67,7 @@ public class ProjectileDragonBreath : Projectile
     {
         if (other.TryGetComponent<Enemy>(out Enemy enemy))
         {
-            Debug.Log($"µð¹ö±ë¿ë Enter, {enemy.name} : {enemy.GetInstanceID()}");
+            //Debug.Log($"µð¹ö±ë¿ë Enter, {enemy.name} : {enemy.GetInstanceID()}");
 
             if (_enemies.Contains(enemy) == false)
             {
@@ -51,7 +80,7 @@ public class ProjectileDragonBreath : Projectile
     {
         if (other.TryGetComponent<Enemy>(out Enemy enemy))
         {
-            Debug.Log($"µð¹ö±ë¿ë Exit, {enemy.name} : {enemy.GetInstanceID()}");
+            //Debug.Log($"µð¹ö±ë¿ë Exit, {enemy.name} : {enemy.GetInstanceID()}");
 
             //ÂüÁ¶ ºñ±³
             _enemies.Remove(enemy);

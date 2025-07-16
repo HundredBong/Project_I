@@ -141,6 +141,13 @@ public class SkillManager : MonoBehaviour
         AddSkill(SkillId.HolyBurst, 1);
         GameManager.Instance.statSaver.SavePlayerSkillData(BuildSaveData());
     }
+
+    [ContextMenu("Add Dragon Breath")]
+    private void AddDragonBreath()
+    {
+        AddSkill(SkillId.DragonBreath, 1);
+        GameManager.Instance.statSaver.SavePlayerSkillData(BuildSaveData());
+    }
 }
 
 [SerializeField]

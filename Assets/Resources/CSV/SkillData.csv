@@ -1,5 +1,5 @@
 SkillId,NameKey,DescKey,SkillIcon,Grade,SkillType,Cooldown,BaseValue,BaseValueIncrease,BuffDuration,SkillEffectType,PassiveValue,PassiveValuePerLevel,MaxLevel,UpgradeCostBase,UpgradeCostPerLevel,AwakenRequiredCount,StatusEffect,StatusChance,HitCount,TargetCount,Range
 Lightning,Skill_Lightning_Name,Skill_Lightning_Desc,Skill_Lightning_Icon,Common,Active,10,130,10,0,GoldBonus,5,0.5,99,10,1,5;10;15;25,ElectricShock,90,3,5,10
-DarkBoom,Skill_DarkBoom_Name,Skill_DarkBoom_Desc,Skill_DarkBoom_Icon,Rare,Active,2,170,20,0,HealthBonus,20,2,99,30,3,5;10;15;25,None,0,5,100,10
+DarkBoom,Skill_DarkBoom_Name,Skill_DarkBoom_Desc,Skill_DarkBoom_Icon,Rare,Active,17,170,20,0,HealthBonus,20,2,99,30,3,5;10;15;25,None,0,5,100,10
 HolyBurst,Skill_HolyBurst_Name,Skill_HolyBurst_Desc,Skill_HolyBurst_Icon,Uncommon,Active,4,50,2,0,ExpBonus,5,1,99,15,2,5;10;15;25,None,0,5,7,7
-DragonBreath,Skill_DragonBreath_Name,Skill_DragonBreath_Desc,Skill_DragonBreath_Icon,,,,,,,,,,,,,,,,,,
+DragonBreath,Skill_DragonBreath_Name,Skill_DragonBreath_Desc,Skill_DragonBreath_Icon,Epic,Active,2,200,10,0,DamageBonus,120,2,99,50,5,5;10;15;25,Burn,30,1,100,10

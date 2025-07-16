@@ -24,11 +24,11 @@ public enum SkillType { Active, Buff, Passive }
 
 public enum SkillEffectType { GoldBonus, ExpBonus, DamageBonus, HealthBonus, CriticalDamageBonus, CriticalChanceBonus }
 
-public enum StatusEffectType { None,ElectricShock }
+public enum StatusEffectType { None, ElectricShock, Burn }
 
 public enum ProjectileId { Lightning, DarkBoom, DragonBreath }
 
-public enum ParticleId { ClickEffect, Lightning, DarkBoom,HolyBurst }
+public enum ParticleId { ClickEffect, Lightning, DarkBoom, HolyBurst, DragonBreath }
 
 public enum ShopCategory { Summon, Normal, Skill, Score, Package, Cash }
 
