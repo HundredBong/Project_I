@@ -93,23 +93,38 @@ public class GameManager : MonoBehaviour
         Debug.Log("[GameManager] FirebaseStatSaver가 파이어베이스에 연결됨");
 
         //불러오기 실행
-        //statSaver.LoadStatLevels(stats.SetAllLevels);
+
         statSaver.LoadPlayerProgressData(data =>
         {
             stats.LoadProgressSaveData(data);
         });
+
         Debug.Log("[GameManager] 스탯 불러오기 실행됨");
 
-        //stats.OnStatChanged += () =>
+        //statSaver.LoadPlayerSkillData(data =>
         //{
-        //    statSaver.RequestSave(stats.GetAllLevels());
-        //};
+        //    SkillManager.Instance.LoadFrom(data);
+        //});
 
-        statSaver.LoadSkillEquipData(data =>
-        {
-            SkillManager.Instance.SetEquippedSkills(data.equippedSkills);
-            FindObjectOfType<ActiveSkillPanel>().Refresh(data.equippedSkills);
-        });
+
+        //statSaver.LoadSkillEquipData(data =>
+        //{
+        //    SkillManager.Instance.SetEquippedSkills(data.equippedSkills);
+        //    FindObjectOfType<ActiveSkillPanel>().Refresh(data.equippedSkills);
+        //});
+
+        var skillStateTask = statSaver.LoadPlayerSkillDataAsync();
+        var equipTask = statSaver.LoadSkillEquipDataAsync();
+
+        await UniTask.WhenAll(skillStateTask, equipTask);
+
+        var skillState = await skillStateTask;
+        var equipData = await equipTask;
+
+        SkillManager.Instance.LoadFrom(skillState);
+        SkillManager.Instance.SetEquippedSkills(equipData.equippedSkills);
+
+        FindObjectOfType<ActiveSkillPanel>().Refresh(SkillManager.Instance.GetEquippedSkills());
 
         statSaver.LoadStageData(data =>
         {
@@ -117,10 +132,7 @@ public class GameManager : MonoBehaviour
             StageManager.Instance.StartStage();
         });
 
-        statSaver.LoadPlayerSkillData(data =>
-        {
-            SkillManager.Instance.LoadFrom(data);
-        });
+
 
         statSaver.LoadInventoryData(data =>
         {
@@ -171,12 +183,6 @@ public class GameManager : MonoBehaviour
     {
         return statSaver != null && stats != null && firebaseInit != null && statSaver.gameObject.activeInHierarchy;
     }
-
-    private void Update()
-    {
-
-    }
-
 
 #if UNITY_EDITOR
     [MenuItem("Tools/Set Language KR")]

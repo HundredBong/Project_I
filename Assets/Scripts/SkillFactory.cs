@@ -19,6 +19,7 @@ public static class SkillFactory
         Register(SkillId.DarkBoom, data => { return new SkillDarkBoom(data); });
         Register(SkillId.HolyBurst, data => { return new SkillHolyBurst(data); });
         Register(SkillId.DragonBreath, data => { return new SkillDragonBreath(data); });
+        Register(SkillId.IceArrow, data => { return new SkillIceArrow(data); });
 
         //스킬이 생기면 여기에 추가로 등록
     }

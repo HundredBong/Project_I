@@ -8,7 +8,7 @@ public class Player : MonoBehaviour
 
 
     private bool isAttacking;
-    private bool isFlip;
+    public bool IsFlip { get; private set; }
 
 
     private Vector3 originScale;
@@ -93,9 +93,9 @@ public class Player : MonoBehaviour
 
     private void FlipSprite()
     {
-        isFlip = TargetEnemy.transform.position.x - transform.position.x > 0 ? true : false;
+        IsFlip = TargetEnemy.transform.position.x - transform.position.x > 0 ? true : false;
 
-        transform.localScale = isFlip ? flipScale : originScale;
+        transform.localScale = IsFlip ? flipScale : originScale;
     }
 
     public void GetExp(float exp)

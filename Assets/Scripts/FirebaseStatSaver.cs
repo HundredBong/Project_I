@@ -427,6 +427,20 @@ public class FirebaseStatSaver : MonoBehaviour
         await UniTask.SwitchToMainThread();
         onLoaded?.Invoke(data);
     }
+
+    public UniTask<PlayerSkillSaveData> LoadPlayerSkillDataAsync()
+    {
+        var tcs = new UniTaskCompletionSource<PlayerSkillSaveData>();
+        LoadPlayerSkillData(data => tcs.TrySetResult(data));
+        return tcs.Task;
+    }
+
+    public UniTask<SkillEquipSaveData> LoadSkillEquipDataAsync()
+    {
+        var tcs = new UniTaskCompletionSource<SkillEquipSaveData>();
+        LoadSkillEquipData(data => tcs.TrySetResult(data));
+        return tcs.Task;
+    }
 }
 
 [System.Serializable]

@@ -19,24 +19,21 @@ public class ProjectileDragonBreath : Projectile
     {
         _skillData = data;
 
-        Vector3 dir = owner.transform.right;
+        bool isFlip = owner.transform.localScale.x < 0f;
 
+        Vector3 dir = isFlip ? Vector3.right : Vector3.left;
         Vector3 spawnPos = owner.transform.position + dir;
         Quaternion rot = Quaternion.FromToRotation(Vector3.right, dir);
-
-        bool isFlip = transform.position.x - spawnPos.x > 0 ? false : true;
-        Debug.LogWarning($"isFlip : {isFlip}, result : {transform.position.x - spawnPos.x}");
 
         transform.position = spawnPos;
         transform.rotation = rot;
 
         Vector3 flipScale = new Vector3(-1f, 1f, 1f);
 
-        PooledParticle par = ObjectPoolManager.Instance.particlePool.GetPrefab(ParticleId.DragonBreath);
-
-        par.transform.localScale = isFlip ? flipScale : Vector3.one;
         transform.localScale = isFlip ? Vector3.Scale(originScale, flipScale) : originScale;
 
+        PooledParticle par = ObjectPoolManager.Instance.particlePool.GetPrefab(ParticleId.DragonBreath);
+        par.transform.localScale = isFlip ? flipScale : Vector3.one;
         par.Play(transform.position);
 
         DelayCallManager.Instance.CallLater(2f, () => { ObjectPoolManager.Instance.projectilePool.Return(this); });

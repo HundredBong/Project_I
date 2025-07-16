@@ -93,6 +93,7 @@ public class UISummonPanel : MonoBehaviour
 
         Refresh(SummonSubCategory.Weapon);
         rewardPanel.Refresh(SummonSubCategory.Weapon);
+        ShowCategory(SummonSubCategory.Weapon);
     }
 
     private void ShowCategory(SummonSubCategory category)

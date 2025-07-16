@@ -95,3 +95,5 @@ Skill_HolyBurst_Desc,빛의 에너지를 소환해 주변 최대 7명의 적에�
 Skill_Effect_ExpBonus,경험치 획득량 증가,Exp Bonus
 Skill_DragonBreath_Name,드래곤 브레스,Dragon Breath
 Skill_DragonBreath_Desc,거대한 불길을 방출합니다. 불길에 닿은 적은 0.2초마다 <color=white>{0}</color>의 대미지를 입습니다. <color=yellow>(쿨타임 {1}초)</color>,Unleashes a massive blaze. Enemies caught in the flames take <color=white>{0}</color> damage every 0.2 seconds. <color=yellow>(Cooldown: {1}s)</color>
+Skill_IceArrow_Name,아이스 애로우,Ice Arrow
+Skill_IceArrow_Desc,전방에 얼음 화살을 5개 발사해 타격받은 적은 <color=white>{0}</color>의 대미지를 입고 <color=blue>{1}%</color>확률로 빙결 상태가 됩니다. <color=yellow>(쿨타임 {2}초)</color>,Fires 5 ice arrows forward. Each hit deals <color=white>{0}</color> damage and has a <color=blue>{1}%</color> chance to freeze the target. <color=yellow>(Cooldown: {2}s)</color>

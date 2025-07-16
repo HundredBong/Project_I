@@ -44,7 +44,7 @@ public class SkillManager : MonoBehaviour
         //tempState.OwnedCount = 0; 
         //tempState.Level = 1;
         //tempState.AwakenLevel = 0;
-        
+
 
         if (skillStates.TryGetValue(id, out PlayerSkillState state))
         {
@@ -146,6 +146,13 @@ public class SkillManager : MonoBehaviour
     private void AddDragonBreath()
     {
         AddSkill(SkillId.DragonBreath, 1);
+        GameManager.Instance.statSaver.SavePlayerSkillData(BuildSaveData());
+    }
+
+    [ContextMenu("Add Ice Arrow")]
+    private void AddIceArrow()
+    {
+        AddSkill(SkillId.IceArrow, 1);
         GameManager.Instance.statSaver.SavePlayerSkillData(BuildSaveData());
     }
 }
