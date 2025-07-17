@@ -47,6 +47,7 @@ public class PlayerStateMachine : MonoBehaviour
             StateType.Chase => new PlayerChaseState(this),
             StateType.Attack => new PlayerAttackState(this),
             StateType.Dead => new PlayerDeadState(this),
+            StateType.Charge => new PlayerChargeState(this),
             _ => null
         };
     }

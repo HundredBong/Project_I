@@ -14,7 +14,7 @@ public enum LanguageType { KR, EN }
 
 public enum StageType { Forest, Cave }
 
-public enum SkillId { None, Lightning, DarkBoom, HolyBurst, DragonBreath, IceArrow }
+public enum SkillId { None, Lightning, DarkBoom, HolyBurst, DragonBreath, IceArrow, Explosion, Charge, Fireball }
 
 public enum ItemType { Weapon, Armor, Necklace }
 
@@ -24,11 +24,11 @@ public enum SkillType { Active, Buff, Passive }
 
 public enum SkillEffectType { GoldBonus, ExpBonus, DamageBonus, HealthBonus, CriticalDamageBonus, CriticalChanceBonus }
 
-public enum StatusEffectType { None, ElectricShock, Burn, Frozen }
+public enum StatusEffectType { None, ElectricShock, Burn, Frozen,Stun }
 
-public enum ProjectileId { Lightning, DarkBoom, DragonBreath, IceArrow }
+public enum ProjectileId { Lightning, DarkBoom, DragonBreath, IceArrow, Explosion, Charge, Fireball }
 
-public enum ParticleId { ClickEffect, Lightning, DarkBoom, HolyBurst, DragonBreath, IceArrow }
+public enum ParticleId { ClickEffect, Lightning, DarkBoom, HolyBurst, DragonBreath, IceArrow, Explosion, Fireball }
 
 public enum ShopCategory { Summon, Normal, Skill, Score, Package, Cash }
 
@@ -36,4 +36,4 @@ public enum SummonSubCategory { Weapon, Armor, Necklace, Skill }
 
 public enum RewardType { Item, Currency }
 
-public enum StateType { None, Idle, Attack, Chase, Dead }
+public enum StateType { None, Idle, Attack, Chase, Dead, Charge }

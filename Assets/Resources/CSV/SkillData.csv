@@ -1,6 +1,9 @@
 SkillId,NameKey,DescKey,SkillIcon,Grade,SkillType,Cooldown,BaseValue,BaseValueIncrease,BuffDuration,SkillEffectType,PassiveValue,PassiveValuePerLevel,MaxLevel,UpgradeCostBase,UpgradeCostPerLevel,AwakenRequiredCount,StatusEffect,StatusChance,HitCount,TargetCount,Range
-Lightning,Skill_Lightning_Name,Skill_Lightning_Desc,Skill_Lightning_Icon,Common,Active,10,130,10,0,GoldBonus,5,0.5,99,10,1,5;10;15;25,ElectricShock,90,3,5,10
-DarkBoom,Skill_DarkBoom_Name,Skill_DarkBoom_Desc,Skill_DarkBoom_Icon,Rare,Active,13,170,20,0,HealthBonus,20,2,99,30,3,5;10;15;25,None,0,5,100,10
-HolyBurst,Skill_HolyBurst_Name,Skill_HolyBurst_Desc,Skill_HolyBurst_Icon,Uncommon,Active,6,50,2,0,ExpBonus,5,1,99,15,2,5;10;15;25,None,0,5,7,7
-DragonBreath,Skill_DragonBreath_Name,Skill_DragonBreath_Desc,Skill_DragonBreath_Icon,Epic,Active,17,200,10,0,DamageBonus,120,2,99,50,5,5;10;15;25,Burn,30,1,100,10
-IceArrow,Skill_IceArrow_Name,Skill_IceArrow_Desc,Skill_IceArrow_Icon,Common,Active,3,50,0.5,0,HealthBonus,5,0.5,99,10,1,5;10;15;25,Frozen ,90,1,100,7
+Lightning,Skill_Lightning_Name,Skill_Lightning_Desc,Skill_Lightning_Icon,Common,Active,10,130,7,0,GoldBonus,5,0.5,99,10,1,5;10;15;25,ElectricShock,90,3,5,10
+DarkBoom,Skill_DarkBoom_Name,Skill_DarkBoom_Desc,Skill_DarkBoom_Icon,Rare,Active,13,100,5,0,HealthBonus,20,2,99,30,3,5;10;15;25,None,0,5,100,10
+HolyBurst,Skill_HolyBurst_Name,Skill_HolyBurst_Desc,Skill_HolyBurst_Icon,Uncommon,Active,7,50,2,0,ExpBonus,1,0.5,99,15,2,5;10;15;25,None,0,5,7,7
+DragonBreath,Skill_DragonBreath_Name,Skill_DragonBreath_Desc,Skill_DragonBreath_Icon,Epic,Active,17,80,5,0,DamageBonus,120,2,99,50,5,5;10;15;25,Burn,30,1,100,10
+IceArrow,Skill_IceArrow_Name,Skill_IceArrow_Desc,Skill_IceArrow_Icon,Common,Active,5,50,0.5,0,HealthBonus,5,0.5,99,10,1,5;10;15;25,Frozen ,90,1,100,7
+Explosion,Skill_Explosion_Name,Skill_Explosion_Desc,Skill_Explosion_Icon,Legendary,Active,3,100,25,0,DamageBonus,200,5,99,75,15,5;10;15;25,Stun,90,5,35,15
+Fireball,Skill_Fireball_Name,Skill_Fireball_Desc,Skill_Fireball_Icon,Uncommon,Active,4,20,2,0,HealthBonus,10,1,99,15,2,5;10;15;25,Burn,90,5,7,7
+Charge,Skill_Charge_Name,Skill_Charge_Desc,Skill_Charge_Icon,Rare,Active,4,200,5,0,GoldBonus,5,1,99,30,3,5;10;15;25,None,0,1,8,10
