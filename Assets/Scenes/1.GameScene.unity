@@ -8800,8 +8800,8 @@ MonoBehaviour:
     Prefab: {fileID: 8400424712307853490, guid: c880a0d5b4a1dde4f998204beabbd365, type: 3}
   - Id: 5
     Prefab: {fileID: 5112403345868107898, guid: 249d0621c2996ee4880ffd05711a9416, type: 3}
-  - Id: 6
-    Prefab: {fileID: 5880797563127281583, guid: 52c6c4adb7355d74f9bebd67b4b63af5, type: 3}
+  - Id: 7
+    Prefab: {fileID: 2504214343621411470, guid: b33e5d4c06b473946bd892f88f2b9ab1, type: 3}
 --- !u!1 &460250430
 GameObject:
   m_ObjectHideFlags: 0
@@ -31237,6 +31237,8 @@ MonoBehaviour:
     prefab: {fileID: 8240633425264427242, guid: 53648f8cf91c926419c8f90f923f3022, type: 3}
   - id: 4
     prefab: {fileID: 6488224561078003124, guid: 259c3fa5044cd1343ba6c56b98c7ffd3, type: 3}
+  - id: 6
+    prefab: {fileID: 1206498299807332555, guid: 66fec10744bd5694fabbbfddf0567638, type: 3}
 --- !u!4 &1712969908
 Transform:
   m_ObjectHideFlags: 0

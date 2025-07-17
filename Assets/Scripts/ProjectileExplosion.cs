@@ -10,8 +10,6 @@ public class ProjectileExplosion : Projectile
     private Collider2D[] _buffer = new Collider2D[32];
     private readonly WaitForSeconds _delay = new WaitForSeconds(0.05f);
 
-    private Vector2 temp;
-
     public void Initaialize(SkillData data, GameObject owner)
     {
         _skillData = data;
@@ -77,7 +75,7 @@ public class ProjectileExplosion : Projectile
     private void FindTarget(Vector2 pos)
     {
         //폭발 위치를 중심으로 타겟을 찾고 리스트에 넣음
-        temp = pos;
+
         int count = Physics2D.OverlapCircleNonAlloc(pos, _skillData.Range * 0.33f, _buffer, SkillManager.Instance.targetMask);
 
         List<Enemy> enemyList = new List<Enemy>(64);
@@ -104,15 +102,5 @@ public class ProjectileExplosion : Projectile
                 }
             }
         }
-    }
-
-    private void OnDrawGizmos()
-    {
-        if (_skillData != null)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(temp, _skillData.Range * 0.33f);
-        }
-
     }
 }
