@@ -20,6 +20,9 @@ public static class SkillFactory
         Register(SkillId.HolyBurst, data => { return new SkillHolyBurst(data); });
         Register(SkillId.DragonBreath, data => { return new SkillDragonBreath(data); });
         Register(SkillId.IceArrow, data => { return new SkillIceArrow(data); });
+        Register(SkillId.Explosion, data => { return new SkillExplosion(data); });
+        Register(SkillId.Fireball, data => { return new SkillFireball(data); });
+        Register(SkillId.Charge, data => { return new SkillFireball(data); });
 
         //스킬이 생기면 여기에 추가로 등록
     }

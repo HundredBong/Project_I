@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -153,6 +154,17 @@ public class SkillManager : MonoBehaviour
     private void AddIceArrow()
     {
         AddSkill(SkillId.IceArrow, 1);
+        GameManager.Instance.statSaver.SavePlayerSkillData(BuildSaveData());
+    }
+
+    [ContextMenu("ALL")]
+    private void AddAllSkill()
+    {
+        foreach (SkillId id in Enum.GetValues(typeof(SkillId)))
+        {
+            AddSkill(id, 1);
+        }
+
         GameManager.Instance.statSaver.SavePlayerSkillData(BuildSaveData());
     }
 }

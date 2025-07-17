@@ -8,6 +8,6 @@ public class SkillExplosion : SkillBase
 
     public override void Execute(GameObject owner)
     {
-
+        ObjectPoolManager.Instance.projectilePool.GetPrefab<ProjectileExplosion>(ProjectileId.Explosion).Initaialize(skillData, owner);
     }
 }
