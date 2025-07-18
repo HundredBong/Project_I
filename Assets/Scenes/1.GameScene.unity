@@ -8802,6 +8802,10 @@ MonoBehaviour:
     Prefab: {fileID: 5112403345868107898, guid: 249d0621c2996ee4880ffd05711a9416, type: 3}
   - Id: 7
     Prefab: {fileID: 2504214343621411470, guid: b33e5d4c06b473946bd892f88f2b9ab1, type: 3}
+  - Id: 8
+    Prefab: {fileID: 8487402871801164198, guid: 57b57e89dda3a584eace47cae3f7d03f, type: 3}
+  - Id: 9
+    Prefab: {fileID: 9157105887711914197, guid: 04f0bb83703657c4faaaf2903e3cadc6, type: 3}
 --- !u!1 &460250430
 GameObject:
   m_ObjectHideFlags: 0

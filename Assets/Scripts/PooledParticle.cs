@@ -14,12 +14,28 @@ public class PooledParticle : MonoBehaviour, IPooledObject
         par = GetComponent<ParticleSystem>();
     }
 
-    public void Play(Vector3 pos)
+    public void Play(Vector3 pos, bool isReturn = true)
     {
         //파티클 재생후 풀에 반환
         par.transform.position = pos;
         par.transform.rotation = Quaternion.identity;
         par.Play();
-        DelayCallManager.Instance.CallLater(par.main.duration, () => { ObjectPoolManager.Instance.particlePool.Return(this); });
+
+        if (isReturn)
+        {
+            DelayCallManager.Instance.CallLater(par.main.duration, () => { ObjectPoolManager.Instance.particlePool.Return(this); });
+        }
+    }
+
+    public void Play(Vector3 pos, Transform parent)
+    {
+        transform.SetParent(parent);
+        Play(pos);
+    }
+
+    public void Stop()
+    {
+        par.Stop();
+        ObjectPoolManager.Instance.particlePool.Return(this);
     }
 }

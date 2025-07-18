@@ -25,8 +25,9 @@ public class Player : MonoBehaviour
     public PlayerStats Stat { get; private set; }
 
     public LayerMask targetLayerMask;
+    public PlayerStateMachine StateMachine { get; private set; }
 
-    private PlayerStateMachine stateMachine;
+    public SpriteRenderer[] SpriteRenderers { get; private set; }
 
     private void Awake()
     {
@@ -34,7 +35,8 @@ public class Player : MonoBehaviour
 
         Animator = GetComponent<Animator>();
         Stat = GetComponent<PlayerStats>();
-        stateMachine = GetComponent<PlayerStateMachine>();
+        StateMachine = GetComponent<PlayerStateMachine>();
+        SpriteRenderers = GetComponentsInChildren<SpriteRenderer>();
 
         originScale = transform.localScale;
         Vector3 flipVector = new Vector3(-1f, 1f, 1f);
@@ -78,17 +80,17 @@ public class Player : MonoBehaviour
 
     public void OnAttackStart()
     {
-        stateMachine?.CurrentAttackState?.OnAttackStart();
+        StateMachine?.CurrentAttackState?.OnAttackStart();
     }
 
     public void OnAttackEnd()
     {
-        stateMachine?.CurrentAttackState?.OnAttackEnd();
+        StateMachine?.CurrentAttackState?.OnAttackEnd();
     }
 
     public void OnAttackHit()
     {
-        stateMachine?.CurrentAttackState?.OnAttackHit();
+        StateMachine?.CurrentAttackState?.OnAttackHit();
     }
 
     private void FlipSprite()

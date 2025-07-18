@@ -9,6 +9,16 @@ public class PlayerStateMachine : MonoBehaviour
 
     public Player player { get; private set; }
 
+    private SkillData _currentSkillData;
+
+    public SkillData CurrentSkillData
+    {
+        get
+        {
+            return _currentSkillData;
+        }
+    }
+
     private void Awake()
     {
         player = GetComponent<Player>();
@@ -39,6 +49,12 @@ public class PlayerStateMachine : MonoBehaviour
         currentState.OnEnter();
     }
 
+    public void ChangeState(StateType nextState, SkillData skillData)
+    {
+        _currentSkillData = skillData;
+        ChangeState(nextState); //기존 메서드 호출
+    }
+
     private IState CreateState(StateType type)
     {
         return type switch
@@ -58,5 +74,11 @@ public class PlayerStateMachine : MonoBehaviour
         {
             return currentState as PlayerAttackState;
         }
+    }
+
+    [ContextMenu("테스트")]
+    private void Test()
+    {
+        ChangeState(currentKey == StateType.Charge ? StateType.Idle : StateType.Charge);
     }
 }

@@ -8,6 +8,9 @@ public class SkillCharge : SkillBase
 
     public override void Execute(GameObject owner)
     {
-
+        if (owner.TryGetComponent<Player>(out Player player))
+        {
+            player.StateMachine.ChangeState(StateType.Charge, skillData);
+        }
     }
 }
