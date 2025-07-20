@@ -36,12 +36,10 @@ public class UIInventoryPage : UIPage
 
     private async void Start()
     {
-        Debug.Log("인벤 스타트1");
         //UIManager의 Awake에서 전부 SetActive(false)시켜주긴 하는데
         //그럼 유니태스크 안쓰고 OnEnable로 해도 되지 않나
         //그래도 가끔 Awake보다 OnEnable이 먼저 실행될 때도 있으니 안전하게 유니태스크 사용
         await UniTask.WaitUntil(() => GameManager.Instance.inventoryReady);
-        Debug.Log("인벤 스타트2");
 
         foreach (ItemData itemData in DataManager.Instance.GetItemData().Values)
         {
@@ -91,7 +89,6 @@ public class UIInventoryPage : UIPage
     {
         foreach (var item in itemSlots)
         {
-            Debug.Log("새로고침 : " + itemSlots.Values.Count);
             item.Value.Refresh();
         }
     }

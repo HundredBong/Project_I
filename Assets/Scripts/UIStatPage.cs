@@ -49,12 +49,12 @@ public class UIStatPage : UIPage
         levelText.text = $"내 레벨 : Lv.{playerStats.level}";
         statPointText.text = $"스탯포인트 {playerStats.statPoint}/{playerStats.level}";
 
-        Debug.Log($"[PlayerStats] RefreshAllStatUIs 실행됨, UI개수 : {slotUIs.Count}");
+        //Debug.Log($"[PlayerStats] RefreshAllStatUIs 실행됨, UI개수 : {slotUIs.Count}");
 
         foreach (StatsSlotUI ui in slotUIs)
         {
             ui.Refresh();
-            Debug.Log($"[PlayerStats] 새로고침한 UI : {ui.name}");
+            //Debug.Log($"[PlayerStats] 새로고침한 UI : {ui.name}");
         }
     }
 }

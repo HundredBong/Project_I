@@ -61,7 +61,7 @@ public class PlayerAttackState : IState
 
     public void OnAttackHit()
     {
-        Debug.Log("Player Attack Hit");
+        //Debug.Log("Player Attack Hit");
 
         //방향계산
         Vector3 rawDir = owner.player.TargetEnemy.transform.position - owner.player.transform.position;
@@ -74,7 +74,7 @@ public class PlayerAttackState : IState
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll
             (center, owner.player.Stat.attackRange, owner.player.targetLayerMask);
 
-        Debug.Log("Player Attack Hit Count : " + hitEnemies.Length);
+        //Debug.Log("Player Attack Hit Count : " + hitEnemies.Length);
 
         foreach (Collider2D col in hitEnemies)
         {

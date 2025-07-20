@@ -38,7 +38,7 @@ public class StatsSlotUI : MonoBehaviour
         Refresh();
         addButton.onClick.AddListener(OnClickAdd);
 
-        Debug.Log("[StatsSlotUI] 초기화 완료됨");
+        //Debug.Log("[StatsSlotUI] 초기화 완료됨");
     }
 
     public void Refresh()

@@ -50,7 +50,7 @@ public class SkillHolyBurst : SkillBase
             {
                 enemy.TakeDamage(damage);
             }
-            Debug.Log($"{enemy.name}에게 {damage}의 대미지를 {skillData.HitCount}번 입힘");
+            //Debug.Log($"{enemy.name}에게 {damage}의 대미지를 {skillData.HitCount}번 입힘");
             ObjectPoolManager.Instance.particlePool.GetPrefab(ParticleId.HolyBurst).Play(enemy.transform.position);
         }
 

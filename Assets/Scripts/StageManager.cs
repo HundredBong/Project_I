@@ -56,12 +56,12 @@ public class StageManager : MonoBehaviour
         bossDefeated = data.BossDefeated ?? new bool[DataManager.Instance.stageDataTable.Count];
         isLoop = data.IsLoop;
 
-        Debug.Log($"[StageManager] 스테이지 데이터 불러오기 완료, 현재 스테이지 : {currentStage}");
+        //Debug.Log($"[StageManager] 스테이지 데이터 불러오기 완료, 현재 스테이지 : {currentStage}");
     }
 
     public void StartStage()
     {
-        Debug.Log($"[StageManager] {currentStage}스테이지 시작");
+        //Debug.Log($"[StageManager] {currentStage}스테이지 시작");
         killCount = 0;
 
         SpawnManager.Instance.SpawnEnemiesForCurrentStage(defaultSpawnCount);
@@ -77,7 +77,7 @@ public class StageManager : MonoBehaviour
         if (killCount < totalKillsRequired && killCount % spawnBatchSize == 0)
         {
             //사이즈만큼 몬스터 다시 생성
-            Debug.Log("[StageManager] 몬스터 재생성");
+            //Debug.Log("[StageManager] 몬스터 재생성");
             SpawnManager.Instance.SpawnEnemiesForCurrentStage(spawnBatchSize);
         }
 
@@ -95,7 +95,7 @@ public class StageManager : MonoBehaviour
         //1-2. 스테이지를 클리어했고, 도전중이라면 보스로 넘어감
         //2. 스테이지를 클리어 했고 보스를 잡은 상태라면
         //2-1. 반복중이라면 다음 스테이지로 넘어감
-        Debug.Log($"[StageManager] {currentStage}스테이지 클리어");
+        //Debug.Log($"[StageManager] {currentStage}스테이지 클리어");
 
         if (isLoop == false)
         {
@@ -121,13 +121,13 @@ public class StageManager : MonoBehaviour
             IsLoop = this.isLoop
         };
 
-        Debug.Log($"[StageManager] 스테이지 데이터 저장 요청, 현재 스테이지 {data.CurrentStageId}, 최대 클리어 스테이지 {data.MaxClearedStageId}");
+        //Debug.Log($"[StageManager] 스테이지 데이터 저장 요청, 현재 스테이지 {data.CurrentStageId}, 최대 클리어 스테이지 {data.MaxClearedStageId}");
         GameManager.Instance.statSaver.SaveStageData(data);
     }
 
     private void ResetStage()
     {
-        Debug.Log($"[SpawnManager] 스테이지 리셋");
+        //Debug.Log($"[SpawnManager] 스테이지 리셋");
         //플레이어 위치 초기화, 기존 몬스터 제거
         killCount = 0;
 

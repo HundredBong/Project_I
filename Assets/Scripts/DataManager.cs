@@ -55,7 +55,7 @@ public class DataManager : MonoBehaviour
 
         foreach (Sprite sprite in sprites)
         {
-            Debug.Log($"{sprite.name}");
+            //Debug.Log($"{sprite.name}");
             spriteDic.Add(sprite.name, sprite);
         }
 
@@ -86,7 +86,7 @@ public class DataManager : MonoBehaviour
             localizedTexts[key] = text;
         }
 
-        Debug.Log($"[DataManager] LocalizedText {localizedTexts.Count}개 로드됨");
+        //Debug.Log($"[DataManager] LocalizedText {localizedTexts.Count}개 로드됨");
     }
 
     public string GetLocalizedText(string key)
@@ -144,7 +144,7 @@ public class DataManager : MonoBehaviour
             statNames[key] = data;
         }
 
-        Debug.Log($"[DataManager] statName : {statNames.Count}개의 데이터를 로드함");
+        //Debug.Log($"[DataManager] statName : {statNames.Count}개의 데이터를 로드함");
     }
 
     private void LoadHUDName()
@@ -169,7 +169,7 @@ public class DataManager : MonoBehaviour
             HudNames[key] = data;
         }
 
-        Debug.Log($"[DataManager] hudNameData : {HudNames.Count}개의 데이터를 로드함");
+        //Debug.Log($"[DataManager] hudNameData : {HudNames.Count}개의 데이터를 로드함");
     }
 
     private void LoadExpData()
@@ -189,14 +189,14 @@ public class DataManager : MonoBehaviour
             expTable[level] = requiredExp;
         }
 
-        Debug.Log($"[DataManager] expTable : {expTable.Count}개의 데이터를 로드함");
+        //Debug.Log($"[DataManager] expTable : {expTable.Count}개의 데이터를 로드함");
     }
 
     public float GetExpData(int level)
     {
         if (expTable.ContainsKey(level) == false)
         {
-            Debug.LogWarning($"[DataManager] 레벨 {level}에 대한 데이터가 없음");
+            //Debug.LogWarning($"[DataManager] 레벨 {level}에 대한 데이터가 없음");
             return 1000;
         }
 
@@ -231,7 +231,7 @@ public class DataManager : MonoBehaviour
 
             enemyDataTable[data.Id] = data;
         }
-        Debug.Log($"[DataManager] enemyDataTable : {enemyDataTable.Count}개의 데이터를 로드함");
+        //Debug.Log($"[DataManager] enemyDataTable : {enemyDataTable.Count}개의 데이터를 로드함");
     }
 
     public EnemyData GetEnemyData(EnemyId id)
@@ -241,7 +241,7 @@ public class DataManager : MonoBehaviour
             return data;
         }
 
-        Debug.LogWarning($"[DataManager] EnemyId {id}에 해당하는 데이터가 없음");
+        //Debug.LogWarning($"[DataManager] EnemyId {id}에 해당하는 데이터가 없음");
         return null;
     }
 
@@ -283,7 +283,7 @@ public class DataManager : MonoBehaviour
 
             stageDataTable[stageId] = data;
         }
-        Debug.Log($"[DataManager] stageDataTable : {stageDataTable.Count}개의 데이터를 로드함");
+        //Debug.Log($"[DataManager] stageDataTable : {stageDataTable.Count}개의 데이터를 로드함");
     }
 
     private void LoadSkillData()
@@ -325,7 +325,7 @@ public class DataManager : MonoBehaviour
             };
             skillDataTable[data.SkillId] = data;
         }
-        Debug.Log($"[DataManager] skillDataTable : {skillDataTable.Count}개의 데이터를 로드함");
+        //Debug.Log($"[DataManager] skillDataTable : {skillDataTable.Count}개의 데이터를 로드함");
     }
 
     public List<SkillData> GetAllSkillData()
@@ -372,7 +372,7 @@ public class DataManager : MonoBehaviour
 
             goldUpgradeTable[type] = goldUpgradeData;
         }
-        Debug.Log($"[DataManager] GoldUpgradeData : {skillDataTable.Count}개의 데이터를 로드함");
+        //Debug.Log($"[DataManager] GoldUpgradeData : {skillDataTable.Count}개의 데이터를 로드함");
     }
 
     public GoldUpgradeData GetGoldUpgradeData(GoldUpgradeType type)
@@ -419,7 +419,7 @@ public class DataManager : MonoBehaviour
             itemDataTable[id] = itemDate;
         }
 
-        Debug.Log($"[DataManager] {itemDataTable.Count}의 아이템 데이터가 로드됨");
+        //Debug.Log($"[DataManager] {itemDataTable.Count}의 아이템 데이터가 로드됨");
     }
 
     public Dictionary<int, ItemData> GetItemData()
@@ -464,7 +464,7 @@ public class DataManager : MonoBehaviour
             summonExpDatas[category] = expList;
         }
 
-        Debug.Log($"[DataManager] 딕셔너리 {summonExpDatas.Count}, 리스트{summonExpDatas.Values.Count}의 데이터를 로드함");
+        //Debug.Log($"[DataManager] 딕셔너리 {summonExpDatas.Count}, 리스트{summonExpDatas.Values.Count}의 데이터를 로드함");
     }
 
     public int GetSummonMaxExp(SummonSubCategory category, int currentLevel)
@@ -532,7 +532,7 @@ public class DataManager : MonoBehaviour
             //내부 딕셔너리에 레벨별 데이터 추가
             table[level] = rateData;
         }
-        Debug.Log($"[DataManager] 소환 등급 확률 로드 됨, {summonRateTable.Count}");
+        //Debug.Log($"[DataManager] 소환 등급 확률 로드 됨, {summonRateTable.Count}");
     }
 
     private void LoadSummonStageProbabilities()
@@ -577,14 +577,14 @@ public class DataManager : MonoBehaviour
                     }
                     else
                     {
-                        Debug.Log($"[DataManager] 잘못된 단계 파싱, {stageTokens[j]}");
+                        Debug.LogWarning($"[DataManager] 잘못된 단계 파싱, {stageTokens[j]}");
                     }
                 }
 
                 rateData.StageProbabilities[gradeType] = stageProb;
             }
         }
-        Debug.Log("[DataManager] StageProbabilities 파싱됨");
+        //Debug.Log("[DataManager] StageProbabilities 파싱됨");
     }
 
     public GradeType GetRandomGrade(SummonSubCategory category, int level)
@@ -741,7 +741,7 @@ public class DataManager : MonoBehaviour
 
         if (skills.Count == 0)
         {
-            Debug.Log($"[DataManage] {grade}등급의 스킬이 없음");
+            Debug.LogWarning($"[DataManage] {grade}등급의 스킬이 없음");
             return SkillId.None;
         }
 
@@ -757,7 +757,7 @@ public class DataManager : MonoBehaviour
         for (int i = 1; i < lines.Length; i++)
         {
             if (string.IsNullOrEmpty(lines[i])) { continue; }
-            Debug.Log($"[라인{i}] {lines[i]}");
+            //Debug.Log($"[라인{i}] {lines[i]}");
             string[] tokens = lines[i].Split(',');
 
             SummonSubCategory category = Enum.Parse<SummonSubCategory>(tokens[0].Trim());
@@ -781,7 +781,7 @@ public class DataManager : MonoBehaviour
             table[level] = data;
         }
 
-        Debug.Log($"[DataManager] 소환 레벨 보상 데이터 로드됨, {summonRewardTable.Count}");
+        //Debug.Log($"[DataManager] 소환 레벨 보상 데이터 로드됨, {summonRewardTable.Count}");
     }
 
     public SummonRewardData GetRewardData(SummonSubCategory category, int level)

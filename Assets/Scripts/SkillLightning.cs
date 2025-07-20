@@ -11,7 +11,7 @@ public class SkillLightning : SkillBase
 
     public override void Execute(GameObject owner)
     {
-        Debug.Log($"[SkillLightning] {skillData.SkillId} ½ÇÇàµÊ");
+        //Debug.Log($"[SkillLightning] {skillData.SkillId} ½ÇÇàµÊ");
 
         List<Enemy> targets = FindClosestEnemies(owner.transform.position, skillData.TargetCount);
 

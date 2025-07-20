@@ -31,7 +31,7 @@ public class ProjectilePool : GenericPoolManager<Projectile>
             Preload(data.prefab, preloadCount);
         }
 
-        Debug.Log($"[ProjectilePool] {prefabCache.Count}°³ ÇÁ¸®ÆÕ Preload µÊ");
+        //Debug.Log($"[ProjectilePool] {prefabCache.Count}°³ ÇÁ¸®ÆÕ Preload µÊ");
     }
 
     public T GetPrefab<T>(ProjectileId id) where T : Projectile

@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UIItemInfoPopup : UIPopup, IPointerDownHandler, IPointerUpHandler
+public class UIItemInfoPopup : UIPopup
 {
     //등급 n단계 tmp
     //아이템 이름 tmp
@@ -246,7 +246,7 @@ public class UIItemInfoPopup : UIPopup, IPointerDownHandler, IPointerUpHandler
             Refresh(); //자기 자신의 UI 갱신
             GameManager.Instance.stats.RecalculateStats(); //스탯 재계산
         }
-        Debug.Log($"[UIItemInfoPopup] 아이템 강화 시도 : {success}");
+        //Debug.Log($"[UIItemInfoPopup] 아이템 강화 시도 : {success}");
         UIShineEffect.PlayShine(tweeningImage);
     }
 
@@ -370,21 +370,6 @@ public class UIItemInfoPopup : UIPopup, IPointerDownHandler, IPointerUpHandler
         Refresh();
         RefreshSynthesisUI();
         GameManager.Instance.stats.RecalculateStats();
-    }
-
-    public void OnPointerDown(PointerEventData data)
-    {
-        InvokeRepeating(nameof(Test2), 0f, 0.1f);
-    }
-
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        CancelInvoke(nameof(Test2));
-    }
-
-    private void Test2()
-    {
-        Debug.Log("Test2 called");
     }
 
     [ContextMenu("테스트")]

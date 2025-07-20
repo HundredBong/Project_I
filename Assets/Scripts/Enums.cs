@@ -14,7 +14,7 @@ public enum LanguageType { KR, EN }
 
 public enum StageType { Forest, Cave }
 
-public enum SkillId { None, Lightning, DarkBoom, HolyBurst, DragonBreath, IceArrow, Explosion, Charge, Fireball }
+public enum SkillId { None, Lightning, DarkBoom, HolyBurst, DragonBreath, IceArrow, Explosion, Fireball, Charge }
 
 public enum ItemType { Weapon, Armor, Necklace }
 

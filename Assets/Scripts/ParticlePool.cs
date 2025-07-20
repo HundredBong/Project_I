@@ -27,7 +27,7 @@ public class ParticlePool : GenericPoolManager<PooledParticle>
             prefabCache[data.Id] = data.Prefab;
             Preload(data.Prefab, preloadCount);
         }
-        Debug.Log($"[ParticlePool] {prefabCache.Count}°³ ÇÁ¸®ÆÕ Preload µÊ");
+        //Debug.Log($"[ParticlePool] {prefabCache.Count}°³ ÇÁ¸®ÆÕ Preload µÊ");
     }
 
     public PooledParticle GetPrefab(ParticleId id)

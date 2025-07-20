@@ -28,9 +28,7 @@ public class ActiveSkillPanel : MonoBehaviour
         {
             if (slot == null || slot.GetEquippedSkill() == null)
             {
-                Debug.Log("[ActiveSkillPanel] 비어있는 슬롯 무시됨");
-                //Debug.Log(slot == null ? "슬롯이 비어있음" : "슬롯은 있음");
-                //Debug.Log(slot.GetEquippedSkill() == null ? "안에 스킬이 없음" : "안에 스킬은 있음");
+                //Debug.Log("[ActiveSkillPanel] 비어있는 슬롯 무시됨");
                 continue;
             }
             slot.StartGlobalCooldown(cooldown);

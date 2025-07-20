@@ -199,7 +199,7 @@ public class UISummonPanel : MonoBehaviour
         }
         else
         {
-            Debug.Log($"[UISummonPanel] 다이아가 부족함, {GameManager.Instance.stats.Diamond}");
+            Debug.LogWarning($"[UISummonPanel] 다이아가 부족함, {GameManager.Instance.stats.Diamond}");
         }
     }
 
@@ -219,7 +219,7 @@ public class UISummonPanel : MonoBehaviour
                 GradeType grade = DataManager.Instance.GetRandomGrade(category, summonLevel);
                 //스킬 등급으로 스킬 아이디 뽑기
 
-                Debug.LogError($"[UISummonPanel] 소환 카테고리 : {category}, 레벨 : {summonLevel}, 등급 : {grade}");
+                //Debug.Log($"[UISummonPanel] 소환 카테고리 : {category}, 레벨 : {summonLevel}, 등급 : {grade}");
 
                 SkillId skillId = DataManager.Instance.GetRandomSkillId(category, grade);
                 skillDatas.Enqueue(DataManager.Instance.GetSkill(skillId));
@@ -247,7 +247,7 @@ public class UISummonPanel : MonoBehaviour
         }
         else
         {
-            Debug.Log($"[UISummonPanel] 다이아가 부족함, {GameManager.Instance.stats.Diamond}");
+            Debug.LogWarning($"[UISummonPanel] 다이아가 부족함, {GameManager.Instance.stats.Diamond}");
         }
     }
 }

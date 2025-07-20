@@ -125,7 +125,7 @@ public class PlayerStats : MonoBehaviour
         maxExp = DataManager.Instance.GetExpData(level);
         playerProgress[PlayerProgressType.Level] = level;
 
-        Debug.Log($"레벨 상승함, 현재 레벨 : {level}, 다음 경험치 요구량 : {maxExp}");
+        //Debug.Log($"레벨 상승함, 현재 레벨 : {level}, 다음 경험치 요구량 : {maxExp}");
 
         statPoint++;
         playerProgress[PlayerProgressType.StatPoint] = statPoint;
@@ -142,12 +142,12 @@ public class PlayerStats : MonoBehaviour
 
         //현재 레벨 280, 최대 300, 선택 수치100, 스탯포인트 200이면 실제 강화량 20
 
-        Debug.Log($"[강화] {statType} + {possibleAmount} (선택값: {amount})");
+        //Debug.Log($"[강화] {statType} + {possibleAmount} (선택값: {amount})");
 
         //이미 최대치까지 강화된 상태라면
         if (possibleAmount <= 0)
         {
-            Debug.Log("강화할 수 없음");
+            Debug.LogWarning("강화할 수 없음");
             return;
         }
 
@@ -350,7 +350,7 @@ public class PlayerStats : MonoBehaviour
         {
             //Add로 ProgressEntry 리스트에 추가
             //Add내부에서 new ProgressEnety로 객체 생성 및 초기화
-            Debug.Log($"[GetProgressSaveData] {progress.Key} = {progress.Value}");
+            //Debug.Log($"[GetProgressSaveData] {progress.Key} = {progress.Value}");
             data.progressValues.Add(new ProgressEntry
             {
                 PlayerProgressType = progress.Key,
@@ -387,14 +387,14 @@ public class PlayerStats : MonoBehaviour
         foreach (ProgressEntry entry in data.progressValues)
         {
             playerProgress[entry.PlayerProgressType] = entry.Value;
-            Debug.Log($"[PlayerStats] {entry.PlayerProgressType} : {entry.Value}");
+            //Debug.Log($"[PlayerStats] {entry.PlayerProgressType} : {entry.Value}");
         }
 
         //스탯 강화 상태 초기회
         foreach (StatLevelEntry entry in data.statLevels)
         {
             statLevels[entry.StatUpgradeType] = entry.Level;
-            Debug.Log($"[PlayerStats] {entry.StatUpgradeType} : {entry.Level}");
+            //Debug.Log($"[PlayerStats] {entry.StatUpgradeType} : {entry.Level}");
         }
 
         foreach (GoldLevelEntry entry in data.goldUpgradeLevels)
@@ -418,7 +418,7 @@ public class PlayerStats : MonoBehaviour
 
         if (playerProgress.TryGetValue(type, out float value) && value >= amount)
         {
-            Debug.Log($"[PlayerStats] {type}, {playerProgress[type]}, {value:F1}, {amount}");
+            //Debug.Log($"[PlayerStats] {type}, {playerProgress[type]}, {value:F1}, {amount}");
 
             playerProgress[type] -= amount;
             return true;
@@ -431,7 +431,7 @@ public class PlayerStats : MonoBehaviour
         //강화하려는 아이템 레벨이 최대 레벨 이상이라면
         if (item.Level >= itemData.MaxLevel)
         {
-            Debug.Log("[PlayerStats] 이미 최대 레벨에 도달함");
+            Debug.LogWarning("[PlayerStats] 이미 최대 레벨에 도달함");
             return false;
         }
 
@@ -441,7 +441,7 @@ public class PlayerStats : MonoBehaviour
         //강화석으로 강화하려는데 실패했다면 리턴
         if (TrySpendItem(PlayerProgressType.EnhanceStone, cost) == false)
         {
-            Debug.Log($"[PlayerStats] 강화석이 부족함 {enhanceStone} / {cost}");
+            Debug.LogWarning($"[PlayerStats] 강화석이 부족함 {enhanceStone} / {cost}");
             return false;
         }
 

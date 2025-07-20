@@ -53,7 +53,7 @@ public class InventoryManager : MonoBehaviour
 
     public void AddItem(ItemData data, int count = 1)
     {
-        Debug.Log($"[InventoryManager] 추가할 아이템 : {data.Id}");
+        //Debug.Log($"[InventoryManager] 추가할 아이템 : {data.Id}");
 
         //아이템이 존재한다면 카운트만 증가시킴
         if (inventory.TryGetValue(data.Id, out InventoryItem inventoryItem))
@@ -76,7 +76,7 @@ public class InventoryManager : MonoBehaviour
             };
         }
 
-        Debug.Log($"[InventoryManager] 추가된 아이템 : {inventory[data.Id].Data.NameKey}, {inventory[data.Id].IsUnlocked}, {inventory[data.Id].Count}");
+        //Debug.Log($"[InventoryManager] 추가된 아이템 : {inventory[data.Id].Data.NameKey}, {inventory[data.Id].IsUnlocked}, {inventory[data.Id].Count}");
 
         //보유효과 적용용 스탯 재계산
         GameManager.Instance.stats.RecalculateStats();
@@ -148,7 +148,7 @@ public class InventoryManager : MonoBehaviour
     public InventorySaveData GetSaveData()
     {
         InventorySaveData data = new InventorySaveData();
-        Debug.Log($"저장할 데이터 : {inventory.Count},{inventory.Values.Count}");
+        //Debug.Log($"저장할 데이터 : {inventory.Count},{inventory.Values.Count}");
 
         foreach (InventoryItem item in inventory.Values)
         {
@@ -186,7 +186,7 @@ public class InventoryManager : MonoBehaviour
             //딕셔너리 초기화
             inventory[entry.Id] = item;
 
-            Debug.Log($"인벤토리 정보 : {entry.Id}");
+            //Debug.Log($"인벤토리 정보 : {entry.Id}");
         }
 
 

@@ -75,11 +75,8 @@ public class UISummonResultPopup : UIPopup
             //0.2√  ¥Î±‚
             yield return wait;
             GameObject obj = Instantiate(contentPrefab, contentRoot);
-            UISkillSlot slot = obj.GetComponent<UISkillSlot>();
-            Debug.LogWarning(slot == null ? "Slot Null" : "Slot Not Null");
-            
+            UISkillSlot slot = obj.GetComponent<UISkillSlot>();         
             SkillData skillData = data.Dequeue();
-            Debug.LogWarning(skillData == null ? "Data Null" : "Data Not Null");
             slot.Init(skillData);
         }
     }

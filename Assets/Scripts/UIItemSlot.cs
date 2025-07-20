@@ -69,7 +69,7 @@ public class UIItemSlot : MonoBehaviour
         //예전 참조 유지라서 매번 새로운 데이터 가져와야 에러 안뜸    
         //itemData는 불변 데이터라서 괜찮음
         inventoryItem = InventoryManager.Instance.GetItem(itemData.Id);
-        Debug.Log($"새로고침 {itemData.NameKey}, {inventoryItem?.IsUnlocked}");
+        //Debug.Log($"새로고침 {itemData.NameKey}, {inventoryItem?.IsUnlocked}");
 
         if (inventoryItem != null && inventoryItem.IsUnlocked)
         {

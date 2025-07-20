@@ -51,7 +51,7 @@ public class ProjectileLightning : Projectile
 
     protected override void OnHit(GameObject other)
     {
-        Debug.Log($"[ProjectileLightning] 히트함, {other.gameObject.name}");
+        //Debug.Log($"[ProjectileLightning] 히트함, {other.gameObject.name}");
 
         if (other.TryGetComponent<Enemy>(out Enemy enemy) == true && hasHit == false)
         {
@@ -71,7 +71,7 @@ public class ProjectileLightning : Projectile
             for (int i = 0; i < skillData.HitCount; i++)
             {
                 enemy.TakeDamage(damage);
-                Debug.Log($"[ProjectileLightning] Enemy에게 {damage}의 피해릅 입힘");
+                //Debug.Log($"[ProjectileLightning] Enemy에게 {damage}의 피해릅 입힘");
             }
 
             if (Random.value < shockChance / 100f)

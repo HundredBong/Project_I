@@ -68,10 +68,20 @@ public class SkillManager : MonoBehaviour
 
     public void SetEquippedSkills(SkillId[] newEquips)
     {
+        if (newEquips == null)
+        {
+            Debug.LogWarning("[SkillManager] SetEquippedSkills null Àü´ÞµÊ");
+            return;
+        }
+
         for (int i = 0; i < equippedSkills.Length; i++)
         {
-            equippedSkills[i] = newEquips[i];
+            equippedSkills[i] = (i < newEquips.Length) ? newEquips[i] : SkillId.None;
         }
+
+        Debug.Log($"[SkillManager] SetEquippedSkills Àû¿ë : {string.Join(",", equippedSkills)}");
+
+
     }
 
     public Dictionary<SkillId, PlayerSkillState> GetAllSkills()

@@ -18,7 +18,8 @@ public class FirebaseInit : MonoBehaviour
                     if (authTask.IsCompleted && authTask.IsFaulted == false && authTask.IsCanceled == false)
                     {
                         GameManager.Instance.firebaseReady = true;
-                        Debug.Log("파이어베이스 준비됨, 익명 로그인 성공");
+                        //Debug.Log("파이어베이스 준비됨, 익명 로그인 성공");
+                        //Debug.Log($"FirebaseInit : {FirebaseAuth.DefaultInstance.CurrentUser.UserId}" );
                     }
                     else
                     {

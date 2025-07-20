@@ -61,7 +61,7 @@ public class SummonRewardPannel : MonoBehaviour
         //중복 보상 방지
         if (GameManager.Instance.SummonManager.HasClaimed(category, level))
         {
-            Debug.Log("[SummonRewardPannel] 이미 받은 보상임");
+            Debug.LogWarning("[SummonRewardPannel] 이미 받은 보상임");
             claimButton.interactable = false;
             return;
         }
