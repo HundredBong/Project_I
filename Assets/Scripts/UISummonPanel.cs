@@ -92,7 +92,6 @@ public class UISummonPanel : MonoBehaviour
         SetLocalizedText();
 
         Refresh(SummonSubCategory.Weapon);
-        rewardPanel.Refresh(SummonSubCategory.Weapon);
         ShowCategory(SummonSubCategory.Weapon);
     }
 
