@@ -50,7 +50,7 @@ public class StageManager : MonoBehaviour
             Debug.LogWarning("[StageManager] 로드된 데이터가 null임");
             return;
         }
-
+        Debug.Log(data.CurrentStageId);
         currentStage = data.CurrentStageId;
         maxClearedStage = data.MaxClearedStageId;
         stageClearedFlags = data.StageClearedFlags ?? new bool[DataManager.Instance.stageDataTable.Count];

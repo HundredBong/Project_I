@@ -1,14 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class UISummonResultPopup : UIPopup
 {
-    [SerializeField] private GameObject contentPrefab;
     [SerializeField] private Transform contentRoot;
 
     private Coroutine showResultCoroutine;
     private WaitForSeconds wait;
+    private List<UIResultContent> _contents = new List<UIResultContent>();
 
     protected override void Awake()
     {
@@ -24,10 +25,13 @@ public class UISummonResultPopup : UIPopup
             StopDisplayingResult();
         }
 
-        foreach (Transform child in contentRoot)
+        foreach (UIResultContent content in _contents)
         {
-            Destroy(child.gameObject);
+            content.transform.SetParent(ObjectPoolManager.Instance.contentPool.transform ?? null);
+            ObjectPoolManager.Instance.contentPool.Return(content);
         }
+
+        _contents.Clear();
 
         showResultCoroutine = StartCoroutine(StartDisplayingResultCoroutine(data));
     }
@@ -39,10 +43,13 @@ public class UISummonResultPopup : UIPopup
             StopDisplayingResult();
         }
 
-        foreach (Transform child in contentRoot)
+        foreach (UIResultContent content in _contents)
         {
-            Destroy(child.gameObject);
+            content.transform.SetParent(ObjectPoolManager.Instance.contentPool.transform ?? null);
+            ObjectPoolManager.Instance.contentPool.Return(content);
         }
+
+        _contents.Clear();
 
         showResultCoroutine = StartCoroutine(StartDisplayingResultCoroutine(data));
     }
@@ -60,11 +67,12 @@ public class UISummonResultPopup : UIPopup
     {
         while (data.Count != 0)
         {
-            //0.2초 대기
             yield return wait;
-            GameObject obj = Instantiate(contentPrefab, contentRoot);
-            UIItemSlot slot = obj.GetComponent<UIItemSlot>();
-            slot.Init(data.Dequeue());
+            UIResultContent content = ObjectPoolManager.Instance.contentPool.GetContent();
+            _contents.Add(content);
+
+            content.transform.SetParent(contentRoot);
+            content.Initialize(data.Dequeue());
         }
     }
 
@@ -72,12 +80,12 @@ public class UISummonResultPopup : UIPopup
     {
         while (data.Count != 0)
         {
-            //0.2초 대기
             yield return wait;
-            GameObject obj = Instantiate(contentPrefab, contentRoot);
-            UISkillSlot slot = obj.GetComponent<UISkillSlot>();         
-            SkillData skillData = data.Dequeue();
-            slot.Init(skillData);
+            UIResultContent content = ObjectPoolManager.Instance.contentPool.GetContent();         
+            _contents.Add(content);
+
+            content.transform.SetParent(contentRoot);
+            content.Initialize(data.Dequeue());
         }
     }
 }

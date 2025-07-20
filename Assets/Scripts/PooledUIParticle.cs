@@ -24,7 +24,7 @@ public class PooledUIParticle : MonoBehaviour, IPooledObject
     public void Play()
     {
         uiParticle.Play();
-        DelayCallManager.Instance.CallLater(par.main.duration, () => { ObjectPoolManager.Instance.uiParticlePool.Return(this); });
+        //DelayCallManager.Instance.CallLater(par.main.duration, () => { ObjectPoolManager.Instance.uiParticlePool.Return(this); });
     }
 }
 

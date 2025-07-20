@@ -132,6 +132,7 @@ public class GameManager : MonoBehaviour
 
             await statSaver.SaveSummonProgressAsync(SummonManager.BuildSummonProgressData());
         }
+        SummonManager.Init(summonProgressData);
         summonReady = true;
     }
 

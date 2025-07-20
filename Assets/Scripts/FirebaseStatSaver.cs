@@ -138,7 +138,7 @@ public class FirebaseStatSaver : MonoBehaviour
     public async UniTask<StageSaveData> LoadStageDataAsync()
     {
         string userId = "test_user";
-        string path = $"users/{userId}/stage/StageData";
+        string path = $"users/{userId}/stage";
         string firstResult = null;
 
         for (int i = 0; i < MAX_RETRY_COUNT; i++)
@@ -162,6 +162,7 @@ public class FirebaseStatSaver : MonoBehaviour
                     continue;
                 }
 
+                Debug.Log(string.IsNullOrEmpty(json) ? "Null" : "Not Null");
                 StageSaveData data = string.IsNullOrEmpty(json) ? new StageSaveData() : JsonUtility.FromJson<StageSaveData>(json);
 
                 await UniTask.SwitchToMainThread();
@@ -418,6 +419,7 @@ public class FirebaseStatSaver : MonoBehaviour
                 }
 
                 SummonProgressData data = string.IsNullOrEmpty(json) ? new SummonProgressData() : JsonUtility.FromJson<SummonProgressData>(json);
+         
                 await UniTask.SwitchToMainThread();
                 return data;
             }
