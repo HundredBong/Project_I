@@ -9,9 +9,9 @@ public class ProjectileFireball : Projectile
     private SkillData _skillData;
 
     private Vector3 _dir;
-    private bool _hasRetarget;
+    //private bool _hasRetarget;
     private float _speed = 10f;
-    private float _turnRate = 25f;
+    //private float _turnRate = 25f;
     private Collider2D[] _buffer = new Collider2D[32];
 
     public void SetTarget(SkillData data, Enemy enemy, GameObject owner)
@@ -21,7 +21,7 @@ public class ProjectileFireball : Projectile
         transform.position = owner.transform.position + new Vector3(Random.Range(-3f, 3f), Random.Range(-3f, 3f), 0);
 
         _dir = (_targetEnemy.transform.position - transform.position).normalized;
-        _hasRetarget = false;
+        //_hasRetarget = false;
     }
 
     private void Update()

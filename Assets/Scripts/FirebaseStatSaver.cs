@@ -1,13 +1,9 @@
-using Firebase.Database;
-using System.Collections.Generic;
-using UnityEngine;
-using System;
 using Cysharp.Threading.Tasks;
+using Firebase.Database;
+using System;
+using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
-using UnityEditor.Experimental.GraphView;
-using JetBrains.Annotations;
+using UnityEngine;
 
 public class FirebaseStatSaver : MonoBehaviour
 {
@@ -18,7 +14,9 @@ public class FirebaseStatSaver : MonoBehaviour
     private CancellationTokenSource progressSaveCts;
     private CancellationTokenSource inventorySaveCts;
 
-    private bool skillEquipListenerRegistered = false;
+    private const int MAX_RETRY_COUNT = 5;
+    private const int RETRY_DELAY_MS = 300;
+    private const float DURATION_THRESHOLD = 0.1f;
 
     private async void Start()
     {
@@ -34,15 +32,11 @@ public class FirebaseStatSaver : MonoBehaviour
         if (progressSaveCts != null)
         {
             progressSaveCts.Cancel();
+            progressSaveCts.Dispose();
         }
+
         progressSaveCts = new CancellationTokenSource();
-
-        //비동기 함수를 기다릴 필요 없으니 Forget선언
         DelayAndSave(data, progressSaveCts.Token).Forget();
-
-        //Debug.Log("[FirebaseStatSaver] 저장 요청 들어옴");
-        string json = JsonUtility.ToJson(data);
-        //Debug.Log($"[FirebaseStatSaver] 저장될 JSON : {json}");
     }
 
     private async UniTaskVoid DelayAndSave(PlayerProgressSaveData data, CancellationToken token)
@@ -53,280 +47,250 @@ public class FirebaseStatSaver : MonoBehaviour
             //2초간 대기하다가 token에서 취소 신호가 오면 중단
             await UniTask.Delay(TimeSpan.FromSeconds(2), cancellationToken: token);
             //SaveStatLevels(statLevels);
-            SavePlayerProgressData(data);
+            SavePlayerProgressDataAsync(data).Forget();
         }
         catch (OperationCanceledException)
         {
             //중간에 저장 요청이 또 들어오면 무시하기
-            //Debug.Log("[FirebaseStatSaver] 저장 취소됨");
+            Debug.Log("[FirebaseStatSaver] 저장 취소됨");
         }
     }
 
-    public void SavePlayerProgressData(PlayerProgressSaveData data)
+    public async UniTask SavePlayerProgressDataAsync(PlayerProgressSaveData data)
     {
         string json = JsonUtility.ToJson(data);
         string userId = "test_user";
         string path = $"users/{userId}/progress";
 
-        dbRef.Child(path).SetRawJsonValueAsync(json).ContinueWith(task =>
+        try
         {
-            if (task.IsCompletedSuccessfully)
-            {
-                //Debug.Log("[FirebaseStatSaver] 플레이어 진행 상태 저장 성공");
-            }
-            else
-            {
-                Debug.LogError($"[FirebaseStatSaver] 진행 상태 저장 실패, {task.Exception}");
-            }
-        });
+            await dbRef.Child(path).SetRawJsonValueAsync(json);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[FirebaseStatSaver] 진행 상태 저장 실패, {e}");
+        }
     }
 
-    public void LoadPlayerProgressData(Action<PlayerProgressSaveData> onLoaded)
+    public async UniTask<PlayerProgressSaveData> LoadPlayerProgressDataAsync()
     {
         string userId = "test_user";
         string path = $"users/{userId}/progress";
 
-        dbRef.Child(path).GetValueAsync().ContinueWith(task =>
+        string firstResult = null;
+
+        for (int i = 0; i < MAX_RETRY_COUNT; i++)
         {
-            if (task.IsCompletedSuccessfully)
+            float start = Time.realtimeSinceStartup;
+            try
             {
-                string json = task.Result.GetRawJsonValue();
-                PlayerProgressSaveData data = JsonUtility.FromJson<PlayerProgressSaveData>(json);
-                MainThreadDispatcher(data, onLoaded);
-            }
-            else
-            {
-                Debug.LogError($"[FirebaseStatSaver] 진행 상태 불러오기 실패, {task.Exception}");
-            }
-        });
-    }
+                DataSnapshot snapshot = await dbRef.Child(path).GetValueAsync();
+                string json = snapshot.GetRawJsonValue();
+                float duration = Time.realtimeSinceStartup - start;
 
-    private async void MainThreadDispatcher(PlayerProgressSaveData data, Action<PlayerProgressSaveData> onLoaded)
-    {
-        await UniTask.SwitchToMainThread();
-        onLoaded?.Invoke(data);
-    }
-
-    public void SaveStatLevels(Dictionary<StatUpgradeType, int> statLevels)
-    {
-        //스탯은 enum 기반이므로 반복해서 저장 가능함,
-
-        string userId = "test_user"; //추후 Firebase Auth로 대체하기
-        string path = $"users/{userId}/stats"; //저장경로
-
-        foreach (KeyValuePair<StatUpgradeType, int> stat in statLevels)
-        {
-            string statName = stat.Key.ToString(); //Attack이나 뭐 그런걸로 저장됨, 키 값 가져오기
-            int level = stat.Value; //Attack의 레벨 가져오기
-
-            //데이터베이스에서 users/userId/Stats/statName에 statValue를 저장하고, 끝났는지 확인후 로그 출력
-            dbRef.Child(path).Child(statName).SetValueAsync(level).ContinueWith(task =>
-            {
-                if (task.IsCompletedSuccessfully)
+                if (firstResult == null)
                 {
-                    //Debug.Log($"[FirebaseStatSaver] {statName},{level} 저장됨");
+                    firstResult = json;
                 }
-                else
+
+                else if (duration < DURATION_THRESHOLD && json == firstResult)
                 {
-                    Debug.LogError($"[FirebaseStatSaver] {statName}저장에 실패함, {task.Exception}");
+                    Debug.LogWarning($"[PlayerProgressData] 캐시 데이터 감지, 재요청 {i + 1}/{MAX_RETRY_COUNT}");
+                    await UniTask.Delay(RETRY_DELAY_MS);
+                    continue;
                 }
-            });
+
+
+                PlayerProgressSaveData data = string.IsNullOrEmpty(json) ? new PlayerProgressSaveData() : JsonUtility.FromJson<PlayerProgressSaveData>(json);
+
+                await UniTask.SwitchToMainThread();
+                return data;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[재시도 {i + 1}/{MAX_RETRY_COUNT}] 스탯 불러오기 실패: {e}");
+                await UniTask.Delay(RETRY_DELAY_MS);
+            }
         }
-    }
 
-    public void LoadStatLevels(Action<Dictionary<StatUpgradeType, int>> onLoaded)
-    {
-        string userId = "test_user";
-        string path = $"users/{userId}/stats";
-
-        dbRef.Child(path).GetValueAsync().ContinueWith(task =>
-        {
-            if (task.IsCompletedSuccessfully)
-            {
-                DataSnapshot snapShot = task.Result;
-                Dictionary<StatUpgradeType, int> loadedStats = new Dictionary<StatUpgradeType, int>();
-
-                foreach (DataSnapshot child in snapShot.Children)
-                {
-                    string statName = child.Key;
-                    string valueStr = child.Value.ToString();
-
-                    if (Enum.TryParse(statName, out StatUpgradeType statType))
-                    {
-                        if (int.TryParse(valueStr, out int level))
-                        {
-                            loadedStats[statType] = level;
-                        }
-                    }
-                }
-
-                MainThreadDispatcher(loadedStats, onLoaded);
-
-                //Debug.Log("[FirebaseStatSaver] 스탯 불러오기 성공");
-                //onLoaded?.Invoke(loadedStats);
-            }
-            else
-            {
-                Debug.LogError("[FirebaseStatSaver] 스탯 불러오기 실패 : " + task.Exception);
-            }
-        });
-    }
-
-    private async void MainThreadDispatcher(Dictionary<StatUpgradeType, int> loadedStats, Action<Dictionary<StatUpgradeType, int>> onLoaded)
-    {
         await UniTask.SwitchToMainThread();
-        onLoaded?.Invoke(loadedStats);
+        throw new Exception($"스탯 불러오기 {MAX_RETRY_COUNT}회 연속 실패함");
     }
 
-    public void SaveStageData(StageSaveData data)
+    public async UniTask SaveStageDataAsync(StageSaveData data)
     {
         string json = JsonUtility.ToJson(data);
 
         string userId = "test_user";
         string path = $"users/{userId}/stage";
-        dbRef.Child(path).KeepSynced(true);
-        dbRef.Child(path).Child("StageData").SetRawJsonValueAsync(json).ContinueWith(task =>
+
+        try
         {
-            if (task.IsCompletedSuccessfully)
-            {
-                //Debug.Log("[FirebaseStatSaver] 스테이지 데이터 저장 성공");
-            }
-            else
-            {
-                Debug.LogError($"[FirebaseStatSaver] 스테이지 데이터 저장 실패, {task.Exception}");
-            }
-        });
+            await dbRef.Child(path).SetRawJsonValueAsync(json);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[FirebaseStatSaver] 스테이지 저장 실패, {e}");
+
+        }
     }
 
-    public void LoadStageData(Action<StageSaveData> onLoaded)
+    public async UniTask<StageSaveData> LoadStageDataAsync()
     {
         string userId = "test_user";
         string path = $"users/{userId}/stage/StageData";
+        string firstResult = null;
 
-
-        dbRef.Child(path).GetValueAsync().ContinueWith(task =>
+        for (int i = 0; i < MAX_RETRY_COUNT; i++)
         {
-            if (task.IsCompletedSuccessfully)
-            {
-                string json = task.Result.GetRawJsonValue();
-                StageSaveData data = JsonUtility.FromJson<StageSaveData>(json);
-                MainThreadDispatcher(data, onLoaded);
-            }
-            else
-            {
-                Debug.LogError($"[FirebaseStatSaver] 스테이지 데이터 불러오기 실패, {task.Exception}");
-            }
-        });
-    }
+            float start = Time.realtimeSinceStartup;
 
-    private async void MainThreadDispatcher(StageSaveData data, Action<StageSaveData> onLoaded)
-    {
+            try
+            {
+                DataSnapshot snapshot = await dbRef.Child(path).GetValueAsync();
+                string json = snapshot.GetRawJsonValue();
+                float duration = Time.realtimeSinceStartup - start;
+
+                if (firstResult == null)
+                {
+                    firstResult = json;
+                }
+                else if (duration < DURATION_THRESHOLD && json == firstResult)
+                {
+                    Debug.LogWarning($"[StageData] 캐시 데이터 감지, 재요청 {i + 1}/{MAX_RETRY_COUNT}");
+                    await UniTask.Delay(RETRY_DELAY_MS);
+                    continue;
+                }
+
+                StageSaveData data = string.IsNullOrEmpty(json) ? new StageSaveData() : JsonUtility.FromJson<StageSaveData>(json);
+
+                await UniTask.SwitchToMainThread();
+                return data;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[재시도 {i + 1}/{MAX_RETRY_COUNT}] 스테이지 불러오기 실패, {e}");
+                await UniTask.Delay(RETRY_DELAY_MS);
+            }
+        }
+
         await UniTask.SwitchToMainThread();
-        onLoaded?.Invoke(data);
+        throw new Exception($"스테이지 불러오기 {MAX_RETRY_COUNT}회 연속 실패함");
     }
 
-    public void SaveSkillEquipData(SkillEquipSaveData data)
+    public async UniTask SaveSkillEquipData(SkillEquipSaveData data)
     {
         string json = JsonUtility.ToJson(data);
         string userId = "test_user";
         string path = $"users/{userId}/skillEquip";
 
-
-        dbRef.Child(path).SetRawJsonValueAsync(json).ContinueWith(task =>
+        try
         {
-            if (task.IsCompletedSuccessfully)
-            {
-                Debug.Log("[FirebaseStatSaver] 스킬 장착 데이터 저장 성공");
-            }
-            else
-            {
-                Debug.LogError($"[FirebaseStatSaver] 스킬 장착 데이터 저장 실패, {task.Exception}");
-            }
-        });
-
-        Debug.Log($"[FirebaseStatSaver] 저장 시도하는 equipData 데이터 : {json}");
+            await dbRef.Child(path).SetRawJsonValueAsync(json);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[FirebaseStatSaver] 스킬 장착 저장 실패, {e}");
+        }
     }
 
-    public void LoadSkillEquipData(Action<SkillEquipSaveData> onLoaded)
+    public async UniTask<SkillEquipSaveData> LoadSkillEquipDataAsync()
     {
         string userId = "test_user";
         string path = $"users/{userId}/skillEquip";
+        string firstResult = null;
 
-        Debug.Log($"[LoadEquip][START t={Time.realtimeSinceStartup:F3}]");
-
-        dbRef.Child(path).GetValueAsync().ContinueWith(task =>
+        for (int i = 0; i < MAX_RETRY_COUNT; i++)
         {
-            Debug.Log($"[LoadEquip][TASK DONE t={Time.realtimeSinceStartup:F3}] Success={task.IsCompletedSuccessfully} Fault={task.IsFaulted} Cancel={task.IsCanceled}");
+            float start = Time.realtimeSinceStartup;
 
-            if (task.IsCompletedSuccessfully)
+            try
             {
-                var snap = task.Result;
-                string json = snap.GetRawJsonValue();
-                Debug.Log($"[LoadEquip][RAW t={Time.realtimeSinceStartup:F3}] {json}");
+                DataSnapshot snapshot = await dbRef.Child(path).GetValueAsync();
+                string json = snapshot.GetRawJsonValue();
+                float duration = Time.realtimeSinceStartup - start;
+
+                if (firstResult == null)
+                {
+                    firstResult = json;
+                }
+
+                else if (duration < DURATION_THRESHOLD && json == firstResult)
+                {
+                    Debug.LogWarning($"[SkillEquipSaveData] 캐시 데이터 감지, 재요청 {i + 1}/{MAX_RETRY_COUNT}");
+                    await UniTask.Delay(RETRY_DELAY_MS);
+                    continue;
+                }
+
                 SkillEquipSaveData data = string.IsNullOrEmpty(json) ? new SkillEquipSaveData() : JsonUtility.FromJson<SkillEquipSaveData>(json);
-                MainThreadDispatcher(data, onLoaded);
+                await UniTask.SwitchToMainThread();
+                return data;
             }
-            else
+            catch (Exception e)
             {
-                Debug.LogError($"[LoadEquip][ERROR] {task.Exception}");
+                Debug.LogWarning($"[재시도 {i + 1}/{MAX_RETRY_COUNT}] 스킬 장착 불러오기 실패, {e}");
+                await UniTask.Delay(RETRY_DELAY_MS);
             }
-        });
-    }
-
-    private async void MainThreadDispatcher(SkillEquipSaveData data, Action<SkillEquipSaveData> onLoaded)
-    {
+        }
         await UniTask.SwitchToMainThread();
-        onLoaded?.Invoke(data);
+        throw new Exception($"스킬 장착 불러오기 {MAX_RETRY_COUNT}회 연속 실패함");
     }
 
-    public void SavePlayerSkillData(PlayerSkillSaveData data)
+    public async UniTask SavePlayerSkillDataAsync(PlayerSkillSaveData data)
     {
         string json = JsonUtility.ToJson(data);
         string userId = "test_user";
         string path = $"users/{userId}/skillState";
 
-
-        dbRef.Child(path).SetRawJsonValueAsync(json).ContinueWith(task =>
+        try
         {
-            if (task.IsCompletedSuccessfully)
-            {
-                Debug.Log("[FirebaseStatSaver] 플레이어 스킬 데이터 저장 성공");
-            }
-            else
-            {
-                Debug.LogError($"[FirebaseStatSaver] 플레이어 스킬 데이터 저장 실패, {task.Exception}");
-            }
-        });
-
-        Debug.Log($"[FirebaseStatSaver] 저장 시도하는 skillState 데이터 : {json}");
-
+            await dbRef.Child(path).SetRawJsonValueAsync(json);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[FirebaseStatSaver] 스킬 상태 저장 실패, {e}");
+        }
     }
 
-    public void LoadPlayerSkillData(Action<PlayerSkillSaveData> onLoaded)
+    public async UniTask<PlayerSkillSaveData> LoadPlayerSkillDataAsync()
     {
         string userId = "test_user";
         string path = $"users/{userId}/skillState";
+        string firstResult = null;
 
 
-        dbRef.Child(path).GetValueAsync().ContinueWith(task =>
+        for (int i = 0; i < MAX_RETRY_COUNT; i++)
         {
-            if (task.IsCompletedSuccessfully)
+            float start = Time.realtimeSinceStartup;
+            try
             {
-                string json = task.Result.GetRawJsonValue();
-                PlayerSkillSaveData data = JsonUtility.FromJson<PlayerSkillSaveData>(json);
-                MainThreadDispatcher(data, onLoaded);
-            }
-            else
-            {
-                Debug.LogError($"[FirebaseStatSaver] 플레이어 스킬 데이터 불러오기 실패, {task.Exception}");
-            }
-        });
-    }
+                DataSnapshot snapShot = await dbRef.Child(path).GetValueAsync();
+                string json = snapShot.GetRawJsonValue();
+                float duration = Time.realtimeSinceStartup - start;
 
-    public async void MainThreadDispatcher(PlayerSkillSaveData data, Action<PlayerSkillSaveData> onLoaded)
-    {
+                if (firstResult == null)
+                {
+                    firstResult = json;
+                }
+                else if (duration < DURATION_THRESHOLD && json == firstResult)
+                {
+                    Debug.LogWarning($"[PlayerSkillSaveData] 캐시 데이터 감지, 재요청 {i + 1}/ {MAX_RETRY_COUNT}");
+                    await UniTask.Delay(RETRY_DELAY_MS);
+                    continue;
+                }
+
+                PlayerSkillSaveData data = string.IsNullOrEmpty(json) ? new PlayerSkillSaveData() : JsonUtility.FromJson<PlayerSkillSaveData>(json);
+                await UniTask.SwitchToMainThread();
+                return data;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[재시도 {i + 1}/{MAX_RETRY_COUNT}] 플레이어 스킬 상태 불러오기 실패, {e}");
+                await UniTask.Delay(RETRY_DELAY_MS);
+            }
+        }
         await UniTask.SwitchToMainThread();
-        onLoaded?.Invoke(data);
+        throw new Exception($"스킬 상태 불러오기 {MAX_RETRY_COUNT}회 연속 실패함");
     }
 
     public void RequestSave(InventorySaveData data)
@@ -334,10 +298,11 @@ public class FirebaseStatSaver : MonoBehaviour
         if (inventorySaveCts != null)
         {
             inventorySaveCts.Cancel();
+            inventorySaveCts.Dispose();
         }
+
         inventorySaveCts = new CancellationTokenSource();
         DelayAndSave(data, inventorySaveCts.Token).Forget();
-        string json = JsonUtility.ToJson(data);
     }
 
     private async UniTaskVoid DelayAndSave(InventorySaveData data, CancellationToken token)
@@ -345,266 +310,126 @@ public class FirebaseStatSaver : MonoBehaviour
         try
         {
             await UniTask.Delay(TimeSpan.FromSeconds(2), cancellationToken: token);
-            SaveInventoryData(data);
+            SaveInventoryDataAsync(data).Forget();
         }
         catch (OperationCanceledException)
         {
-            //Debug.Log("[FirebaseStatSaver] 저장 취소됨");
+            Debug.Log("[FirebaseStatSaver] 저장 취소됨");
         }
     }
 
-    public void SaveInventoryData(InventorySaveData data)
+    public async UniTask SaveInventoryDataAsync(InventorySaveData data)
     {
         string json = JsonUtility.ToJson(data);
         string userId = "test_user";
         string path = $"users/{userId}/InventoryData";
 
-
-        dbRef.Child(path).SetRawJsonValueAsync(json).ContinueWith(task =>
-        {
-            if (task.IsCompletedSuccessfully)
-            {
-                //Debug.Log("[FirebaseStatSaver] 플레이어 인벤토리 데이터 저장 성공");
-            }
-            else
-            {
-                Debug.LogError($"[FirebaseStatSaver] 플레이어 인벤토리 데이터 저장 실패, {task.Exception}");
-            }
-        });
-    }
-
-    public void LoadInventoryData(Action<InventorySaveData> onLoaded)
-    {
-        //Debug.Log("로드 인벤토리");
-        string userId = "test_user";
-        string path = $"users/{userId}/InventoryData";
-
-
-        dbRef.Child(path).GetValueAsync().ContinueWith(task =>
-        {
-            if (task.IsCompletedSuccessfully)
-            {
-                string json = task.Result.GetRawJsonValue();
-                InventorySaveData data = JsonUtility.FromJson<InventorySaveData>(json);
-                MainThreadDispatcher(data, onLoaded);
-                //Debug.Log("인벤 불러오기 완료");
-            }
-            else
-            {
-                Debug.LogError($"[FirebaseStatSaver] 인벤토리 불러오기 실패, {task.Exception}");
-            }
-        });
-    }
-
-    private async void MainThreadDispatcher(InventorySaveData data, Action<InventorySaveData> onLoaded)
-    {
-        await UniTask.SwitchToMainThread();
-        onLoaded?.Invoke(data);
-    }
-
-    public void SaveSummonProgress(SummonProgressData data)
-    {
-        string json = JsonUtility.ToJson(data);
-        string userId = "test_user";
-        string path = $"users/{userId}/SummonProgress";
-
-
-        dbRef.Child(path).SetRawJsonValueAsync(json).ContinueWith(task =>
-        {
-            if (task.IsCompletedSuccessfully)
-            {
-                //Debug.Log($"[FirebaseStatSaver] 플레이어 소환레벨 데이터 저장 성공");
-            }
-            else
-            {
-                Debug.LogError($"[FirebaseStatSaver] 플레이어 소환레벨 저장 실패, {task.Exception}");
-            }
-        });
-    }
-
-    public void LoadSummonProgressData(Action<SummonProgressData> onLoaded)
-    {
-        string userId = "test_user";
-        string path = $"users/{userId}/SummonProgress";
-
-        dbRef.Child(path).GetValueAsync().ContinueWith(task =>
-        {
-            if (task.IsCompletedSuccessfully)
-            {
-                string json = task.Result.GetRawJsonValue();
-                SummonProgressData data = JsonUtility.FromJson<SummonProgressData>(json);
-                MainThreadDispatcher(data, onLoaded);
-                //Debug.Log($"[FirebaseStatSaver] 소환레벨 불러오기 완료 {data.SummonProgressEntries.Count}");
-            }
-            else
-            {
-                Debug.LogError($"[FirebaseStatSaver] 소환레벨 불러오기 실패, {task.Exception}");
-            }
-        });
-    }
-
-    private async void MainThreadDispatcher(SummonProgressData data, Action<SummonProgressData> onLoaded)
-    {
-        await UniTask.SwitchToMainThread();
-        onLoaded?.Invoke(data);
-    }
-
-    public UniTask<PlayerSkillSaveData> LoadPlayerSkillDataAsync()
-    {
-        var tcs = new UniTaskCompletionSource<PlayerSkillSaveData>();
-        LoadPlayerSkillData(data => tcs.TrySetResult(data));
-        return tcs.Task;
-    }
-
-    public UniTask<SkillEquipSaveData> LoadSkillEquipDataAsync()
-    {
-        var tcs = new UniTaskCompletionSource<SkillEquipSaveData>();
-        LoadSkillEquipData(data => tcs.TrySetResult(data));
-        return tcs.Task;
-    }
-
-
-    public void ListenSkillEquip(Action<SkillEquipSaveData> onChanged)
-    {
-        if (skillEquipListenerRegistered)
-        {
-            Debug.Log("[SkillEquipListener] 이미 등록됨, 중복 등록 무시");
-            return;
-        }
-
-        string userId = "test_user";
-        string path = $"users/{userId}/skillEquip";
-
-        DatabaseReference target = FirebaseDatabase.DefaultInstance.RootReference.Child(path);
-
-        Debug.Log("[SkillEquipListener] 등록 시작");
-
-        target.ValueChanged += (object sender, ValueChangedEventArgs e) =>
-        {
-            if (e.DatabaseError != null)
-            {
-                Debug.LogError($"[SkillEquipListener] DB Error : {e.DatabaseError.Message}");
-                return;
-            }
-
-            string raw = e.Snapshot.GetRawJsonValue();
-            Debug.Log($"[SkillEquipListener] 수신된 raw : {raw}");
-
-            SkillEquipSaveData data;
-
-            if (string.IsNullOrEmpty(raw))
-            {
-                data = new SkillEquipSaveData();
-            }
-            else
-            {
-                data = JsonUtility.FromJson<SkillEquipSaveData>(raw);
-
-                if (data.equippedSkills == null || data.equippedSkills.Length != 6)
-                {
-                    SkillId[] safe = new SkillId[6];
-
-                    if (data.equippedSkills != null)
-                    {
-                        int copy = Mathf.Min(6, data.equippedSkills.Length);
-                        for (int i = 0; i < copy; i++)
-                        {
-                            safe[i] = data.equippedSkills[i];
-                        }
-                    }
-                    data.equippedSkills = safe;
-                }
-            }
-
-            onChanged?.Invoke(data);
-        };
-
-        skillEquipListenerRegistered = true;
-        Debug.Log("[SkillEquipListener] 등록 완료");
-    }
-
-    public async UniTask<SkillEquipSaveData> LoadDataWithCheck()
-    {
-        string userId = "test_user"; 
-        string path = $"users/{userId}/skillEquip";
-
-        var db = FirebaseDatabase.DefaultInstance;
-        var node = db.GetReference(path);
-
-        float start = Time.realtimeSinceStartup;
-        var task = node.GetValueAsync();
-        await task;
-        float duration = Time.realtimeSinceStartup - start;
-
-
-        string result = task.IsCompletedSuccessfully ? task.Result.GetRawJsonValue() : null;
-        string firstResult = result;
-
-        Debug.Log($"duration = {duration:F3}");
-        Debug.Log($"result : {result}");
-
-        if (string.IsNullOrEmpty(result))
-        {
-            Debug.LogWarning("[SkillEquipLoad] 결과값이 비어있음");
-            return new SkillEquipSaveData(); 
-        }
-
-        //캐시로 의심되면 최대 5회 반복 재시도
-        if (duration < 0.1f)
-        {
-            Debug.LogWarning("[SkillEquipLoad] 캐시 데이터 감지, 재요청 시작");
-
-            for (int i = 0; i < 5; i++)
-            {
-                await UniTask.Delay(200);
-                var retryTask = node.GetValueAsync();
-                await retryTask;
-
-                string newResult = retryTask.IsCompletedSuccessfully ? retryTask.Result.GetRawJsonValue() : null;
-                Debug.Log($"[SkillEquipLoad] {i + 1}회 재시도 데이터 : {newResult}");
-
-                //값이 달라졌으면 break 
-                if (!string.IsNullOrEmpty(newResult) && newResult != firstResult)
-                {
-                    result = newResult;
-                    Debug.Log("[SkillEquipLoad] 다른 데이터 도착, 반복 중지");
-                    break;
-                }
-            }
-        }
-
-        if (string.IsNullOrEmpty(result))
-        {
-            Debug.LogWarning("[SkillEquipLoad] 반복 후에도 데이터 없음, 기본값 반환");
-            return new SkillEquipSaveData();
-        }
-
-        SkillEquipSaveData data = null;
         try
         {
-            data = JsonUtility.FromJson<SkillEquipSaveData>(result);
+            await dbRef.Child(path).SetRawJsonValueAsync(json);
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            Debug.LogError($"[SkillEquipLoad] 파싱 실패: {ex.Message}");
-            data = new SkillEquipSaveData();
+            Debug.LogError($"[FirebaseStatSaver] 인벤토리 저장 실패, {e}");
         }
-
-        if (data == null)
-        {
-            Debug.LogWarning("[SkillEquipLoad] 파싱 결과가 null, 기본값 반환");
-            return new SkillEquipSaveData();
-        }
-        //배열 길이 보정
-        if (data.equippedSkills == null || data.equippedSkills.Length != 6)
-        {
-            Debug.LogWarning("[SkillEquipLoad] 배열 길이 보정");
-            data.equippedSkills = new SkillId[6];
-        }
-
-        return data;
     }
 
+    public async UniTask<InventorySaveData> LoadInventoryDataAsync()
+    {
+        string userId = "test_user";
+        string path = $"users/{userId}/InventoryData";
+        string firstResult = null;
+
+        for (int i = 0; i < MAX_RETRY_COUNT; i++)
+        {
+            float start = Time.realtimeSinceStartup;
+            try
+            {
+                DataSnapshot snapshot = await dbRef.Child(path).GetValueAsync();
+                string json = snapshot.GetRawJsonValue();
+                float duration = Time.realtimeSinceStartup - start;
+
+                if (firstResult == null)
+                {
+                    firstResult = json;
+                }
+                else if (duration < DURATION_THRESHOLD && firstResult == json)
+                {
+                    Debug.LogWarning($"[InventorySaveData] 캐시 데이터 감지, 재요청 {i + 1}/ {MAX_RETRY_COUNT}");
+                    await UniTask.Delay(RETRY_DELAY_MS);
+                    continue;
+                }
+                InventorySaveData data = string.IsNullOrEmpty(json) ? new InventorySaveData() : JsonUtility.FromJson<InventorySaveData>(json);
+                await UniTask.SwitchToMainThread();
+                return data;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[재시도 {i + 1}/{MAX_RETRY_COUNT}] 플레이어 인벤토리 불러오기 실패, {e}");
+                await UniTask.Delay(RETRY_DELAY_MS);
+            }
+        }
+
+        await UniTask.SwitchToMainThread();
+        throw new Exception($"플레이어 인벤토리 불러오기 {MAX_RETRY_COUNT}회 연속 실패함");
+    }
+
+    public async UniTask SaveSummonProgressAsync(SummonProgressData data)
+    {
+        string json = JsonUtility.ToJson(data);
+        string userId = "test_user";
+        string path = $"users/{userId}/SummonProgress";
+
+        try
+        {
+            await dbRef.Child(path).SetRawJsonValueAsync(json);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[FirebaseStatSaver] 소환 레벨 저장 실패, {e}");
+        }
+    }
+
+    public async UniTask<SummonProgressData> LoadSummonProgressDataAsync()
+    {
+        string userId = "test_user";
+        string path = $"users/{userId}/SummonProgress";
+        string firstResult = null;
+
+        for (int i = 0; i < MAX_RETRY_COUNT; i++)
+        {
+            float start = Time.realtimeSinceStartup;
+
+            try
+            {
+                DataSnapshot snapshot = await dbRef.Child(path).GetValueAsync();
+                string json = snapshot.GetRawJsonValue();
+                float duration = Time.realtimeSinceStartup - start;
+
+                if (firstResult == null)
+                {
+                    firstResult = json;
+                }
+                else if (duration < DURATION_THRESHOLD && firstResult == json)
+                {
+                    Debug.LogWarning($"[SummonProgressData] 캐시 데이터 감지, 재요청 {i + 1}/ {MAX_RETRY_COUNT}");
+                    await UniTask.Delay(RETRY_DELAY_MS);
+                    continue;
+                }
+
+                SummonProgressData data = string.IsNullOrEmpty(json) ? new SummonProgressData() : JsonUtility.FromJson<SummonProgressData>(json);
+                await UniTask.SwitchToMainThread();
+                return data;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[재시도 {i + 1}/{MAX_RETRY_COUNT}] 플레이어 소환 레벨 불러오기 실패, {e}");
+                await UniTask.Delay(RETRY_DELAY_MS);
+            }
+        }
+        await UniTask.SwitchToMainThread();
+        throw new Exception($"플레이어 소환 레벨 불러오기 {MAX_RETRY_COUNT}회 연속 실패함");
+    }
 }
 
 [System.Serializable]

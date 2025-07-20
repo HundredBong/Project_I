@@ -181,11 +181,11 @@ public class UISummonPanel : MonoBehaviour
             //count 만큼 경험치 증가
             GameManager.Instance.SummonManager.AddExp(category, count);
             //뽑기 정보 저장
-            GameManager.Instance.statSaver.SaveSummonProgress(GameManager.Instance.SummonManager.GetSummonProgressData());
+            GameManager.Instance.statSaver.SaveSummonProgressAsync(GameManager.Instance.SummonManager.BuildSummonProgressData()).Forget();
             //인벤토리 정보 저장
-            GameManager.Instance.statSaver.SaveInventoryData(InventoryManager.Instance.GetSaveData());
+            GameManager.Instance.statSaver.SaveInventoryDataAsync(InventoryManager.Instance.BuildSaveData()).Forget();
             //재화 정보 저장
-            GameManager.Instance.statSaver.SavePlayerProgressData(GameManager.Instance.stats.GetProgressSaveData());
+            GameManager.Instance.statSaver.SavePlayerProgressDataAsync(GameManager.Instance.stats.GetProgressSaveData()).Forget();
 
             //인벤토리 페이지 새로고침
             if (UIManager.Instance.TryGetPage<UIInventoryPage>(out UIInventoryPage inventoryPage))
@@ -229,11 +229,11 @@ public class UISummonPanel : MonoBehaviour
             //count 만큼 경험치 증가
             GameManager.Instance.SummonManager.AddExp(category, count);
             //뽑기 정보 저장
-            GameManager.Instance.statSaver.SaveSummonProgress(GameManager.Instance.SummonManager.GetSummonProgressData());
+            GameManager.Instance.statSaver.SaveSummonProgressAsync(GameManager.Instance.SummonManager.BuildSummonProgressData()).Forget();
             //재화 정보 저장
-            GameManager.Instance.statSaver.SavePlayerProgressData(GameManager.Instance.stats.GetProgressSaveData());
+            GameManager.Instance.statSaver.SavePlayerProgressDataAsync(GameManager.Instance.stats.GetProgressSaveData()).Forget();
             //스킬 정보 저장
-            GameManager.Instance.statSaver.SavePlayerSkillData(SkillManager.Instance.BuildSaveData());
+            GameManager.Instance.statSaver.SavePlayerSkillDataAsync(SkillManager.Instance.BuildSaveData()).Forget();
 
             //스킬 페이지 새로고침
             if (UIManager.Instance.TryGetPage<UISkillPage>(out UISkillPage skillPage))

@@ -77,7 +77,7 @@ public class ShopSummonManager
         levels[category] = level;
     }
 
-    public SummonProgressData GetSummonProgressData()
+    public SummonProgressData BuildSummonProgressData()
     {
         List<SummonProgressEntry> entries = new List<SummonProgressEntry>();
         List<SummonRewardClaimEntry> rewardEntries = new List<SummonRewardClaimEntry>();

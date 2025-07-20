@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,7 +15,7 @@ public class SkillEquipPopup : UIPopup
 
 
      private List<SkillSelectButton> skillSelectButtons = new List<SkillSelectButton>(64); //보유 스킬 버튼들
-    public override void Open()
+    public override async void Open()
     {
         base.Open();
 
@@ -33,7 +34,8 @@ public class SkillEquipPopup : UIPopup
         else
         {
             //equippedSkills를 가져오지 못했거나, 가져왔는데 빈 배열이라면
-            GameManager.Instance.statSaver.LoadSkillEquipData(LoadEquippedSkills);
+            SkillEquipSaveData data = await GameManager.Instance.statSaver.LoadSkillEquipDataAsync();
+            InitializeEquippedSkills(data); 
         }
 
         RefreshSkillButtons();
@@ -155,7 +157,7 @@ public class SkillEquipPopup : UIPopup
         }
     }
 
-    public void LoadEquippedSkills(SkillEquipSaveData saveData)
+    public void InitializeEquippedSkills(SkillEquipSaveData saveData)
     {
         for (int i = 0; i < slots.Count; i++)
         {
@@ -187,7 +189,7 @@ public class SkillEquipPopup : UIPopup
         {
             saveData.equippedSkills[i] = newEquippedSkills[i];
         }
-        GameManager.Instance.statSaver.SaveSkillEquipData(saveData);
+        GameManager.Instance.statSaver.SaveSkillEquipData(saveData).Forget();
 
         activeSkillPanel.Refresh(newEquippedSkills);
     }

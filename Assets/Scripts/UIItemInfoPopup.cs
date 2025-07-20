@@ -320,7 +320,7 @@ public class UIItemInfoPopup : UIPopup
         {
             //인벤토리에 아이템 추가 및 저장
             InventoryManager.Instance.AddItem(nextItem, synthesisCount);
-            GameManager.Instance.statSaver.RequestSave(InventoryManager.Instance.GetSaveData());
+            GameManager.Instance.statSaver.RequestSave(InventoryManager.Instance.BuildSaveData());
             //onUpgraded?.Invoke(); //개별 아이템 슬롯 초기화
 
             //UI 새로고침 및 스탯 반영되도록 재계산
@@ -364,7 +364,7 @@ public class UIItemInfoPopup : UIPopup
             currentId++;
         }
 
-        GameManager.Instance.statSaver.RequestSave(InventoryManager.Instance.GetSaveData());
+        GameManager.Instance.statSaver.RequestSave(InventoryManager.Instance.BuildSaveData());
 
         onSynthesisComplete?.Invoke();
         Refresh();

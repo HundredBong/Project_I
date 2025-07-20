@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEditor;
+using UnityEditor.U2D;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -92,80 +93,46 @@ public class GameManager : MonoBehaviour
         await UniTask.WaitUntil(() => firebaseReady);
 
         //불러오기 실행
+        PlayerProgressSaveData playerProgress = await statSaver.LoadPlayerProgressDataAsync();
+        stats.InitializeFromProgressData(playerProgress);
 
-        statSaver.LoadPlayerProgressData(data =>
-        {
-            stats.LoadProgressSaveData(data);
-        });
+        StageSaveData stageData = await statSaver.LoadStageDataAsync();
+        StageManager.Instance.SetStageData(stageData);
+        StageManager.Instance.StartStage();
 
-        statSaver.LoadStageData(data =>
-        {
-            StageManager.Instance.SetStageData(data);
-            StageManager.Instance.StartStage();
-        });
-
-
-        var skillState = await statSaver.LoadPlayerSkillDataAsync();
+        PlayerSkillSaveData skillState = await statSaver.LoadPlayerSkillDataAsync();
         SkillManager.Instance.LoadFrom(skillState);
 
-        //SkillEquipSaveData firstEquip = null;
-
-        //statSaver.ListenSkillEquip(data =>
-        //{
-        //    firstEquip = data;
-
-        //    SkillManager.Instance.SetEquippedSkills(data.equippedSkills);
-
-        //    var panel = FindObjectOfType<ActiveSkillPanel>();
-        //    if (panel != null)
-        //    {
-        //        panel.Refresh(SkillManager.Instance.GetEquippedSkills());
-        //    }
-        //});
-
-        var equipData = await statSaver.LoadDataWithCheck();
+        SkillEquipSaveData equipData = await statSaver.LoadSkillEquipDataAsync();
         SkillManager.Instance.SetEquippedSkills(equipData.equippedSkills);
         FindObjectOfType<ActiveSkillPanel>().Refresh(SkillManager.Instance.GetEquippedSkills());
 
-        statSaver.LoadInventoryData(data =>
+        InventorySaveData inventoryData = await statSaver.LoadInventoryDataAsync();
+        if (inventoryData == null || inventoryData.InventoryEntries == null || inventoryData.InventoryEntries.Count == 0)
         {
-            if (data == null || data.InventoryEntries == null || data.InventoryEntries.Count == 0)
+            foreach (var itemData in DataManager.Instance.GetItemData().Values)
             {
-                foreach (var itemData in DataManager.Instance.GetItemData().Values)
+                if (itemData.GradeType == GradeType.Common && itemData.Stage == 1)
                 {
-                    if (itemData.GradeType == GradeType.Common && itemData.Stage == 1)
-                    {
-                        InventoryManager.Instance.AddItem(itemData, 1);
-                    }
+                    InventoryManager.Instance.AddItem(itemData, 1);
                 }
-                statSaver.SaveInventoryData(InventoryManager.Instance.GetSaveData());
             }
-            else
-            {
-                InventoryManager.Instance.SetInventoryData(data);
-            }
-            inventoryReady = true;
-        });
+            await statSaver.SaveInventoryDataAsync(InventoryManager.Instance.BuildSaveData());
+        }
+        inventoryReady = true;
 
-        statSaver.LoadSummonProgressData(data =>
+        var summonProgressData = await statSaver.LoadSummonProgressDataAsync();
+        if (summonProgressData == null || summonProgressData.SummonProgressEntries.Count == 0)
         {
-            if (data == null || data.SummonProgressEntries.Count == 0)
+            foreach (SummonSubCategory category in Enum.GetValues(typeof(SummonSubCategory)))
             {
-                foreach (SummonSubCategory category in Enum.GetValues(typeof(SummonSubCategory)))
-                {
-                    SummonManager.AddExp(category, 0);
-                    SummonManager.SetLevel(category, 1);
-                }
-
-                statSaver.SaveSummonProgress(SummonManager.GetSummonProgressData());
-            }
-            else
-            {
-                SummonManager.Init(data);
+                SummonManager.AddExp(category, 0);
+                SummonManager.SetLevel(category, 1);
             }
 
-            summonReady = true;
-        });
+            await statSaver.SaveSummonProgressAsync(SummonManager.BuildSummonProgressData());
+        }
+        summonReady = true;
     }
 
     private bool CheckReadyForLoad()
@@ -191,26 +158,6 @@ public class GameManager : MonoBehaviour
     {
         //Instance.statSaver.SaveStatLevels(Instance.stats.GetAllLevels());
         Instance.statSaver.RequestSave(Instance.stats.GetProgressSaveData());
-    }
-
-    [MenuItem("Tools/Load Stats")]
-    public static void LoadStats()
-    {
-        //Instance.statSaver.LoadStatLevels(Instance.stats.SetAllLevels);
-        Instance.statSaver.LoadPlayerProgressData(data => Instance.stats.LoadProgressSaveData(data));
-    }
-
-    [MenuItem("Tools/Save Skill State")]
-    public static void SaveSkillState()
-    {
-        SkillManager.Instance.AddSkill(SkillId.Lightning, 1);
-        Instance.statSaver.SavePlayerSkillData(SkillManager.Instance.BuildSaveData());
-    }
-
-    [MenuItem("Tools/Save Inventory Data")]
-    public static void SaveInventoryData()
-    {
-        Instance.statSaver.SaveInventoryData(InventoryManager.Instance.GetSaveData());
     }
 
 #endif

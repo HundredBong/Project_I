@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -105,12 +106,12 @@ public class StageManager : MonoBehaviour
             stageClearedFlags[currentStage - 1] = true;
         }
 
-        SaveStageData();
         ResetStage();
-        GameManager.Instance.statSaver.SavePlayerProgressData(GameManager.Instance.stats.GetProgressSaveData());
+        GameManager.Instance.statSaver.SaveStageDataAsync(BuildStageSaveData()).Forget();
+        GameManager.Instance.statSaver.SavePlayerProgressDataAsync(GameManager.Instance.stats.GetProgressSaveData()).Forget();
     }
 
-    private void SaveStageData()
+    private StageSaveData BuildStageSaveData()
     {
         StageSaveData data = new StageSaveData
         {
@@ -121,8 +122,7 @@ public class StageManager : MonoBehaviour
             IsLoop = this.isLoop
         };
 
-        //Debug.Log($"[StageManager] 스테이지 데이터 저장 요청, 현재 스테이지 {data.CurrentStageId}, 최대 클리어 스테이지 {data.MaxClearedStageId}");
-        GameManager.Instance.statSaver.SaveStageData(data);
+        return data;
     }
 
     private void ResetStage()

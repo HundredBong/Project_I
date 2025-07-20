@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -130,7 +131,7 @@ public class PlayerStats : MonoBehaviour
         statPoint++;
         playerProgress[PlayerProgressType.StatPoint] = statPoint;
 
-        GameManager.Instance.statSaver.SavePlayerProgressData(GameManager.Instance.stats.GetProgressSaveData());
+        GameManager.Instance.statSaver.SavePlayerProgressDataAsync(GameManager.Instance.stats.GetProgressSaveData()).Forget();
     }
 
     public void AddStat(StatUpgradeType statType, int amount)
@@ -379,7 +380,7 @@ public class PlayerStats : MonoBehaviour
         return data;
     }
 
-    public void LoadProgressSaveData(PlayerProgressSaveData data)
+    public void InitializeFromProgressData(PlayerProgressSaveData data)
     {
         //넘어온 데이터의 ProgressEntry리스트와 StatLevelEntry리스트를 순회하며 딕셔너리 초기화
 
@@ -449,7 +450,7 @@ public class PlayerStats : MonoBehaviour
 
         //저장 요청, 이후 ItemUI는 UIItemInfoPopup에서 갱신함
         GameManager.Instance.statSaver.RequestSave(GetProgressSaveData());
-        GameManager.Instance.statSaver.RequestSave(InventoryManager.Instance.GetSaveData());
+        GameManager.Instance.statSaver.RequestSave(InventoryManager.Instance.BuildSaveData());
         //OnStatChanged?.Invoke();
         return true;
     }

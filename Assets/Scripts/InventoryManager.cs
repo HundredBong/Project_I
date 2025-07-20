@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -122,7 +123,7 @@ public class InventoryManager : MonoBehaviour
         equippedItems[type] = item;
 
         //장착은 보통 한번씩 이루어지니 바로 저장
-        GameManager.Instance.statSaver.SaveInventoryData(GetSaveData());
+        GameManager.Instance.statSaver.SaveInventoryDataAsync(BuildSaveData()).Forget();
         //장착하고나면 대미지 재계산
         GameManager.Instance.stats.RecalculateStats();
     }
@@ -134,7 +135,7 @@ public class InventoryManager : MonoBehaviour
         {
             item.IsEquipped = false;
             equippedItems.Remove(type);
-            GameManager.Instance.statSaver.SaveInventoryData(GetSaveData());
+            GameManager.Instance.statSaver.SaveInventoryDataAsync(BuildSaveData()).Forget();
             GameManager.Instance.stats.RecalculateStats();
         }
     }
@@ -145,7 +146,7 @@ public class InventoryManager : MonoBehaviour
         return item;
     }
 
-    public InventorySaveData GetSaveData()
+    public InventorySaveData BuildSaveData()
     {
         InventorySaveData data = new InventorySaveData();
         //Debug.Log($"저장할 데이터 : {inventory.Count},{inventory.Values.Count}");

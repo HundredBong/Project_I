@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -139,34 +140,6 @@ public class SkillManager : MonoBehaviour
         return finalDamage;
     }
 
-    [ContextMenu("Add Dark Boom")]
-    private void AddDarkBoom()
-    {
-        AddSkill(SkillId.DarkBoom, 1);
-        GameManager.Instance.statSaver.SavePlayerSkillData(BuildSaveData());
-    }
-
-    [ContextMenu("Add Holy Burst")]
-    private void AddHolyBurst()
-    {
-        AddSkill(SkillId.HolyBurst, 1);
-        GameManager.Instance.statSaver.SavePlayerSkillData(BuildSaveData());
-    }
-
-    [ContextMenu("Add Dragon Breath")]
-    private void AddDragonBreath()
-    {
-        AddSkill(SkillId.DragonBreath, 1);
-        GameManager.Instance.statSaver.SavePlayerSkillData(BuildSaveData());
-    }
-
-    [ContextMenu("Add Ice Arrow")]
-    private void AddIceArrow()
-    {
-        AddSkill(SkillId.IceArrow, 1);
-        GameManager.Instance.statSaver.SavePlayerSkillData(BuildSaveData());
-    }
-
     [ContextMenu("ALL")]
     private void AddAllSkill()
     {
@@ -175,7 +148,7 @@ public class SkillManager : MonoBehaviour
             AddSkill(id, 1);
         }
 
-        GameManager.Instance.statSaver.SavePlayerSkillData(BuildSaveData());
+        GameManager.Instance.statSaver.SavePlayerSkillDataAsync(BuildSaveData()).Forget();
     }
 }
 
