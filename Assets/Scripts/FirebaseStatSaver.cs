@@ -162,8 +162,10 @@ public class FirebaseStatSaver : MonoBehaviour
                     continue;
                 }
 
-                Debug.Log(string.IsNullOrEmpty(json) ? "Null" : "Not Null");
-                StageSaveData data = string.IsNullOrEmpty(json) ? new StageSaveData() : JsonUtility.FromJson<StageSaveData>(json);
+                bool isEmpty = snapshot.Exists == false || json == "null";
+                Debug.Log($"Exists : {snapshot.Exists}, json : {json}");
+
+                StageSaveData data = isEmpty ? null : JsonUtility.FromJson<StageSaveData>(json);
 
                 await UniTask.SwitchToMainThread();
                 return data;
@@ -439,9 +441,16 @@ public class StageSaveData
 {
     public int CurrentStageId;
     public int MaxClearedStageId;
-    public bool IsLoop;
+    public bool[] BossChallengable;
     public bool[] BossDefeated;
-    public bool[] StageClearedFlags;
+
+    public StageSaveData()
+    {
+        CurrentStageId = 1;
+        MaxClearedStageId = 0;
+        BossChallengable = new bool[DataManager.Instance.stageDataTable.Count];
+        BossDefeated = new bool[DataManager.Instance.stageDataTable.Count];
+    }
 }
 
 [System.Serializable]

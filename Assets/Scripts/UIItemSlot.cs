@@ -1,13 +1,7 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
-using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.Experimental.AssetDatabaseExperimental.AssetDatabaseCounters;
-using static UnityEditor.Timeline.Actions.MenuPriority;
-
 
 public class UIItemSlot : MonoBehaviour
 {

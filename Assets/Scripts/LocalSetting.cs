@@ -7,6 +7,7 @@ public static class LocalSetting
     private const string UpgradeAmountKey = "UpgradeAmount";
     private const string LanguageKey = "Language";
     private const string AutoSkillKey = "AutoSkillActivate";
+    private const string StageLoopKey = "StageLoopActivate";
 
 
     public static void SaveLanguage(string language)
@@ -42,6 +43,17 @@ public static class LocalSetting
     {
         //µðÆúÆ® OFF
         return PlayerPrefs.GetInt(AutoSkillKey, 0) == 1;
+    }
+
+    public static void SaveStageLoop(bool active)
+    {
+        PlayerPrefs.SetInt(StageLoopKey, active ? 1 : 0);
+        PlayerPrefs.Save();
+    }
+
+    public static bool LoadStageLoop()
+    {
+        return PlayerPrefs.GetInt(StageLoopKey, 0) == 1;
     }
 
 }

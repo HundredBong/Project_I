@@ -12,14 +12,14 @@ public class SummonRewardPannel : MonoBehaviour
 
     private SummonSubCategory category;
     private RewardType rewardType;
-    private int level;
+    private int level; //현재 패널이 다루는 실제 레벨
     private SummonRewardData rewardData;
 
     public void Refresh(SummonSubCategory category)
     {
         this.category = category;
-        int currentLevel = GameManager.Instance.SummonManager.GetLevel(category);
-        int targetLevel = -1;
+        int currentLevel = GameManager.Instance.SummonManager.GetLevel(category); //플레이어가 현재 도달한 소환 레벨
+        int targetLevel = -1; //UI에 표시할 보상 레벨
 
         //안받은 보상이 있는지 검사
         for (int i = 1; i <= currentLevel; i++)
@@ -30,6 +30,7 @@ public class SummonRewardPannel : MonoBehaviour
                 continue;
             }
 
+            //보상은 존재하나 받지 않았다면
             if (GameManager.Instance.SummonManager.HasClaimed(category, i) == false)
             {
                 targetLevel = i;
@@ -57,7 +58,7 @@ public class SummonRewardPannel : MonoBehaviour
                 rewardIcon.sprite = DataManager.Instance.GetSpriteByKey(itemData.IconKey);
                 this.rewardType = RewardType.Item;
                 break;
-            case RewardType.Currency:
+            case RewardType.SkillGem:
                 //스프라이트 딕셔너리에서 ID로 아이콘 가져오고
                 //ID 파싱해서 재화로 만들고 지급
                 break;
@@ -97,7 +98,7 @@ public class SummonRewardPannel : MonoBehaviour
                     inventoryPage.RefreshAll();
                 }
                 break;
-            case RewardType.Currency:
+            case RewardType.SkillGem:
                 break;
             default:
                 break;

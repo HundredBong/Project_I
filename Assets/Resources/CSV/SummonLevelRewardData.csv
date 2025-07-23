@@ -3,7 +3,7 @@ Necklace,2,Item,306,1
 Necklace,3,Item,308,1
 Armor,2,Item,206,1
 Armor,3,Item,208,1
-Skill,2,Currency,SkillGem,50
-Skill,3,Currency,SkillGem,75
+Skill,2,SkillGem,SkillGem,50
+Skill,3,SkillGem,SkillGem,75
 Weapon,2,Item,106,1
 Weapon,3,Item,108,1

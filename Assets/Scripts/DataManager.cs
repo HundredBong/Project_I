@@ -278,7 +278,11 @@ public class DataManager : MonoBehaviour
                 DEFRate = float.Parse(tokens[6]),
                 RewardRate = float.Parse(tokens[7]),
                 InitCount = int.Parse(tokens[8]),
-                AddCount = int.Parse(tokens[9])
+                AddCount = int.Parse(tokens[9]),
+                BossEnemyId = Enum.Parse<EnemyId>(tokens[10].Trim()),
+                RewardType = Enum.Parse<RewardType>(tokens[11].Trim()),
+                BossRewardAmount = int.Parse(tokens[12].Trim()),
+                BossStatRate = float.Parse(tokens[13].Trim()),
             };
 
             stageDataTable[stageId] = data;
@@ -874,6 +878,10 @@ public class StageData
     public float RewardRate;
     public int InitCount;
     public int AddCount;
+    public EnemyId BossEnemyId;
+    public RewardType RewardType;
+    public int BossRewardAmount;
+    public float BossStatRate;
 }
 
 [System.Serializable]

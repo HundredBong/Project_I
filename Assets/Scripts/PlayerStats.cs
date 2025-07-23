@@ -33,6 +33,7 @@ public class PlayerStats : MonoBehaviour
     public float gold = 0;
     public int diamond = 0;
     public int enhanceStone = 0;
+    public int skillGem = 0;
 
     [Header("º¸³Ê½º")]
     [SerializeField] private float goldBonus = 1;

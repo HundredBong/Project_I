@@ -16,14 +16,14 @@ public class UIStatPage : UIPage
     [SerializeField] private TextMeshProUGUI levelText;
     [SerializeField] private TextMeshProUGUI statPointText;
 
-    [HideInInspector] public List<StatsSlotUI> slotUIs = new List<StatsSlotUI>();
+    [HideInInspector] public List<UIStatSlot> slotUIs = new List<UIStatSlot>();
     private void Start()
     {
         //시작하면 타입에 맞게 패널 UI 알아서 생성해줌
         foreach (StatUpgradeType type in System.Enum.GetValues(typeof(StatUpgradeType)))
         {
             GameObject obj = Instantiate(statSlotPrefab, contentRoot);
-            StatsSlotUI slot = obj.GetComponent<StatsSlotUI>();
+            UIStatSlot slot = obj.GetComponent<UIStatSlot>();
             slot.Init(playerStats, type);
             slotUIs.Add(slot);
         }
@@ -51,7 +51,7 @@ public class UIStatPage : UIPage
 
         //Debug.Log($"[PlayerStats] RefreshAllStatUIs 실행됨, UI개수 : {slotUIs.Count}");
 
-        foreach (StatsSlotUI ui in slotUIs)
+        foreach (UIStatSlot ui in slotUIs)
         {
             ui.Refresh();
             //Debug.Log($"[PlayerStats] 새로고침한 UI : {ui.name}");

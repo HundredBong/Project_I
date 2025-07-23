@@ -34,7 +34,6 @@ public class SpawnManager : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             EnemyId enemyId = stage.Enemies[Random.Range(0, stage.Enemies.Count)];
-            //GameObject prefab = Resources.Load<GameObject>($"Prefabs/Enemies/{enemyId}");
             GameObject prefab = ObjectPoolManager.Instance.enemyPool.GetPrefab(enemyId);
 
             if (prefab == null)
@@ -44,9 +43,29 @@ public class SpawnManager : MonoBehaviour
             }
 
             Enemy enemy = ObjectPoolManager.Instance.enemyPool.Get(prefab);
+            enemy.Initialize();
             enemy.transform.position = GetRandomPos();
             enemy.transform.rotation = Quaternion.identity;
         }
+    }
+
+    public void SpawnStageBoss()
+    {
+        int stageId = StageManager.Instance.GetCurrentStage();
+        StageData stage = DataManager.Instance.stageDataTable[stageId];
+
+        if (stage == null)
+        {
+            Debug.LogError("[SpawnManager] 현재 스테이지 데이터 없음");
+            return;
+        }
+
+        GameObject prefab = ObjectPoolManager.Instance.enemyPool.GetPrefab(stage.BossEnemyId);
+        EnemyData enemyData = DataManager.Instance.GetEnemyData(stage.BossEnemyId);
+        Enemy boss = ObjectPoolManager.Instance.enemyPool.Get(prefab);
+        boss.transform.position = GetRandomPos();
+        boss.transform.localScale = boss.OriginScale * 2f; 
+        boss.InitializeBoss(stage, enemyData);
     }
 
     private Vector2 GetRandomPos()

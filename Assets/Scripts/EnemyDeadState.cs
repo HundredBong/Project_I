@@ -21,12 +21,25 @@ public class EnemyDeadState : IState
         }
 
         float deadTime = anim.GetCurrentAnimatorStateInfo(0).length;
-        DelayCallManager.Instance.CallLater(deadTime, () => { ObjectPoolManager.Instance.enemyPool.Return(owner.enemy); });
+
+        DelayCallManager.Instance.CallLater(deadTime, () => 
+        {
+            if (owner.enemy.IsBoss) 
+            {
+                owner.enemy.transform.localScale = owner.enemy.OriginScale; 
+            }
+            ObjectPoolManager.Instance.enemyPool.Return(owner.enemy); 
+        });
 
         GameManager.Instance.player.GetExp(owner.enemy.expValue);
         GameManager.Instance.player.GetGold(owner.enemy.goldValue);
         GameManager.Instance.enemyList.Remove(owner.enemy);
         StageManager.Instance.NotifyKill();
+
+        if (owner.enemy.IsBoss)
+        {
+            StageManager.Instance.NotifyKillBoss();
+        }
     }
 
     public void OnExit()

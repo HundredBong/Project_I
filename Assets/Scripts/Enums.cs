@@ -6,7 +6,7 @@ public enum StatUpgradeType { Attack, Health, AttackSpeed, MoveSpeed, }
 
 public enum GoldUpgradeType { Attack, Health, CriticalChance, CriticalDamage }
 
-public enum PlayerProgressType { Level, CurrentExp, MaxExp, StatPoint, Gold, Diamond, EnhanceStone }
+public enum PlayerProgressType { Level, CurrentExp, MaxExp, StatPoint, Gold, Diamond, EnhanceStone,SkillGem }
 
 public enum HUDType { Shop, Stat, Skill, Inventory, Menu }
 
@@ -34,6 +34,6 @@ public enum ShopCategory { Summon, Normal, Skill, Score, Package, Cash }
 
 public enum SummonSubCategory { Weapon, Armor, Necklace, Skill }
 
-public enum RewardType { Item, Currency }
+public enum RewardType { Item, Diamond, EnhanceStone, SkillGem }
 
 public enum StateType { None, Idle, Attack, Chase, Dead, Charge }

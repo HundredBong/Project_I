@@ -145,7 +145,7 @@ GameObject:
   - component: {fileID: 7388699630253259360}
   - component: {fileID: 5482553901487262783}
   - component: {fileID: 7587962464827634139}
-  - component: {fileID: 6266696186554932591}
+  - component: {fileID: 5638765398609144358}
   m_Layer: 5
   m_Name: Stat Content
   m_TagString: Untagged
@@ -213,7 +213,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &6266696186554932591
+--- !u!114 &5638765398609144358
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -222,7 +222,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1377613939474825581}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c08a5089dbb7bf946a599ff86b054fb3, type: 3}
+  m_Script: {fileID: 11500000, guid: 6b8eedf9831772a40bba32d7b0d11230, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   statNameText: {fileID: 6379728895979713679}

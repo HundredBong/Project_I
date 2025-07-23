@@ -31,16 +31,18 @@ public class Enemy : MonoBehaviour, IPooledObject
 
     public Player PlayerReference { get; private set; }
 
+    public bool IsBoss { get; private set; }
+
     private EnemyStateMachine stateMachine;
 
-    private Vector3 originScale;
+    public Vector3 OriginScale { get; private set; }
     private Vector3 flipScale;
 
     private void Awake()
     {
         PlayerReference = GameManager.Instance.player;
 
-        originScale = transform.localScale;
+        OriginScale = transform.localScale;
         Vector3 flipVector = new Vector3(-1f, 1f, 1f);
         flipScale = Vector3.Scale(transform.localScale, flipVector);
 
@@ -58,7 +60,7 @@ public class Enemy : MonoBehaviour, IPooledObject
 
         stateMachine = GetComponent<EnemyStateMachine>();
 
-        if(stateMachine == null)
+        if (stateMachine == null)
         {
             Debug.LogError("[Enemy] EnemyStateMachine 컴포넌트가 없음.");
         }
@@ -71,7 +73,8 @@ public class Enemy : MonoBehaviour, IPooledObject
     {
         isDead = false;
 
-        Initialize();
+        //Initialize();
+
 
         if (GameManager.Instance != null)
         {
@@ -96,7 +99,7 @@ public class Enemy : MonoBehaviour, IPooledObject
         }
     }
 
-    private async void Initialize()
+    public async void Initialize()
     {
         await UniTask.WaitUntil(() => StageManager.Instance != null);
 
@@ -127,7 +130,23 @@ public class Enemy : MonoBehaviour, IPooledObject
         expValue = enemyData.EXP * stageData.RewardRate;
         goldValue = enemyData.Gold * stageData.RewardRate;
         chaseRange = enemyData.ChaseRange;
+        IsBoss = false;
+    }
 
+    public void InitializeBoss(StageData stageData, EnemyData enemyData)
+    {
+        Debug.Log($"보스 소환, 배율 : {stageData.BossStatRate}, 크기 : {transform.lossyScale}");
+        IsBoss = true;
+        maxHealth = enemyData.HP * stageData.BossStatRate;
+        health = maxHealth;
+        damage = enemyData.ATK * stageData.BossStatRate;
+        defend = enemyData.DEF * stageData.BossStatRate;
+        moveSpeed = enemyData.SPD;
+        attackRange = enemyData.Range;
+        attackInterval = enemyData.AttackInterval;
+        expValue = enemyData.EXP * stageData.RewardRate;
+        goldValue = enemyData.Gold * stageData.RewardRate;
+        chaseRange = enemyData.ChaseRange;
     }
 
     public void TakeDamage(float damage)
@@ -163,6 +182,13 @@ public class Enemy : MonoBehaviour, IPooledObject
     {
         isFlip = PlayerReference?.transform.position.x - transform.position.x > 0 ? true : false;
 
-        transform.localScale = isFlip ? flipScale : originScale;
+        if (IsBoss == false)
+        {
+            transform.localScale = isFlip ? flipScale : OriginScale;
+        }
+        else
+        {
+            transform.localScale = isFlip ? flipScale * 2 : OriginScale * 2;
+        }
     }
 }
