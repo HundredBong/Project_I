@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class StageManager : MonoBehaviour
@@ -14,12 +15,15 @@ public class StageManager : MonoBehaviour
     [SerializeField] private int totalKillsRequired = 100; //스테이지 클리어에 필요한 킬 카운트
     [SerializeField] private int spawnBatchSize = 20; //재생성할 몬스터 수
     [SerializeField] private int defaultSpawnCount = 30; //기본 몬스터 생성 수
-    [SerializeField] private int maxClearedStage = 1; //최대 클리어 스테이지
-    public bool IsLoop { get; set; } //현재 스테이지를 반복할 것인지에 대한 변수
+
+    public int MaxClearedStage { get; private set; }
 
     [SerializeField] private bool[] bossChallengable;
     [SerializeField] private bool[] bossDefeated;
 
+    public event Action<int, int> OnKillUpdated; //현재 킬, 필요 킬
+    public event Action<int, bool> OnStageChanged; //현재 스테이지,canBoss
+    public event Action<int> OnBossStageEntered; //current
 
     private void Awake()
     {
@@ -51,20 +55,19 @@ public class StageManager : MonoBehaviour
             Debug.LogWarning("[StageManager] 로드된 데이터가 null임");
             return;
         }
+
         Debug.Log(data.CurrentStageId);
         currentStage = data.CurrentStageId;
-        maxClearedStage = data.MaxClearedStageId;
+        MaxClearedStage = data.MaxClearedStageId;
         bossChallengable = data.BossChallengable ?? new bool[DataManager.Instance.stageDataTable.Count];
         bossDefeated = data.BossDefeated ?? new bool[DataManager.Instance.stageDataTable.Count];
-        IsLoop = LocalSetting.LoadStageLoop();
-
-        //Debug.Log($"[StageManager] 스테이지 데이터 불러오기 완료, 현재 스테이지 : {currentStage}");
     }
 
     public void StartStage()
     {
-        //Debug.Log($"[StageManager] {currentStage}스테이지 시작");
         killCount = 0;
+        OnStageChanged?.Invoke(currentStage, bossChallengable[currentStage - 1]); //스테이지 시작할 때마다 현재 스테이지 갱신
+        OnKillUpdated?.Invoke(killCount, totalKillsRequired);
 
         SpawnManager.Instance.SpawnEnemiesForCurrentStage(defaultSpawnCount);
     }
@@ -74,13 +77,15 @@ public class StageManager : MonoBehaviour
     {
         killCount++;
 
-        //다음 스테이지로 넘어가기위한 최대 킬 수에 도달하지 않고, 현재 킬 카운트와 사이즈 연산 값이 0이면 
-        //20 < 100 && 20 % 20 == 0 
+
+        Debug.Log($"킬 카운트 {killCount}, 연산 : {killCount % spawnBatchSize}, bool : {killCount < totalKillsRequired && killCount % spawnBatchSize == 0}");
+        ////다음 스테이지로 넘어가기위한 최대 킬 수에 도달하지 않고, 현재 킬 카운트와 사이즈 연산 값이 0이면 
         if (killCount < totalKillsRequired && killCount % spawnBatchSize == 0)
         {
-            //사이즈만큼 몬스터 다시 생성
             SpawnManager.Instance.SpawnEnemiesForCurrentStage(spawnBatchSize);
         }
+
+        OnKillUpdated?.Invoke(killCount, totalKillsRequired);
 
         //현재 킬 카운트가 스테이지 클리어에 필요한만큼 도달하면
         if (killCount >= totalKillsRequired)
@@ -91,11 +96,10 @@ public class StageManager : MonoBehaviour
 
     public void NotifyKillBoss()
     {
-        bossDefeated[currentStage] = true;
+        bossDefeated[currentStage - 1] = true;
         GiveBossReward();
+        MaxClearedStage = Mathf.Max(MaxClearedStage, currentStage); //최대 스테이지 업데이트
         currentStage++;
-        maxClearedStage = Mathf.Max(maxClearedStage, currentStage); //최대 클리어 스테이지 업데이트
-
         GameManager.Instance.statSaver.SaveStageDataAsync(BuildStageSaveData()).Forget();
         GameManager.Instance.statSaver.SavePlayerProgressDataAsync(GameManager.Instance.stats.GetProgressSaveData()).Forget();
 
@@ -124,31 +128,43 @@ public class StageManager : MonoBehaviour
 
     private void OnStageClear()
     {
-        //반복중이라면 스테이지 클리어
-        if (IsLoop == true)
+        Debug.Log($"current : {currentStage}, max : {MaxClearedStage}, bossChallengable : {bossChallengable[currentStage - 1]}");
+
+        bool canBose = bossChallengable[currentStage - 1];
+        bool climbing = currentStage > MaxClearedStage;
+
+
+        if (climbing)
+        {
+            if (canBose)
+            {
+                StartBossChallenge();
+            }
+            else
+            {
+                bossChallengable[currentStage - 1] = true;
+            }
+        }
+        else
         {
             ResetStage();
         }
 
-        //반복중이 아니고, 보스를 클리어하지 않았으며, 보스에게 도전 불가능한 상태에서 클리어 했다면
-        if (IsLoop == false && bossChallengable[currentStage] == false && bossDefeated[currentStage] == false)
-        {
-            //보스에게 도전 가능하도록 함,
-            bossChallengable[currentStage] = true;
-            maxClearedStage = currentStage;
-        }
-
-        //반복중이 아니고, 보스에게 도전이 가능하다면
-        if (IsLoop == false && bossChallengable[currentStage] == true && bossDefeated[currentStage] == false)
-        {
-            //보스에게 도전하는 스테이지로 초기화
-            GameManager.Instance.player.transform.position = Vector3.zero;
-            ObjectPoolManager.Instance.enemyPool.ReturnAllEnemies();
-            SpawnManager.Instance.SpawnStageBoss();
-        }
-
         GameManager.Instance.statSaver.SaveStageDataAsync(BuildStageSaveData()).Forget();
         GameManager.Instance.statSaver.SavePlayerProgressDataAsync(GameManager.Instance.stats.GetProgressSaveData()).Forget();
+    }
+
+    public void StartBossChallenge()
+    {
+        GameManager.Instance.player.transform.position = Vector3.zero;
+        ObjectPoolManager.Instance.enemyPool.ReturnAllEnemies();
+
+        //캔슬 이슈로 1초 딜레이 줌
+        DelayCallManager.Instance.CallLater(1.5f, () =>
+        {
+            SpawnManager.Instance.SpawnStageBoss();
+            OnBossStageEntered?.Invoke(currentStage);
+        });
     }
 
     private StageSaveData BuildStageSaveData()
@@ -156,7 +172,7 @@ public class StageManager : MonoBehaviour
         StageSaveData data = new StageSaveData
         {
             CurrentStageId = this.currentStage,
-            MaxClearedStageId = this.maxClearedStage,
+            MaxClearedStageId = this.MaxClearedStage,
             BossChallengable = this.bossChallengable,
             BossDefeated = this.bossDefeated,
         };
@@ -164,14 +180,22 @@ public class StageManager : MonoBehaviour
         return data;
     }
 
-    private void ResetStage()
+    public void ResetStage()
     {
-        //플레이어 위치 초기화, 기존 몬스터 제거
-        killCount = 0;
-
-        GameManager.Instance.player.transform.position = Vector3.zero;
         ObjectPoolManager.Instance.enemyPool.ReturnAllEnemies();
-        SpawnManager.Instance.SpawnEnemiesForCurrentStage(30);
+
+        DelayCallManager.Instance.CallLater(1.5f, () =>
+        {
+            //플레이어 위치 초기화, 기존 몬스터 제거
+            killCount = 0;
+
+            GameManager.Instance.player.transform.position = Vector3.zero;
+
+            SpawnManager.Instance.SpawnEnemiesForCurrentStage(30);
+
+            OnStageChanged?.Invoke(currentStage, bossChallengable[currentStage - 1]);
+            OnKillUpdated?.Invoke(killCount, totalKillsRequired);
+        });
     }
 
     public StageType GetStageType(int stageNumber)
@@ -182,5 +206,24 @@ public class StageManager : MonoBehaviour
     public int GetCurrentStage()
     {
         return currentStage;
+    }
+
+    public void GoToStage(int stage)
+    {
+        if (stage > MaxClearedStage)
+        {
+            Debug.LogWarning("[StageManager] 잘못된 스테이지 접근");
+            return;
+        }
+
+        currentStage = stage;
+        ResetStage();
+        OnStageChanged?.Invoke(stage, bossChallengable[stage - 1]);
+    }
+
+    [ContextMenu("GO 1")]
+    private void Test()
+    {
+        GoToStage(1);
     }
 }

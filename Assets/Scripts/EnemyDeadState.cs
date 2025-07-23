@@ -12,6 +12,11 @@ public class EnemyDeadState : IState
 
     public void OnEnter()
     {
+        if (owner.enemy.IsBoss)
+        {
+            Debug.Log($"IsBoss : {owner.enemy.IsBoss}");
+        }
+
         owner.enemy.isDead = true;
         anim = owner.enemy.Animator;
 
@@ -22,22 +27,25 @@ public class EnemyDeadState : IState
 
         float deadTime = anim.GetCurrentAnimatorStateInfo(0).length;
 
-        DelayCallManager.Instance.CallLater(deadTime, () => 
+        DelayCallManager.Instance.CallLater(deadTime, () =>
         {
-            if (owner.enemy.IsBoss) 
-            {
-                owner.enemy.transform.localScale = owner.enemy.OriginScale; 
-            }
-            ObjectPoolManager.Instance.enemyPool.Return(owner.enemy); 
+            owner.enemy.transform.localScale = owner.enemy.OriginScale;
+            ObjectPoolManager.Instance.enemyPool.Return(owner.enemy);
         });
 
         GameManager.Instance.player.GetExp(owner.enemy.expValue);
         GameManager.Instance.player.GetGold(owner.enemy.goldValue);
         GameManager.Instance.enemyList.Remove(owner.enemy);
-        StageManager.Instance.NotifyKill();
 
-        if (owner.enemy.IsBoss)
+        if (owner.enemy.IsBoss == false)
         {
+            StageManager.Instance.NotifyKill();
+
+        }
+        else if (owner.enemy.IsBoss)
+        {
+            Debug.Log($"BossDead : {owner.enemy.IsBoss}");
+
             StageManager.Instance.NotifyKillBoss();
         }
     }

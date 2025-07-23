@@ -64,6 +64,7 @@ public class PlayerAttackState : IState
         //Debug.Log("Player Attack Hit");
 
         //방향계산
+        if (owner.player.TargetEnemy == null) { return; }
         Vector3 rawDir = owner.player.TargetEnemy.transform.position - owner.player.transform.position;
 
         Vector3 dir = new Vector3(rawDir.x, 0f, 0f).normalized;

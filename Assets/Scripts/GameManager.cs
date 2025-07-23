@@ -97,7 +97,7 @@ public class GameManager : MonoBehaviour
         stats.InitializeFromProgressData(playerProgress);
 
         StageSaveData stageData = await statSaver.LoadStageDataAsync();
-        if (stageData == null || stageData.CurrentStageId == 0)
+        if (stageData == null || stageData.CurrentStageId == 0 || stageData.MaxClearedStageId == 0)
         {
             Debug.Log("새로운 스테이지 데이터 작성");
             stageData = new StageSaveData();

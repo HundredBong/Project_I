@@ -89,6 +89,7 @@ public class Enemy : MonoBehaviour, IPooledObject
     private void OnDisable()
     {
         isDead = true;
+        health = maxHealth;
     }
 
     private void Update()
@@ -136,6 +137,7 @@ public class Enemy : MonoBehaviour, IPooledObject
     public void InitializeBoss(StageData stageData, EnemyData enemyData)
     {
         Debug.Log($"보스 소환, 배율 : {stageData.BossStatRate}, 크기 : {transform.lossyScale}");
+        Debug.Log($"enemyData.HP : {enemyData.HP}, stageData.StatRate : {stageData.BossStatRate}, max : {maxHealth}health : {health}");
         IsBoss = true;
         maxHealth = enemyData.HP * stageData.BossStatRate;
         health = maxHealth;

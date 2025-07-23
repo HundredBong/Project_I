@@ -141,7 +141,7 @@ public class FirebaseStatSaver : MonoBehaviour
         string path = $"users/{userId}/stage";
         string firstResult = null;
 
-        for (int i = 0; i < MAX_RETRY_COUNT; i++)
+        for (int i = 0; i < 100; i++)
         {
             float start = Time.realtimeSinceStartup;
 
@@ -151,11 +151,13 @@ public class FirebaseStatSaver : MonoBehaviour
                 string json = snapshot.GetRawJsonValue();
                 float duration = Time.realtimeSinceStartup - start;
 
+                Debug.Log($"DURATION : {duration}");
+
                 if (firstResult == null)
                 {
                     firstResult = json;
                 }
-                else if (duration < DURATION_THRESHOLD && json == firstResult)
+                if (duration < DURATION_THRESHOLD && json == firstResult)
                 {
                     Debug.LogWarning($"[StageData] 캐시 데이터 감지, 재요청 {i + 1}/{MAX_RETRY_COUNT}");
                     await UniTask.Delay(RETRY_DELAY_MS);
