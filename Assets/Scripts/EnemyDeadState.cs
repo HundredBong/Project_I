@@ -12,6 +12,8 @@ public class EnemyDeadState : IState
 
     public void OnEnter()
     {
+        owner.enemy.deadCount++;
+
         if (owner.enemy.IsBoss)
         {
             Debug.Log($"IsBoss : {owner.enemy.IsBoss}");

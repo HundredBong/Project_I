@@ -52,9 +52,12 @@ public class EnemyPool : GenericPoolManager<Enemy>
             if (enemy != null && enemy.gameObject.activeInHierarchy)
             {
                 Return(enemy);
+                GameManager.Instance.enemyList.Remove(enemy);
             }
         }
     }
+
+
 
     public void InitializePool(int preloadCount = 30)
     {

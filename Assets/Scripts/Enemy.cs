@@ -38,6 +38,8 @@ public class Enemy : MonoBehaviour, IPooledObject
     public Vector3 OriginScale { get; private set; }
     private Vector3 flipScale;
 
+    public int deadCount = 0;
+
     private void Awake()
     {
         PlayerReference = GameManager.Instance.player;
@@ -90,6 +92,8 @@ public class Enemy : MonoBehaviour, IPooledObject
     {
         isDead = true;
         health = maxHealth;
+
+        deadCount = 0;
     }
 
     private void Update()
@@ -97,6 +101,11 @@ public class Enemy : MonoBehaviour, IPooledObject
         if (PlayerReference != null && isDead == false)
         {
             FlipSprite();
+        }
+
+        if (deadCount >= 2)
+        {
+            Debug.LogError($"DeadState 여러번 진입함, {deadCount}");
         }
     }
 

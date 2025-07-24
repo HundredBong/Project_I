@@ -30651,12 +30651,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   killText: {fileID: 1264077802}
   stageText: {fileID: 1353356222}
-  goMaxStageText: {fileID: 1415034999}
-  loopText: {fileID: 802812463}
+  goToMaxStageText: {fileID: 1415034999}
   bossChallengeButton: {fileID: 2042607699}
-  goMaxStageButton: {fileID: 707794817}
+  goToMaxStageButton: {fileID: 707794817}
   stageSelectButton: {fileID: 1357312139}
-  setLoopButton: {fileID: 64962176}
   giveUpButton: {fileID: 1993900473}
   stageProgressImage: {fileID: 958099186}
 --- !u!1 &1556935541
