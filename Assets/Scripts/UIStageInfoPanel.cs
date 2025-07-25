@@ -128,7 +128,7 @@ public class UIStageInfoPanel : MonoBehaviour
 
     private void OnStageSelectButtonClicked()
     {
-        //UIManager.Instance.PopupOpen
+        UIManager.Instance.PopupOpen<UIStageSelectPopup>();
     }
 
     private void OnGiveUpButtonClicked()
