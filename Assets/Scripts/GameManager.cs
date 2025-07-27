@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 
@@ -145,10 +146,8 @@ public class GameManager : MonoBehaviour
     {
         this.player = player;
 
-        if (StageManager.Instance != null)
-        {
-            StageManager.Instance.StartStage();
-        }
+        StageManager.Instance.StartStage();
+
     }
 
 
@@ -172,10 +171,28 @@ public class GameManager : MonoBehaviour
         Instance.statSaver.RequestSave(Instance.stats.GetProgressSaveData());
     }
 
-    [MenuItem("Tools/Go To Main Scene")]
+    [MenuItem("Tools/Go To Main Scene (Game)")]
     public static void GoToMainScene()
     {
         LoadingSceneController.LoadScene("0_MainScene");
+    }
+
+    [MenuItem("Scenes/Go To Stage Scene (Editor)")]
+    private static void OpenStageScene()
+    {
+        if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+        {
+            EditorSceneManager.OpenScene("Assets/Scenes/1_StageScene.unity");
+        }
+    }
+
+    [MenuItem("Scenes/Go To Main Menu (Editor)")]
+    private static void OpenMainMenuScene()
+    {
+        if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+        {
+            EditorSceneManager.OpenScene("Assets/Scenes/0_MainScene.unity");
+        }
     }
 
 #endif

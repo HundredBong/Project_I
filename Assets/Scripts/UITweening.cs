@@ -16,6 +16,8 @@ public static class UITweening
 
     public static void FadeIn(Image fadeImage, float duration)
     {
+        Debug.Log("트위닝 시작함");
+
         fadeImage.DOFade(0f, duration).SetEase(Ease.OutQuad);
     }
 

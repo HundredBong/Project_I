@@ -16,7 +16,7 @@ public class UIManager : MonoBehaviour
 
     private Stack<UIPopup> openPopups = new Stack<UIPopup>();
     private UIPage currentPage;
-    private Image _fadeImage;
+    [SerializeField] private Image _fadeImage;
 
     private void Awake()
     {
@@ -30,11 +30,13 @@ public class UIManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         //-------------------------------------------------------------------
+
+        SceneManager.sceneLoaded += RegisterUI;
     }
 
-    private void OnEnable()
+    private void OnDestroy()
     {
-        SceneManager.sceneLoaded += RegisterUI;
+        SceneManager.sceneLoaded -= RegisterUI;
     }
 
     private void Init()
@@ -156,20 +158,21 @@ public class UIManager : MonoBehaviour
         {
             return;
         }
+        Debug.Log("레지스터 UI호출");
 
         popups.Clear();
         pages.Clear();
         openPopups.Clear();
         currentPage = null;
 
-        UIPage[] foundPages = FindObjectsOfType<UIPage>();
+        UIPage[] foundPages = FindObjectsOfType<UIPage>(true);
 
         foreach (var page in foundPages)
         {
             pages.Add(page);
         }
 
-        UIPopup[] foundPopus = FindObjectsOfType<UIPopup>();
+        UIPopup[] foundPopus = FindObjectsOfType<UIPopup>(true);
 
         foreach (var popup in foundPopus)
         {
@@ -185,6 +188,20 @@ public class UIManager : MonoBehaviour
         {
             UITweening.FadeOut(_fadeImage, totalDuration / 2);
             DelayCallManager.Instance.CallLater(totalDuration / 2, () => { UITweening.FadeIn(_fadeImage, totalDuration / 2); });
+        }
+        else
+        {
+            Debug.LogWarning("[UIManager] fadeImage가 존재하지 않음");
+        }
+    }
+
+    public void FadeIn(float duration)
+    { 
+        if (_fadeImage != null)
+        {
+        Debug.Log("페이드 인 실행됨");
+
+            UITweening.FadeIn(_fadeImage, duration);
         }
         else
         {
