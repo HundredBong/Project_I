@@ -119,6 +119,18 @@ public class ActiveSkillSlot : MonoBehaviour
             }
         }
 
+        if (equippedSkill == null)
+        {
+            Debug.Log("장착된 스킬이 null임");
+            return;
+        }
+
+        if (GameManager.Instance.player == null)
+        {
+            Debug.Log("게임매니저의 플레이어가 null임");
+            return;
+        }
+
         if (equippedSkill != null && equippedSkill.IsTargetInRange(GameManager.Instance.player.gameObject) == false)
         {
             //범위 밖에있으면 쿨타임 텍스트 대신 다른 텍스트 출력

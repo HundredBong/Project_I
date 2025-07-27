@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
@@ -14,6 +16,7 @@ public class UIManager : MonoBehaviour
 
     private Stack<UIPopup> openPopups = new Stack<UIPopup>();
     private UIPage currentPage;
+    private Image _fadeImage;
 
     private void Awake()
     {
@@ -27,8 +30,11 @@ public class UIManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         //-------------------------------------------------------------------
+    }
 
-        Init();
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += RegisterUI;
     }
 
     private void Init()
@@ -65,13 +71,13 @@ public class UIManager : MonoBehaviour
             page.Open();
             currentPage = page;
         }
-      
+
         return page;
     }
 
     public void PageClose()
     {
-        while(openPopups.Count > 0)
+        while (openPopups.Count > 0)
         {
             PopupClose();
         }
@@ -112,7 +118,7 @@ public class UIManager : MonoBehaviour
     public void HandleBack()
     {
         //팝업 큐에 남아있는 팝업이 있으면 팝업을 닫음.
-        if (openPopups.Count > 0) 
+        if (openPopups.Count > 0)
         {
             PopupClose();
         }
@@ -136,5 +142,53 @@ public class UIManager : MonoBehaviour
 
         page = null;
         return false;
+    }
+
+    public void RegisterFadeImage(Image fadeImage)
+    {
+        Debug.Log("fadeImage 등록됨");
+        _fadeImage = fadeImage;
+    }
+
+    private void RegisterUI(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name.Contains("Loading"))
+        {
+            return;
+        }
+
+        popups.Clear();
+        pages.Clear();
+        openPopups.Clear();
+        currentPage = null;
+
+        UIPage[] foundPages = FindObjectsOfType<UIPage>();
+
+        foreach (var page in foundPages)
+        {
+            pages.Add(page);
+        }
+
+        UIPopup[] foundPopus = FindObjectsOfType<UIPopup>();
+
+        foreach (var popup in foundPopus)
+        {
+            popups.Add(popup);
+        }
+
+        Init();
+    }
+
+    public void FadeInOut(float totalDuration)
+    {
+        if (_fadeImage != null)
+        {
+            UITweening.FadeOut(_fadeImage, totalDuration / 2);
+            DelayCallManager.Instance.CallLater(totalDuration / 2, () => { UITweening.FadeIn(_fadeImage, totalDuration / 2); });
+        }
+        else
+        {
+            Debug.LogWarning("[UIManager] fadeImage가 존재하지 않음");
+        }
     }
 }

@@ -8,6 +8,11 @@ public class ActiveSkillPanel : MonoBehaviour
 {
     [SerializeField] private ActiveSkillSlot[] skillSlots;
 
+    private void Start()
+    {
+        Refresh(SkillManager.Instance.GetEquippedSkills());
+    }
+
     public void Refresh(SkillId[] equippedSkills)
     {
         for (int i = 0; i < skillSlots.Length; i++)

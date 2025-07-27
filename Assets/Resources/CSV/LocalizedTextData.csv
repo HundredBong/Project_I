@@ -103,3 +103,5 @@ Skill_Fireball_Name,파이어볼,Fireball
 Skill_Fireball_Desc,적을 추격하는 불꽃을 소환해 주변 최대 {0}명의 적에게 소환해 <color=white>{1}<color/>의 대미지로 {2}번 피해를 입힙니다. 타격받은 적은 {3}% 확률로 화상 상태가 됩니다.<color=yellow>(쿨타임 {4}초)</color>,"Summons homing flames that chase enemies, hitting up to {0} nearby targets for <color=white>{1}</color> damage {2} times. Hit enemies have a {3}% chance to be inflicted with Burn. <color=yellow>(Cooldown: {4}s)</color>"
 Skill_Charge_Name,돌진,Charge
 Skill_Charge_Desc,최대 {0}명의 적에게 돌진해 <clolr=whie>{1}</color>의 대미지를 입히고 타격당 플레이어는 최대 체력의 3%만큼 체력을 회복합니다.<color=yellow>(쿨타임 {2}초)</color>,"Charges at up to {0} enemies, dealing <color=white>{1}</color> damage. The player heals for 3% of max HP per enemy hit. <color=yellow>(Cooldown: {2}s)</color>"
+UI_GoMaxStage,최대 스테이지로,Go To Max Stage
+UI_Stage,스테이지,Stage

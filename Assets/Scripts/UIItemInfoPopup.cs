@@ -247,7 +247,7 @@ public class UIItemInfoPopup : UIPopup
             GameManager.Instance.stats.RecalculateStats(); //스탯 재계산
         }
         //Debug.Log($"[UIItemInfoPopup] 아이템 강화 시도 : {success}");
-        UIShineEffect.PlayShine(tweeningImage);
+        UITweening.PlayShine(tweeningImage);
     }
 
     private void OnClickEquip()

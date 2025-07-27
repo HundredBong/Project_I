@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -34,7 +35,7 @@ public class Player : MonoBehaviour
         IsDead = false;
 
         Animator = GetComponent<Animator>();
-        Stat = GetComponent<PlayerStats>();
+        Stat = GameManager.Instance.stats;
         StateMachine = GetComponent<PlayerStateMachine>();
         SpriteRenderers = GetComponentsInChildren<SpriteRenderer>();
 
@@ -46,6 +47,11 @@ public class Player : MonoBehaviour
     private void OnEnable()
     {
         Stat.health = Stat.maxHealth;
+    }
+
+    private void Start()
+    {
+        GameManager.Instance.RegistPlayer(this);
     }
 
     private void Update()
@@ -148,4 +154,6 @@ public class Player : MonoBehaviour
         //    //상태머신 추가하면 ChangeState(StateType.Dead)
         //}
     }
+
+
 }

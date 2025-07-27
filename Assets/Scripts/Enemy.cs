@@ -42,16 +42,13 @@ public class Enemy : MonoBehaviour, IPooledObject
 
     private void Awake()
     {
-        PlayerReference = GameManager.Instance.player;
+
 
         OriginScale = transform.localScale;
         Vector3 flipVector = new Vector3(-1f, 1f, 1f);
         flipScale = Vector3.Scale(transform.localScale, flipVector);
 
-        if (PlayerReference == null)
-        {
-            Debug.LogError("[Enemy] Player가 Null임");
-        }
+
 
         Animator = GetComponent<Animator>();
 
@@ -94,6 +91,16 @@ public class Enemy : MonoBehaviour, IPooledObject
         health = maxHealth;
 
         deadCount = 0;
+    }
+
+    private void Start()
+    {
+        PlayerReference = GameManager.Instance.player;
+
+        if (PlayerReference == null)
+        {
+            Debug.LogError("[Enemy] Player가 Null임");
+        }
     }
 
     private void Update()

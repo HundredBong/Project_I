@@ -19,7 +19,7 @@ public class UIStageInfoPanel : MonoBehaviour
 
     private void OnEnable()
     {
-        Debug.Log($"스테이지 매니저가 널일 수 있나 {(StageManager.Instance == null ? "네" : "아니용")}");
+        Debug.Log($"스테이지 매니저가 널일 수 있나 {(StageManager.Instance == null ? "그럴수도 있죵" : "그럴 수는 없어용")}");
         SubscribeAsync().Forget();
     }
 
@@ -61,22 +61,36 @@ public class UIStageInfoPanel : MonoBehaviour
     private void Start()
     {
         //각종 텍스트 초기화
+
+
+        int stage = StageManager.Instance.CurrentStage;
+        bool canBoss = false; //즉시 보스에게 도전하지 못하도록 일단 false, 절대 프로퍼티 만들기 귀찮아서 그런거 아님
+
+        RefreshStage(stage, canBoss);
+        SetLocalizedText();
+    }
+
+    private void SetLocalizedText()
+    {
+        stageText.text = $"{DataManager.Instance.GetLocalizedText("UI_Stage")} {StageManager.Instance.CurrentStage}";
         goToMaxStageText.text = DataManager.Instance.GetLocalizedText("UI_GoMaxStage");
     }
 
     private void RefreshKill(int current, int required)
     {
-        killText.text = $"{current} / {required}";
+        int count = Mathf.Min(current, required);
+        killText.text = $"{count} / {required}";
         stageProgressImage.fillAmount = Mathf.Min(current / (float)required, 1f);
     }
 
     private void RefreshStage(int stage, bool canBoss)
     {
-        Debug.Log($"현재 스테이지 : {stage}, 맥스 : {StageManager.Instance.MaxClearedStage}, 보스 여부 : {canBoss}");
+        //Debug.Log($"현재 스테이지 : {stage}, 맥스 : {StageManager.Instance.MaxClearedStage}, 보스 여부 : {canBoss}");
 
         stageText.text = $"{DataManager.Instance.GetLocalizedText("UI_Stage")} {stage}";
 
-        bool climbing = stage > StageManager.Instance.MaxClearedStage;
+        bool climbing = stage > StageManager.Instance.MaxClearedStage;// || (stage>= StageManager.Instance.MaxClearedStage && canBoss == );
+        ;
 
 
         if (climbing)

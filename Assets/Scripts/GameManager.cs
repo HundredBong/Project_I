@@ -1,13 +1,9 @@
 using Cysharp.Threading.Tasks;
-using Firebase.Auth;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEditor;
-using UnityEditor.U2D;
 using UnityEngine;
+
 
 public class GameManager : MonoBehaviour
 {
@@ -25,6 +21,7 @@ public class GameManager : MonoBehaviour
     public bool firebaseReady = false;
     public bool inventoryReady = false;
     public bool summonReady = false;
+    public bool loadSceneReady = false;
 
     public ShopSummonManager SummonManager { get; private set; }
 
@@ -52,16 +49,7 @@ public class GameManager : MonoBehaviour
             player = FindObjectOfType<Player>();
             if (player == null)
             {
-                Debug.LogError("[GameManager] Player 참조 설정 확인");
-            }
-        }
-
-        if (stats == null)
-        {
-            stats = FindObjectOfType<PlayerStats>();
-            if (stats == null)
-            {
-                Debug.LogError("[GameManager] PlayerStats 참조 설정 확인");
+                Debug.LogWarning("[GameManager] Player 참조 설정 확인");
             }
         }
 
@@ -104,14 +92,18 @@ public class GameManager : MonoBehaviour
             await statSaver.SaveStageDataAsync(stageData);
         }
         StageManager.Instance.SetStageData(stageData);
-        StageManager.Instance.StartStage();
+
+        //StageManager 
+        //StageManager.Instance.StartStage();
 
         PlayerSkillSaveData skillState = await statSaver.LoadPlayerSkillDataAsync();
         SkillManager.Instance.LoadFrom(skillState);
 
         SkillEquipSaveData equipData = await statSaver.LoadSkillEquipDataAsync();
         SkillManager.Instance.SetEquippedSkills(equipData.equippedSkills);
-        FindObjectOfType<ActiveSkillPanel>().Refresh(SkillManager.Instance.GetEquippedSkills());
+
+        //ActiveSkillPanel의 Start에서 Refresh하도록 함
+        //FindObjectOfType<ActiveSkillPanel>().Refresh(SkillManager.Instance.GetEquippedSkills());
 
         InventorySaveData inventoryData = await statSaver.LoadInventoryDataAsync();
         if (inventoryData == null || inventoryData.InventoryEntries == null || inventoryData.InventoryEntries.Count == 0)
@@ -140,6 +132,8 @@ public class GameManager : MonoBehaviour
         }
         SummonManager.Init(summonProgressData);
         summonReady = true;
+
+        loadSceneReady = true;
     }
 
     private bool CheckReadyForLoad()
@@ -165,6 +159,16 @@ public class GameManager : MonoBehaviour
     {
         //Instance.statSaver.SaveStatLevels(Instance.stats.GetAllLevels());
         Instance.statSaver.RequestSave(Instance.stats.GetProgressSaveData());
+    }
+
+    public void RegistPlayer(Player player)
+    {
+        this.player = player;
+
+        if (StageManager.Instance != null)
+        {
+            StageManager.Instance.StartStage();
+        }
     }
 
 #endif
