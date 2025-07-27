@@ -73,7 +73,7 @@ public class StageManager : MonoBehaviour
     public void StartStage()
     {
         killCount = 0;
-        UIManager.Instance.FadeIn(1f);
+        UIManager.Instance.FadeIn(FADE_DURATION / 2);
         OnStageChanged?.Invoke(currentStage, bossChallengable[currentStage - 1]); //스테이지 시작할 때마다 현재 스테이지 갱신
         OnKillUpdated?.Invoke(killCount, totalKillsRequired);
         DelayCallManager.Instance.CallLater(FADE_DURATION / 2, () => SpawnManager.Instance.SpawnEnemiesForCurrentStage(defaultSpawnCount));

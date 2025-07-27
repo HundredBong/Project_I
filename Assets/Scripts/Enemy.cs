@@ -91,6 +91,8 @@ public class Enemy : MonoBehaviour, IPooledObject
         health = maxHealth;
 
         deadCount = 0;
+
+        GameManager.Instance.enemyList.Remove(this);
     }
 
     private void Start()

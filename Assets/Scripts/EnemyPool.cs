@@ -52,7 +52,7 @@ public class EnemyPool : GenericPoolManager<Enemy>
             if (enemy != null && enemy.gameObject.activeInHierarchy)
             {
                 Return(enemy);
-                GameManager.Instance.enemyList.Remove(enemy);
+                //GameManager.Instance.enemyList.Remove(enemy);
             }
         }
     }
