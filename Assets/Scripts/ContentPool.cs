@@ -15,6 +15,5 @@ public class ContentPool : GenericPoolManager<UIResultContent>
     {
         return Get(resultPrefab);
     }
-
 }
 

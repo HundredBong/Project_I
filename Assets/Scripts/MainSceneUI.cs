@@ -39,6 +39,6 @@ public class MainSceneUI : MonoBehaviour
 
     private void OnClickStartButton()
     {
-        SceneManager.LoadScene("1_StageScene");
+        LoadingSceneController.LoadScene("1_StageScene");
     }
 }

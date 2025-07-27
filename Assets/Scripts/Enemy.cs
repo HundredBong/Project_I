@@ -74,7 +74,6 @@ public class Enemy : MonoBehaviour, IPooledObject
 
         //Initialize();
 
-
         if (GameManager.Instance != null)
         {
             GameManager.Instance.enemyList.Add(this);
@@ -83,6 +82,7 @@ public class Enemy : MonoBehaviour, IPooledObject
         {
             Debug.LogError("[Enemy] GameManager 가 Null임");
         }
+
     }
 
     private void OnDisable()
@@ -95,12 +95,12 @@ public class Enemy : MonoBehaviour, IPooledObject
 
     private void Start()
     {
-        PlayerReference = GameManager.Instance.player;
+        //PlayerReference = GameManager.Instance.player;
 
-        if (PlayerReference == null)
-        {
-            Debug.LogError("[Enemy] Player가 Null임");
-        }
+        //if (PlayerReference == null)
+        //{
+        //    Debug.LogError("[Enemy] Player가 Null임");
+        //}
     }
 
     private void Update()
@@ -119,6 +119,13 @@ public class Enemy : MonoBehaviour, IPooledObject
     public async void Initialize()
     {
         await UniTask.WaitUntil(() => StageManager.Instance != null);
+
+        PlayerReference = GameManager.Instance.player;
+
+        if (PlayerReference == null)
+        {
+            Debug.LogError("[Enemy] Player가 Null임");
+        }
 
         EnemyData enemyData = DataManager.Instance.GetEnemyData(enemyId);
 

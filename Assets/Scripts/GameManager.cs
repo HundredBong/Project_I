@@ -141,6 +141,17 @@ public class GameManager : MonoBehaviour
         return statSaver != null && stats != null && firebaseInit != null && statSaver.gameObject.activeInHierarchy;
     }
 
+    public void RegistPlayer(Player player)
+    {
+        this.player = player;
+
+        if (StageManager.Instance != null)
+        {
+            StageManager.Instance.StartStage();
+        }
+    }
+
+
 #if UNITY_EDITOR
     [MenuItem("Tools/Set Language KR")]
     public static void SetLanguageKR()
@@ -161,14 +172,10 @@ public class GameManager : MonoBehaviour
         Instance.statSaver.RequestSave(Instance.stats.GetProgressSaveData());
     }
 
-    public void RegistPlayer(Player player)
+    [MenuItem("Tools/Go To Main Scene")]
+    public static void GoToMainScene()
     {
-        this.player = player;
-
-        if (StageManager.Instance != null)
-        {
-            StageManager.Instance.StartStage();
-        }
+        LoadingSceneController.LoadScene("0_MainScene");
     }
 
 #endif

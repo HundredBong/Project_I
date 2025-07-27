@@ -46,6 +46,20 @@ public class ProjectilePool : GenericPoolManager<Projectile>
         Debug.LogError($"[ProjectilePool] {id} 프리팹이 없음");
         return null;
     }
+
+    public void ReturnAllProjectiles()
+    {
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+            Transform child = transform.GetChild(i);
+
+            Projectile projectile = child.GetComponent<Projectile>();
+            if (projectile != null && child.gameObject.activeSelf == true)
+            {
+                Return(projectile);
+            }
+        }
+    }
 }
 
 [System.Serializable]

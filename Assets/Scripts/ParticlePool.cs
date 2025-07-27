@@ -40,6 +40,20 @@ public class ParticlePool : GenericPoolManager<PooledParticle>
 
         return null;
     }
+
+    public void ReturnAllParticles()
+    {
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+            Transform child = transform.GetChild(i);
+
+            PooledParticle praticle = child.GetComponent<PooledParticle>();
+            if (praticle != null && child.gameObject.activeSelf == true)
+            {
+                Return(praticle);
+            }
+        }
+    }
 }
 
 [System.Serializable]

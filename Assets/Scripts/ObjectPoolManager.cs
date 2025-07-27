@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ObjectPoolManager : MonoBehaviour
 {
@@ -21,5 +23,19 @@ public class ObjectPoolManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
+        SceneManager.activeSceneChanged += ReturnAllPools;
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.activeSceneChanged -= ReturnAllPools;
+    }
+
+    private void ReturnAllPools(Scene arg0, Scene arg1)
+    {
+        enemyPool.ReturnAllEnemies();
+        projectilePool.ReturnAllProjectiles();
+        particlePool.ReturnAllParticles();
     }
 }
