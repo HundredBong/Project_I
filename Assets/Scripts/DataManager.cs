@@ -439,7 +439,7 @@ public class DataManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("[DataManager] 해당하는 키의 스프라이트를 찾을 수 없음");
+            Debug.LogWarning($"[DataManager] 해당하는 키의 스프라이트를 찾을 수 없음 {key}");
             return null;
         }
 

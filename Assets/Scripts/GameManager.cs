@@ -118,6 +118,7 @@ public class GameManager : MonoBehaviour
             }
             await statSaver.SaveInventoryDataAsync(InventoryManager.Instance.BuildSaveData());
         }
+        InventoryManager.Instance.SetInventoryData(inventoryData);
         inventoryReady = true;
 
         var summonProgressData = await statSaver.LoadSummonProgressDataAsync();

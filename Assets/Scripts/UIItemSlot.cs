@@ -21,11 +21,14 @@ public class UIItemSlot : MonoBehaviour
 
     public void Init(ItemData itemData, Action onSynthesisComplete)
     {
+        Debug.Log(itemData == null ? "아이템 데이터가 없음" : $"아이템 데이터 : {itemData}");
         this.itemData = itemData;
         this.onSynthesisComplete = onSynthesisComplete;
 
         inventoryItem = InventoryManager.Instance.GetItem(itemData.Id);
 
+        Debug.Log(inventoryItem == null ? "인벤토리 아이템이 없음" : $"인벤토리 아이템 : {inventoryItem}");
+            
         if (inventoryItem != null && inventoryItem.IsUnlocked == true)
         {
             lockedImage.gameObject.SetActive(false);
