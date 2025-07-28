@@ -4,10 +4,12 @@ using UnityEngine.UI;
 
 public class UIStatSlot : MonoBehaviour
 {
-    public TextMeshProUGUI statNameText;
-    public TextMeshProUGUI statValueText;
-    public TextMeshProUGUI statMaxText;
-    public Button addButton;
+    [SerializeField] private TextMeshProUGUI statNameText;
+    [SerializeField] private TextMeshProUGUI statValueText;
+    [SerializeField] private TextMeshProUGUI statMaxText;
+    [SerializeField] private Button addButton;
+    [SerializeField] private Image tweeningImage;
+    [SerializeField] private Image iconImage;
 
     private PlayerStats stats;
     private StatUpgradeType statType;
@@ -27,13 +29,16 @@ public class UIStatSlot : MonoBehaviour
     {
         LanguageManager.OnLanguageChanged -= Refresh;
     }
-    
+
     //UIStatPage가 실행시켜 줌
     public void Init(PlayerStats stats, StatUpgradeType type)
     {
         this.stats = stats;
 
         this.statType = type;
+
+        //아이콘 초기화는 1회만, 스탯 이름은 LanguageManager에서 건드리니까 제외
+        iconImage.sprite = DataManager.Instance.GetSpriteByKey($"Stat_{statType}");
 
         Refresh();
         addButton.onClick.AddListener(OnClickAdd);
@@ -59,6 +64,7 @@ public class UIStatSlot : MonoBehaviour
         if (stats.statPoint > 0)
         {
             stats.AddStat(statType, StatUpgradeAmount.statSlotAmount);
+            UITweening.PlayShine(tweeningImage);
             Refresh();
         }
         else

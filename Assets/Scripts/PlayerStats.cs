@@ -161,7 +161,7 @@ public class PlayerStats : MonoBehaviour
         OnStatChanged?.Invoke(); //UI 새로고침
     }
 
-    public void AddStat(GoldUpgradeType type, int amount)
+    public bool AddStat(GoldUpgradeType type, int amount)
     {
         int currentLevel = GetUpgradeLevel(type);
         int maxLevel = GetMaxUpgradeLevel(type);
@@ -170,7 +170,7 @@ public class PlayerStats : MonoBehaviour
         if (targetLevel > maxLevel)
         {
             Debug.LogWarning($"[PlayerStats] {type} 최대 레벨 초과");
-            return;
+            return false;
         }
 
         GoldUpgradeData data = DataManager.Instance.GetGoldUpgradeData(type);
@@ -179,7 +179,7 @@ public class PlayerStats : MonoBehaviour
         if (Gold < price)
         {
             Debug.LogWarning($"[PlayerStats] 골드가 부족함 {Gold} / {price}");
-            return;
+            return false;
         }
 
         Gold -= price;
@@ -188,6 +188,8 @@ public class PlayerStats : MonoBehaviour
         RecalculateStats();
         GameManager.Instance.statSaver.RequestSave(GetProgressSaveData());
         OnStatChanged?.Invoke(); //UI 및 골드 새로고침 해줘야 함
+
+        return true;
     }
 
     public int GetStat(StatUpgradeType statType)

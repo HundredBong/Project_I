@@ -12,13 +12,35 @@ public class UIGoldUpgradeSlot : MonoBehaviour
     [SerializeField] private TextMeshProUGUI priceText;
     [SerializeField] private Button addButton;
 
+    [SerializeField] private Image tweeningImage;
+    [SerializeField] private Image iconImage;
+
     private PlayerStats stats;
     private GoldUpgradeType upgradeType;
+
+
+    private void OnEnable()
+    {
+        LanguageManager.OnLanguageChanged += Refresh;
+
+        if (stats != null)
+        {
+            Refresh();
+        }
+
+    }
+
+    private void OnDisable()
+    {
+        LanguageManager.OnLanguageChanged -= Refresh;
+    }
 
     public void Init(PlayerStats stats, GoldUpgradeType type)
     {
         this.stats = stats;
         upgradeType = type;
+
+        iconImage.sprite = DataManager.Instance.GetSpriteByKey($"Upgrade_{type}");
 
         Refresh();
         addButton.onClick.AddListener(OnClickAdd);
@@ -38,6 +60,10 @@ public class UIGoldUpgradeSlot : MonoBehaviour
     private void OnClickAdd()
     {
         //소지 골드 검사나 맥스레벨 검사는 AddStat안에서 실행함
-        stats.AddStat(upgradeType, StatUpgradeAmount.statSlotAmount);
+
+        if (stats.AddStat(upgradeType, StatUpgradeAmount.statSlotAmount))
+        {
+            UITweening.PlayShine(tweeningImage);
+        }
     }
 }

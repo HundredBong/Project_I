@@ -31,6 +31,16 @@ public class UIStatPage : UIPage
         openUpgradeButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UIGoldUpgradePage>());
     }
 
+    protected override void Awake()
+    {
+        base.Awake();
+
+        if (playerStats == null)
+        {
+            playerStats = GameManager.Instance.stats;
+        }
+    }
+
     private void OnEnable()
     {
         playerStats.OnStatChanged += Refresh;

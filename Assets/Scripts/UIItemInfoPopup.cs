@@ -245,9 +245,10 @@ public class UIItemInfoPopup : UIPopup
             onUpgraded?.Invoke(); //UIItemSlot의 UI 갱신
             Refresh(); //자기 자신의 UI 갱신
             GameManager.Instance.stats.RecalculateStats(); //스탯 재계산
+            UITweening.PlayShine(tweeningImage);
         }
         //Debug.Log($"[UIItemInfoPopup] 아이템 강화 시도 : {success}");
-        UITweening.PlayShine(tweeningImage);
+
     }
 
     private void OnClickEquip()
