@@ -14,15 +14,17 @@ public static class UITweening
         image.DOFade(1f, 0.2f).SetLoops(2, LoopType.Yoyo).SetEase(Ease.InOutSine);
     }
 
-    public static void FadeIn(Image fadeImage, float duration)
+    public static void FadeOut(Image fadeImage, float duration)
     {
-        Debug.Log("트위닝 시작함");
+        fadeImage.color = new Color(fadeImage.color.r, fadeImage.color.g, fadeImage.color.b, 1f);
 
         fadeImage.DOFade(0f, duration).SetEase(Ease.OutQuad);
     }
 
-    public static void FadeOut(Image fadeImage, float duration)
+    public static void FadeIn(Image fadeImage, float duration)
     {
+        fadeImage.color = new Color(fadeImage.color.r, fadeImage.color.g, fadeImage.color.b, 0f);
+
         fadeImage.DOFade(1f, duration).SetEase(Ease.InQuad);
     }
 }

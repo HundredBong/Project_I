@@ -186,8 +186,8 @@ public class UIManager : MonoBehaviour
     {
         if (_fadeImage != null)
         {
-            UITweening.FadeOut(_fadeImage, totalDuration / 2);
-            DelayCallManager.Instance.CallLater(totalDuration / 2, () => { UITweening.FadeIn(_fadeImage, totalDuration / 2); });
+            UITweening.FadeIn(_fadeImage, totalDuration / 2);
+            DelayCallManager.Instance.CallLater(totalDuration / 2, () => { UITweening.FadeOut(_fadeImage, totalDuration / 2); });
         }
         else
         {
@@ -195,13 +195,13 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void FadeIn(float duration)
+    public void FadeOut(float duration)
     { 
         if (_fadeImage != null)
         {
         Debug.Log("페이드 인 실행됨");
 
-            UITweening.FadeIn(_fadeImage, duration);
+            UITweening.FadeOut(_fadeImage, duration);
         }
         else
         {

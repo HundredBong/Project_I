@@ -30,7 +30,7 @@ public class StageManager : MonoBehaviour
     public event Action<int> OnBossStageEntered; //current
 
 
-    private bool isStageTransitioning = false;
+    public bool isStageTransitioning = false;
     public bool IsChallenging { get; private set; }
     private void Awake()
     {
@@ -73,7 +73,7 @@ public class StageManager : MonoBehaviour
     public void StartStage()
     {
         killCount = 0;
-        UIManager.Instance.FadeIn(FADE_DURATION / 2);
+        UIManager.Instance.FadeOut(FADE_DURATION / 2);
         OnStageChanged?.Invoke(currentStage, bossChallengable[currentStage - 1]); //스테이지 시작할 때마다 현재 스테이지 갱신
         OnKillUpdated?.Invoke(killCount, totalKillsRequired);
         DelayCallManager.Instance.CallLater(FADE_DURATION / 2, () => SpawnManager.Instance.SpawnEnemiesForCurrentStage(defaultSpawnCount));
@@ -197,11 +197,13 @@ public class StageManager : MonoBehaviour
         return data;
     }
 
-    public void ResetStage()
+    public void ResetStage(float fadeDuration = -1f)
     {
+        isStageTransitioning = true;
+
         ObjectPoolManager.Instance.enemyPool.ReturnAllEnemies();
 
-        DelayCallManager.Instance.CallLater(FADE_DURATION, () =>
+        DelayCallManager.Instance.CallLater(fadeDuration < 0 ? FADE_DURATION : FADE_DURATION / 2f, () =>
         {
             //플레이어 위치 초기화, 기존 몬스터 제거
             killCount = 0;
@@ -212,10 +214,10 @@ public class StageManager : MonoBehaviour
 
             OnStageChanged?.Invoke(currentStage, bossChallengable[currentStage - 1]);
             OnKillUpdated?.Invoke(killCount, totalKillsRequired);
-        });
 
-        isStageTransitioning = false;
-        IsChallenging = false;
+            isStageTransitioning = false;
+            IsChallenging = false;
+        });
     }
 
     public StageType GetStageType(int stageNumber)
@@ -228,9 +230,8 @@ public class StageManager : MonoBehaviour
         return currentStage;
     }
 
-    public void GoToStage(int stage) //2
+    public void GoToStage(int stage) 
     {
-        //2가 2+1보다 크다면 리턴,
         if (stage > MaxClearedStage + 1 || stage < 1 || stage == currentStage)
         {
             Debug.LogWarning("[StageManager] 잘못된 스테이지 접근");
@@ -245,8 +246,6 @@ public class StageManager : MonoBehaviour
 
         isStageTransitioning = true;
 
-        Debug.Log($"stage : {stage}, Max : {MaxClearedStage}, bool : {bossDefeated[stage]}");
-        //2가 2랑 같고, 2스테를 클리어 했다면
         if (stage == MaxClearedStage && bossDefeated[stage - 1] == true)
         {
             stage++;
@@ -256,8 +255,7 @@ public class StageManager : MonoBehaviour
         DelayCallManager.Instance.CallLater(FADE_DURATION / 2f, () =>
         {
             currentStage = stage;
-            ResetStage();
-            OnStageChanged?.Invoke(stage, bossChallengable[stage - 1]);
+            ResetStage(FADE_DURATION);
         });
     }
 }
