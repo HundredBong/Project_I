@@ -18,7 +18,6 @@ public class UIGoldUpgradeSlot : MonoBehaviour
     private PlayerStats stats;
     private GoldUpgradeType upgradeType;
 
-
     private void OnEnable()
     {
         LanguageManager.OnLanguageChanged += Refresh;
@@ -28,11 +27,14 @@ public class UIGoldUpgradeSlot : MonoBehaviour
             Refresh();
         }
 
+        StatUpgradeAmount.Register(this);
     }
 
     private void OnDisable()
     {
         LanguageManager.OnLanguageChanged -= Refresh;
+
+        StatUpgradeAmount.Unregister(this); 
     }
 
     public void Init(PlayerStats stats, GoldUpgradeType type)
@@ -43,18 +45,27 @@ public class UIGoldUpgradeSlot : MonoBehaviour
         iconImage.sprite = DataManager.Instance.GetSpriteByKey($"Upgrade_{type}");
 
         Refresh();
+        addButton.onClick.RemoveAllListeners();
         addButton.onClick.AddListener(OnClickAdd);
     }
 
     public void Refresh()
     {
+        GoldUpgradeData data = DataManager.Instance.GetGoldUpgradeData(upgradeType);
         int upgradeValue = stats.GetUpgradeLevel(upgradeType);
-        float price = DataManager.Instance.GetGoldUpgradeData(upgradeType).Price + (DataManager.Instance.GetGoldUpgradeData(upgradeType).PriceIncrease * upgradeValue);
+
+        int amount = StatUpgradeAmount.statSlotAmount;
+
+        float totalPrice = 0f;
+        for (int i = 0; i < amount; i++)
+        {
+            totalPrice += data.Price + data.PriceIncrease * (upgradeValue + i);
+        }
 
         upgradeNameText.text = DataManager.Instance.GetLocalizedText(DataManager.Instance.GetGoldUpgradeData(upgradeType).NameKey);
         upgradeValueText.text = $"Lv. {upgradeValue}";
         upgradeMaxText.text = $"Max Lv. {stats.GetMaxUpgradeLevel(upgradeType)}";
-        priceText.text = $"{price:F1}";
+        priceText.text = $"{totalPrice:F1}";
     }
 
     private void OnClickAdd()
@@ -65,5 +76,10 @@ public class UIGoldUpgradeSlot : MonoBehaviour
         {
             UITweening.PlayShine(tweeningImage);
         }
+        else
+        {
+            Debug.LogWarning("°ñµå ºÎÁ·ÇÔ");
+        }
     }
+
 }

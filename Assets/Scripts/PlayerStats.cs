@@ -67,6 +67,38 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
+    public int StatPoint
+    {
+        get => statPoint;
+        set
+        {
+            statPoint = value;
+            playerProgress[PlayerProgressType.StatPoint] = statPoint;
+            OnCurrencyChanged?.Invoke();
+        }
+    }
+
+    public int EnhanceStone
+    {
+        get => enhanceStone;
+        set
+        {
+            enhanceStone = value;
+            playerProgress[PlayerProgressType.EnhanceStone] = enhanceStone;
+            OnCurrencyChanged?.Invoke();
+        }
+    }
+
+    public int SkillGem
+    {
+        get => skillGem;
+        set
+        {
+            skillGem = value;
+            playerProgress[PlayerProgressType.SkillGem] = skillGem;
+            OnCurrencyChanged?.Invoke();
+        }
+    }
 
     private Dictionary<StatUpgradeType, int> statLevels = new Dictionary<StatUpgradeType, int>();
     private Dictionary<GoldUpgradeType, int> upgradeLevels = new Dictionary<GoldUpgradeType, int>();
@@ -129,8 +161,8 @@ public class PlayerStats : MonoBehaviour
 
         //Debug.Log($"레벨 상승함, 현재 레벨 : {level}, 다음 경험치 요구량 : {maxExp}");
 
-        statPoint++;
-        playerProgress[PlayerProgressType.StatPoint] = statPoint;
+        StatPoint++;
+        playerProgress[PlayerProgressType.StatPoint] = StatPoint;
 
         GameManager.Instance.statSaver.SavePlayerProgressDataAsync(GameManager.Instance.stats.GetProgressSaveData()).Forget();
     }
@@ -140,7 +172,7 @@ public class PlayerStats : MonoBehaviour
         int currentLevel = GetStat(statType);
         int maxLevel = GetMaxStat(statType);
         //강화하려는 수치가 최대 레벨까지 남은 양과 보유한 스탯 포인트중 더 낮은 쪽까지만 사용하게 함.
-        int possibleAmount = Mathf.Min(amount, maxLevel - currentLevel, statPoint); //최대까지 남은 수치 계산
+        int possibleAmount = Mathf.Min(amount, maxLevel - currentLevel, StatPoint); //최대까지 남은 수치 계산
 
         //현재 레벨 280, 최대 300, 선택 수치100, 스탯포인트 200이면 실제 강화량 20
 
@@ -153,7 +185,7 @@ public class PlayerStats : MonoBehaviour
             return;
         }
 
-        statPoint -= possibleAmount;
+        StatPoint -= possibleAmount;
         statLevels[statType] += possibleAmount;
 
         RecalculateStats(); //스탯 재계산
@@ -165,32 +197,54 @@ public class PlayerStats : MonoBehaviour
     {
         int currentLevel = GetUpgradeLevel(type);
         int maxLevel = GetMaxUpgradeLevel(type);
-        int targetLevel = currentLevel + amount;
-
-        if (targetLevel > maxLevel)
-        {
-            Debug.LogWarning($"[PlayerStats] {type} 최대 레벨 초과");
-            return false;
-        }
-
         GoldUpgradeData data = DataManager.Instance.GetGoldUpgradeData(type);
-        float price = data.Price + (data.PriceIncrease * currentLevel);
 
-        if (Gold < price)
+        int availableAmount = Mathf.Min(amount, maxLevel - currentLevel);
+
+        if (availableAmount <= 0)
         {
-            Debug.LogWarning($"[PlayerStats] 골드가 부족함 {Gold} / {price}");
+            Debug.LogWarning("[PlayerStats] 강화할 수 있는 수치가 없음");
             return false;
         }
 
-        Gold -= price;
-        upgradeLevels[type] = targetLevel;
+        float totalCost = 0f;
+        int finalAmount = 0;
+
+        for (int i = 0; i < availableAmount; i++)
+        {
+            //업그레이드 비용 계산
+            float cost = data.Price + (data.PriceIncrease * (currentLevel + i));
+            //현재 골드로 가능한만큼 강화할 수치 결정
+            if (Gold >= totalCost + cost)
+            {
+                totalCost += cost;
+                finalAmount++;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        if (finalAmount <= 0)
+        {
+            Debug.LogWarning("골드 부족");
+            return false;
+        }
+
+        Gold -= totalCost;
+        upgradeLevels[type] -= finalAmount;
 
         RecalculateStats();
         GameManager.Instance.statSaver.RequestSave(GetProgressSaveData());
-        OnStatChanged?.Invoke(); //UI 및 골드 새로고침 해줘야 함
+        OnStatChanged?.Invoke();
+
+        Debug.Log($"[PlayerStats] {type} 강화 + {finalAmount}, 총 비용 {totalCost:F1}");
 
         return true;
     }
+
+
 
     public int GetStat(StatUpgradeType statType)
     {
@@ -233,7 +287,8 @@ public class PlayerStats : MonoBehaviour
 
     private float GetUpgradeValue(GoldUpgradeType type)
     {
-        return DataManager.Instance.GetGoldUpgradeData(type).BaseValue + (DataManager.Instance.GetGoldUpgradeData(type).BaseValueIncrease * GetUpgradeLevel(type));
+        GoldUpgradeData data = DataManager.Instance.GetGoldUpgradeData(type);
+        return data.BaseValue + (data.BaseValueIncrease * GetUpgradeLevel(type));
     }
 
     public void RecalculateStats()
@@ -241,7 +296,7 @@ public class PlayerStats : MonoBehaviour
         level = Mathf.Max((int)GetProgress(PlayerProgressType.Level), 1);
         currentExp = GetProgress(PlayerProgressType.CurrentExp);
         maxExp = maxExp = DataManager.Instance.GetExpData(level);
-        statPoint = (int)GetProgress(PlayerProgressType.StatPoint);
+        StatPoint = (int)GetProgress(PlayerProgressType.StatPoint);
         Gold = (int)GetProgress(PlayerProgressType.Gold);
         Diamond = (int)GetProgress(PlayerProgressType.Diamond);
 
@@ -312,7 +367,7 @@ public class PlayerStats : MonoBehaviour
                 damage += value;
                 break;
             case SkillEffectType.HealthBonus:
-                health += value;
+                maxHealth += value;
                 break;
             case SkillEffectType.CriticalDamageBonus:
                 criticalDamage += value; 
@@ -424,7 +479,7 @@ public class PlayerStats : MonoBehaviour
         {
             //Debug.Log($"[PlayerStats] {type}, {playerProgress[type]}, {value:F1}, {amount}");
 
-            playerProgress[type] -= amount;
+            playerProgress[type] -= amount;          
             return true;
         }
         return false;
@@ -445,7 +500,7 @@ public class PlayerStats : MonoBehaviour
         //강화석으로 강화하려는데 실패했다면 리턴
         if (TrySpendItem(PlayerProgressType.EnhanceStone, cost) == false)
         {
-            Debug.LogWarning($"[PlayerStats] 강화석이 부족함 {enhanceStone} / {cost}");
+            Debug.LogWarning($"[PlayerStats] 강화석이 부족함 {EnhanceStone} / {cost}");
             return false;
         }
 
@@ -454,7 +509,7 @@ public class PlayerStats : MonoBehaviour
         //저장 요청, 이후 ItemUI는 UIItemInfoPopup에서 갱신함
         GameManager.Instance.statSaver.RequestSave(GetProgressSaveData());
         GameManager.Instance.statSaver.RequestSave(InventoryManager.Instance.BuildSaveData());
-        //OnStatChanged?.Invoke();
+        RecalculateStats();
         return true;
     }
 

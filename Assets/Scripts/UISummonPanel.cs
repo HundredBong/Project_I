@@ -195,6 +195,7 @@ public class UISummonPanel : MonoBehaviour
             UIManager.Instance.PopupOpen<UISummonResultPopup>().StartDisplayingResult(itemDatas);
             Refresh(category);
             rewardPanel.Refresh(category);
+            GameManager.Instance.stats.RecalculateStats();
         }
         else
         {
@@ -240,6 +241,7 @@ public class UISummonPanel : MonoBehaviour
                 skillPage.RefreshAll();
             }
 
+            GameManager.Instance.stats.RecalculateStats();
             UIManager.Instance.PopupOpen<UISummonResultPopup>().StartDisplayingResult(skillDatas);
             Refresh(category);
             rewardPanel.Refresh(category);
