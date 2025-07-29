@@ -115,3 +115,4 @@ UI_ActiveSkill,액티브 스킬,Active Skill
 UI_PassiveSkill,패시브 스킬,Passive Skill
 Skill_Effect_HealthBonus,체력 보너스,Health Bonus
 Skill_Effect_DamageBonus,대미지 보너스,Damage Bonus
+UI_Awaken,각성,Awaken

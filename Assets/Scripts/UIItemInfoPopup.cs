@@ -147,8 +147,7 @@ public class UIItemInfoPopup : UIPopup
         }
 
         itemIconImage.sprite = DataManager.Instance.GetSpriteByKey(itemData.IconKey);
-        //일반 1단계 라는 식을 표현하려면 {아이템 등급} {n} {단계}
-        gradeText.text = $"{DataManager.Instance.GetLocalizedText($"Grade_{itemData.GradeType.ToString()}")} {itemData.Stage}{DataManager.Instance.GetLocalizedText("UI_Grade")}";
+        gradeText.text = DataManager.Instance.GetLocalizedText($"Grade_{itemData.GradeType.ToString()}");
         itemNameText.text = DataManager.Instance.GetLocalizedText(itemData.NameKey);
         itemLevelText.text = $"Lv. {inventoryItem.Level} / {itemData.MaxLevel}";
         itemCountText.text = $"{DataManager.Instance.GetLocalizedText("UI_OwnedCount")} : {inventoryItem.Count}";

@@ -477,7 +477,7 @@ public class PlayerStats : MonoBehaviour
 
         if (playerProgress.TryGetValue(type, out float value) && value >= amount)
         {
-            //Debug.Log($"[PlayerStats] {type}, {playerProgress[type]}, {value:F1}, {amount}");
+            Debug.Log($"[PlayerStats] {type}, {playerProgress[type]}, {value:F1}, {amount}");
 
             playerProgress[type] -= amount;          
             return true;

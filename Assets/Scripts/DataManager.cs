@@ -326,7 +326,7 @@ public class DataManager : MonoBehaviour
                 EffectType = Enum.Parse<SkillEffectType>(tokens[10].Trim()),
                 PassiveValue = float.Parse(tokens[11]),
                 PassiveValuePerLevel = float.Parse(tokens[12]),
-                MaxLevel = int.Parse(tokens[13]),
+                MaxLevels = tokens[13].Trim().Split(';').Select(int.Parse).ToArray(),
                 UpgradeCost = int.Parse(tokens[14]),
                 UpgradeCostPerLevel = int.Parse(tokens[15]),
                 AwakenRequiredCount = tokens[16].Trim().Split(';').Select(int.Parse).ToArray(),
@@ -910,7 +910,7 @@ public class SkillData
     public SkillEffectType EffectType; //스킬 효과 타입, GoldBonus, ExpBonus 등
     public float PassiveValue; //보유 효과
     public float PassiveValuePerLevel; //보유 효과 증가량
-    public int MaxLevel; //스킬의 최대 레벨
+    public int[] MaxLevels; //스킬의 최대 레벨
     public int UpgradeCost; //스킬 업그레이드 비용, 골드 등
     public int UpgradeCostPerLevel; //레벨당 업그레이드 비용 증가량
     public int[] AwakenRequiredCount;

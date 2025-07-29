@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class SkillManager : MonoBehaviour
@@ -139,6 +140,63 @@ public class SkillManager : MonoBehaviour
 
         return finalDamage;
     }
+
+    public int GetRequiredCount(SkillData data)
+    {
+        PlayerSkillState state = GetSkillState(data.SkillId);
+
+        //각성 레벨이 배열 길이 이상이면,
+        if (state.AwakenLevel >= data.AwakenRequiredCount.Length)
+        {
+            Debug.LogWarning($"[SkillManager] 각성 수치 초과 접근 시도: {data.SkillId} Level {state.AwakenLevel}");
+            return -1; // 또는 throw exception
+        }
+
+        return data.AwakenRequiredCount[state.AwakenLevel];
+    }
+
+    public bool TryAwaken(SkillData data)
+    {
+        SkillId skillId = data.SkillId;
+
+        if (skillStates.TryGetValue(skillId, out var state))
+        {
+            int[] awakenRequiredCounts = DataManager.Instance.GetSkill(skillId).AwakenRequiredCount;
+
+            if (state.AwakenLevel < awakenRequiredCounts.Length)
+            {
+                int requiredCount = awakenRequiredCounts[state.AwakenLevel];
+                if (state.OwnedCount >= requiredCount)
+                {
+                    state.OwnedCount -= requiredCount;
+                    state.AwakenLevel++;
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public bool CanAwaken(SkillData data)
+    {
+        if (skillStates.TryGetValue(data.SkillId, out var state) == false)
+        {
+            return false;
+        }
+
+        int awakenLevel = state.AwakenLevel;
+
+        //각성 단계가 최대치를 초과했는지 체크
+        if (awakenLevel >= data.AwakenRequiredCount.Length)
+        {
+            return false;
+        }
+
+        int requiredCount = data.AwakenRequiredCount[awakenLevel];
+        return state.OwnedCount >= requiredCount;
+    }
+
 
     [ContextMenu("ALL")]
     private void AddAllSkill()

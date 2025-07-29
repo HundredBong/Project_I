@@ -37,7 +37,16 @@ public class UISkillSlot : MonoBehaviour
         if(skillState != null)
         {
             currentLevelText.text = $"Lv.{skillState.Level}";
-            requiredCount.text = $"{skillState.OwnedCount} / {skillData.AwakenRequiredCount[skillState.AwakenLevel]}";
+
+            if (skillState.AwakenLevel < skillData.AwakenRequiredCount.Length)
+            {
+                int required = skillData.AwakenRequiredCount[skillState.AwakenLevel];
+                requiredCount.text = $"{skillState.OwnedCount} / {required}";
+            }
+            else
+            {
+                requiredCount.text = DataManager.Instance.GetLocalizedText("UI_Awaken_MAX");
+            }
         }
 
         //스킬 매니저에서 스킬 아이디가 있는지 확인하고, 없다면 해당 스킬은 잠금 상태로 표시
@@ -54,7 +63,6 @@ public class UISkillSlot : MonoBehaviour
         }
         else
         {
-            //TODO : string을 인자로 받는 팝업을 UIManager에 추가하여 사용
             Debug.LogWarning($"[SkillSlotUI] 잠겨있는 스킬임, {skillData.SkillId}");
         }
     }
