@@ -108,7 +108,8 @@ public class PlayerStats : MonoBehaviour
     public event Action OnStatChanged;
     //골드, 다이아 업데이트용 액션
     public event Action OnCurrencyChanged;
-
+    //체력바, 경험치바 업데이트용 액션
+    public event Action OnStatusChanged;
 
     private void Awake()
     {
@@ -142,6 +143,7 @@ public class PlayerStats : MonoBehaviour
 
             LevelUp();
         }
+        OnStatusChanged?.Invoke();
     }
 
     public void GetGold(float gold)
@@ -191,6 +193,7 @@ public class PlayerStats : MonoBehaviour
         RecalculateStats(); //스탯 재계산
         GameManager.Instance.statSaver.RequestSave(GetProgressSaveData()); //스탯 저장 요청
         OnStatChanged?.Invoke(); //UI 새로고침
+        OnStatusChanged?.Invoke();
     }
 
     public bool AddStat(GoldUpgradeType type, int amount)
@@ -238,6 +241,7 @@ public class PlayerStats : MonoBehaviour
         RecalculateStats();
         GameManager.Instance.statSaver.RequestSave(GetProgressSaveData());
         OnStatChanged?.Invoke();
+        OnStatusChanged?.Invoke();
 
         Debug.Log($"[PlayerStats] {type} 강화 + {finalAmount}, 총 비용 {totalCost:F1}");
 
@@ -303,12 +307,13 @@ public class PlayerStats : MonoBehaviour
         damage = 5 + (GetStat(StatUpgradeType.Attack) * 3) + (GetUpgradeValue(GoldUpgradeType.Attack));
         maxHealth = 50 + (GetStat(StatUpgradeType.Health) * 10) + (GetUpgradeValue(GoldUpgradeType.Health));
         criticalChance = GetUpgradeLevel(GoldUpgradeType.CriticalChance);
-        //TODO : 크리 공식 손봐야 하는데 우선순위 매우낮음
+        //TODO : 크리 공식 손봐야 하는데
         attackSpeed = 1 + (GetStat(StatUpgradeType.AttackSpeed) * 0.01f);
         moveSpeed = 5 + (GetStat(StatUpgradeType.MoveSpeed) * 0.01f);
 
         RecalculateItem();
         RecalculateSkill();
+        OnStatusChanged?.Invoke();
     }
 
     private void RecalculateItem()
@@ -516,6 +521,14 @@ public class PlayerStats : MonoBehaviour
     public void TakeDamage(float damage)
     {
         health -= damage;
+        OnStatusChanged?.Invoke();
+
+    }
+
+    public void Recovery()
+    {
+        health = maxHealth;
+        OnStatusChanged?.Invoke();
     }
 
     public void ResetStats()
@@ -533,6 +546,8 @@ public class PlayerStats : MonoBehaviour
         RecalculateStats();
         GameManager.Instance.statSaver.RequestSave(GetProgressSaveData());
         OnStatChanged?.Invoke();
+        OnStatusChanged.Invoke();
+
     }
 
     [ContextMenu("다이아부자")]

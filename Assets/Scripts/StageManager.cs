@@ -151,6 +151,7 @@ public class StageManager : MonoBehaviour
             else
             {
                 bossChallengable[currentStage - 1] = true;
+                ResetStage();
             }
         }
         else
@@ -180,6 +181,7 @@ public class StageManager : MonoBehaviour
 
         DelayCallManager.Instance.CallLater(FADE_DURATION, () =>
         {
+            GameManager.Instance.stats.Recovery();
             SpawnManager.Instance.SpawnStageBoss();
         });
     }
@@ -209,6 +211,7 @@ public class StageManager : MonoBehaviour
             killCount = 0;
 
             GameManager.Instance.player.transform.position = Vector3.zero;
+            GameManager.Instance.stats.Recovery();
 
             SpawnManager.Instance.SpawnEnemiesForCurrentStage(defaultSpawnCount);
 

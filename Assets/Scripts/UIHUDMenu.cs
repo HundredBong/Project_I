@@ -19,8 +19,12 @@ public class UIHUDMenu : MonoBehaviour
     [SerializeField] private TextMeshProUGUI skillText;
     [SerializeField] private TextMeshProUGUI inventoryText;
     [SerializeField] private TextMeshProUGUI menuText;
-    [SerializeField] private TextMeshProUGUI goldText;
-    [SerializeField] private TextMeshProUGUI diamondText;
+
+    [Space(20)]
+    [SerializeField] private TextMeshProUGUI stageGoldText;
+    [SerializeField] private TextMeshProUGUI stageDiamondText;
+    [SerializeField] private TextMeshProUGUI shopGoldText;
+    [SerializeField] private TextMeshProUGUI shopDiamondText;
 
     private void OnEnable()
     {
@@ -44,6 +48,7 @@ public class UIHUDMenu : MonoBehaviour
 
         //-----------------------------------------------------------------------------------------
 
+        RefreshCurrency();
         RefreshLanguage();
     }
 
@@ -63,8 +68,13 @@ public class UIHUDMenu : MonoBehaviour
 
     private void RefreshCurrency()
     {
-        goldText.text = GameManager.Instance.stats.GetGold().ToString();
-        diamondText.text = GameManager.Instance.stats.GetDiamond().ToString();
+        string gold = GameManager.Instance.stats.GetGold().ToString();
+        string diamond = GameManager.Instance.stats.GetDiamond().ToString();
+
+        stageGoldText.text = gold;
+        stageDiamondText.text = diamond;
+        shopGoldText.text = gold;
+        shopDiamondText.text = diamond;
     }
 }
 

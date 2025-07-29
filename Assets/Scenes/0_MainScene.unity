@@ -913,7 +913,7 @@ MonoBehaviour:
   killCount: 0
   totalKillsRequired: 100
   spawnBatchSize: 20
-  defaultSpawnCount: 0
+  defaultSpawnCount: 30
   _fadeImage: {fileID: 0}
   bossChallengable: 
   bossDefeated: 
