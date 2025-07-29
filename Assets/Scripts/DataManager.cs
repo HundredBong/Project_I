@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -89,11 +90,20 @@ public class DataManager : MonoBehaviour
         //Debug.Log($"[DataManager] LocalizedText {localizedTexts.Count}개 로드됨");
     }
 
-    public string GetLocalizedText(string key)
+    public string GetLocalizedText(string key, Dictionary<string, string> args = null)
     {
         if (localizedTexts.TryGetValue(key, out LocalizedText text))
         {
-            return text.Get();
+            string result = text.Get();
+
+            if (args != null)
+            {
+                foreach (var kvp in args)
+                {
+                    result = result.Replace("{" + kvp.Key + "}", kvp.Value.ToString());
+                }
+            }
+            return result;
         }
 
         Debug.LogWarning($"[DataManager] '{key}'에 해당하는 로컬라이즈 텍스트가 없음");
@@ -102,18 +112,18 @@ public class DataManager : MonoBehaviour
 
     public string GetSkillDesc(SkillData data, SkillId id)
     {
-        string rawText = DataManager.Instance.GetLocalizedText(data.DescKey);
-        string formattedText = "";
-        switch (id)
+        //string, object타입보다는 string, string으로 하는게 박싱 적음
+        Dictionary<string, string> args = new Dictionary<string, string>
         {
-            case SkillId.Lightning:
-                //한국어, 영어 모두 동일한 포맷이라면 가능하기는 한데, 포맷 방식이 다르다면 다 따로 만들어줘야 함.
-                //혹시 모르니 스위치 익스프레션이 아닌 일반 스위치문으로 작성
-                formattedText = string.Format(rawText, data.BaseValue, data.HitCount, data.StatucChance, data.Cooldown);
-                return formattedText;
-            default:
-                return rawText;
-        }
+            { "damage", SkillManager.Instance.CalculateSkillDamage(data).ToString("F0") },
+            { "hitCount", ((int)data.HitCount).ToString() },
+            { "targetCount", ((int)data.TargetCount).ToString() },
+            { "chance", ((float)data.StatucChance).ToString("F0") },
+            { "cooldown", ((float)data.Cooldown).ToString("F0") }
+        };
+
+        string desc = GetLocalizedText(data.DescKey, args);
+        return desc.Replace('|', ',');
     }
 
     private void LoadStatName()
@@ -911,7 +921,7 @@ public class SkillData
     public float Range;
     //public bool isUnlocked; //여긴 불변데이터 모아놓는 곳인데용, 이게 왜 들어갔을까, PlayerSkillState에서 관리함
     //추후 추가해야 할거 : 스킬 범위
-   
+
 }
 
 public class LocalizedText

@@ -15,11 +15,13 @@ public class UIInventoryPage : UIPage
     [SerializeField] private Button showWeaponButton;
     [SerializeField] private Button showArmorButton;
     [SerializeField] private Button showNecklaceButton;
+    [SerializeField] private Button consumableItemButton;
 
     [Header("버튼 텍스트")]
     [SerializeField] private TextMeshProUGUI weaponButtonText;
     [SerializeField] private TextMeshProUGUI armorButtonText;
     [SerializeField] private TextMeshProUGUI necklaceButtonText;
+    [SerializeField] private TextMeshProUGUI consumableItemButtonText;
 
     private Dictionary<int, UIItemSlot> itemSlots = new Dictionary<int, UIItemSlot>();
     private ItemType currentItemType;
@@ -54,6 +56,7 @@ public class UIInventoryPage : UIPage
         showWeaponButton.onClick.AddListener(() => FilteringByType(ItemType.Weapon));
         showArmorButton.onClick.AddListener(() => FilteringByType(ItemType.Armor));
         showNecklaceButton.onClick.AddListener(() => FilteringByType(ItemType.Necklace));
+        consumableItemButton.onClick.AddListener(() => FilteringByType(ItemType.Consumables));
         Refresh();
     }
 
@@ -82,6 +85,7 @@ public class UIInventoryPage : UIPage
         weaponButtonText.text = DataManager.Instance.GetLocalizedText("UI_Weapon");
         armorButtonText.text = DataManager.Instance.GetLocalizedText("UI_Armor");
         necklaceButtonText.text = DataManager.Instance.GetLocalizedText("UI_Necklace");
+        consumableItemButtonText.text = DataManager.Instance.GetLocalizedText("UI_Consumables");
     }
 
     [ContextMenu("테스트")]

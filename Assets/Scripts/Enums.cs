@@ -6,7 +6,7 @@ public enum StatUpgradeType { Attack, Health, AttackSpeed, MoveSpeed, }
 
 public enum GoldUpgradeType { Attack, Health, CriticalChance, CriticalDamage }
 
-public enum PlayerProgressType { Level, CurrentExp, MaxExp, StatPoint, Gold, Diamond, EnhanceStone,SkillGem }
+public enum PlayerProgressType { Level, CurrentExp, MaxExp, StatPoint, Gold, Diamond, EnhanceStone, SkillGem }
 
 public enum HUDType { Shop, Stat, Skill, Inventory, Menu }
 
@@ -16,7 +16,7 @@ public enum StageType { Forest, Cave }
 
 public enum SkillId { None, Lightning, DarkBoom, HolyBurst, DragonBreath, IceArrow, Explosion, Fireball, Charge }
 
-public enum ItemType { Weapon, Armor, Necklace }
+public enum ItemType { Weapon, Armor, Necklace, Consumables }
 
 public enum GradeType { Common, Uncommon, Rare, Epic, Legendary, Mythical }
 

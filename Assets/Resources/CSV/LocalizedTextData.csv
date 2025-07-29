@@ -1,4 +1,14 @@
 Key,KR,EN
+Armor_Plate_01,일반 방어구 1형,Basic Armor I
+Armor_Plate_02,일반 방어구 2형,Basic Armor II
+Armor_Plate_03,보급형 방어구 1형,Standard Armor I
+Armor_Plate_04,보급형 방어구 2형,Standard Armor II
+Armor_Plate_05,고급 방어구 1형,Advanced Armor I
+Armor_Plate_06,고급 방어구 2형,Advanced Armor II
+Armor_Plate_07,마력 깃든 방어구,Enchanted Armor
+Armor_Plate_08,기사단 방어구,Knights' Armor
+Armor_Plate_09,상급 기사 방어구,Elite Knight Armor
+Armor_Plate_10,용비늘 방어구,Dragonscale Armor
 Grade_Common,일반,Common
 Grade_Epic,영웅,Epic
 Grade_Legendary,전설,Legendary
@@ -17,64 +27,6 @@ Item_Effect_ExpBonus,경험치 획득량 증가,Exp Bonus
 Item_Effect_GoldBonus,골드 획득량 증가,Gold Bonus
 Item_Effect_HealthBonus,체력 보너스,Health Bonus
 Item_Stage,단계,Stage
-Skill_Count,보유 수량,Skills owned
-Skill_Effect,보유 효과,Passive Effect 
-Skill_Effect_GoldBonus,골드 획득량 증가,Increased Gold Gain
-Skill_Lightning_Desc,적 위치에 번개를 내리치며 타격받은 적은 <color=white>{0}%</color> 대미지로 {1}번 피해를 입습니다. 타격받은 적은 <color=blue>{2}%</color>확률로 감전상태가 됩니다. <color=yellow>(쿨타임 {3}초)</color>,Calls lightning on enemy position. Deals <color=white>{0}%</color> damage {1} times. Has <color=cyan>{2}%</color> chance to shock. <color=yellow>(Cooldown: {3}s)</color>
-Skill_Lightning_Name,라이트닝,Lightning
-Stat_Attack,공격력,Attack
-Stat_AttackSpeed,공격속도,Attack Speed
-Stat_CriticalChance,크리티컬 확률,Critical Chance
-Stat_CriticalDamage,크리티컬 대미지,Critical Damage
-Stat_Health,체력,Health
-Stat_MoveSpeed,이동속도,Move Speed
-UI_BatchSynthesis,일괄 합성,Batch Synthesis
-UI_Equip,장착 효과,Equip
-UI_Equip,장착,Equip
-UI_Equipped,장착중,Equipped
-UI_EquippedEffect,장착 효과,Equipped Effect
-UI_Grade,단계,Stage
-UI_ItemSynthesisDesc,이 장비 5개를 소모해 다음 등급 장비를 획득합니다.,Use 5 of these equipment to obtain the next class of equipment.
-UI_LevelUp,레벨 업,Level Up
-UI_LevelUp,레벨 업,Level Up
-UI_Normal,일반,Normal
-UI_OwnedCount,보유 수량,Quantity
-UI_OwnedEffect,보유 효과,Owned Effect
-UI_Package,패키지,Package
-UI_Score,스코어,Score
-UI_Shop,상점,Shop
-UI_Skill,스킬,Skill
-UI_Summon,소환,Summon
-UI_Summon10,10회 소환,Summon 10
-UI_Summon30,30회 소환,Summon 30
-UI_SummonArmor,방어구 소환,Armor
-UI_SummonNecklace,목걸이 소환,Necklace
-UI_SummonSkill,스킬 소환,Skill
-UI_SummonWeapon,무기 소환,Weapon
-UI_Synthesis,합성,Synthesis
-UI_Synthesis,합성,Synthesis
-UI_UpgradeMaterial,강화 재료,Upgrade Material
-UI_UpgradeType,강화,Upgrade
-Weapon_Sword_01,나무칼,Wood Sword
-Weapon_Sword_02,돌검,Stone Sword
-Weapon_Sword_03,철검,Iron Sword
-Weapon_Sword_04,은검,Silver Sword
-Weapon_Sword_05,대검,Greatsword
-Weapon_Sword_06,시미터,Scimitar
-Weapon_Sword_07,크리스,Kris
-Weapon_Sword_08,피바라기,Bloodthirster
-Weapon_Sword_09,집행검,Executioner Sword
-Weapon_Sword_10,마검,Cursed Sword
-Armor_Plate_01,일반 방어구 1형,Basic Armor I
-Armor_Plate_02,일반 방어구 2형,Basic Armor II
-Armor_Plate_03,보급형 방어구 1형,Standard Armor I
-Armor_Plate_04,보급형 방어구 2형,Standard Armor II
-Armor_Plate_05,고급 방어구 1형,Advanced Armor I
-Armor_Plate_06,고급 방어구 2형,Advanced Armor II
-Armor_Plate_07,마력 깃든 방어구,Enchanted Armor
-Armor_Plate_08,기사단 방어구,Knights' Armor
-Armor_Plate_09,상급 기사 방어구,Elite Knight Armor
-Armor_Plate_10,용비늘 방어구,Dragonscale Armor
 Necklace_01,뼈목걸이 1형,Bone Necklace I
 Necklace_02,뼈목걸이 2형,Bone Necklace II
 Necklace_03,돌목걸이 1형,Stone Necklace I
@@ -85,23 +37,81 @@ Necklace_07,흑옥 목걸이,Onyx Necklace
 Necklace_08,자수정 목걸이,Amethyst Necklace
 Necklace_09,에메랄드 목걸이,Emerald Necklace
 Necklace_10,다이아몬드 목걸이,Diamond Necklace
-UI_Weapon,무기,Weapon
-UI_Armor,방어구,Armor
-UI_Necklace,목걸이,Necklace
-Skill_DarkBoom_Name,검은 폭탄,Dark Boom
-Skill_DarkBoom_Desc,어두운 기운이 폭발하며 주변의 적들에게 <color=white>{0}</color>의 피해를 {1}회 입힙니다. <color=yellow>(쿨타임 {2}초)</color>,"Dark energy erupts, dealing <color=white>{0}</color> damage to nearby enemies {1} times. <color=yellow>(Cooldown: {2}s)</color> "
-Skill_HolyBurst_Name,홀리 버스트,Holy Burst
-Skill_HolyBurst_Desc,빛의 에너지를 소환해 주변 최대 7명의 적에게 <color=white>{0}</color>의 대미지로 5번 피해를 입힙니다. <color=yellow>(쿨타임 {1}초)</color>,"Summons the energy of light to deal damage to up to 7 nearby enemies 5 times, each hit inflicting <color=white>{0}</color> damage. <color=yellow>(Cooldown: {1}s)</color>"
-Skill_Effect_ExpBonus,경험치 획득량 증가,Exp Bonus
-Skill_DragonBreath_Name,드래곤 브레스,Dragon Breath
-Skill_DragonBreath_Desc,거대한 불길을 방출합니다. 불길에 닿은 적은 0.2초마다 <color=white>{0}</color>의 대미지를 입습니다. <color=yellow>(쿨타임 {1}초)</color>,Unleashes a massive blaze. Enemies caught in the flames take <color=white>{0}</color> damage every 0.2 seconds. <color=yellow>(Cooldown: {1}s)</color>
-Skill_IceArrow_Name,아이스 애로우,Ice Arrow
-Skill_IceArrow_Desc,전방에 얼음 화살을 5개 발사해 타격받은 적은 <color=white>{0}</color>의 대미지를 입고 <color=blue>{1}%</color>확률로 빙결 상태가 됩니다. <color=yellow>(쿨타임 {2}초)</color>,Fires 5 ice arrows forward. Each hit deals <color=white>{0}</color> damage and has a <color=blue>{1}%</color> chance to freeze the target. <color=yellow>(Cooldown: {2}s)</color>
-Skill_Explosion_Name,익스플로전,Explosion
-Skill_Explosion_Desc,"광범위한범위에 폭발을 30회 일으킵니다. 휩쓸린 적은 <color=white>{0}</color>의 대미지를 {1}회 받고, <color=blue>{2}%</color>확률로 기절 상태가 됩니다.<color=yellow>(쿨타임 {3}초)</color>",Triggers 30 explosions over a wide area. Enemies caught in the blast take <color=white>{0}</color> damage {1} times and have a <color=blue>{2}%</color> chance to be stunned. <color=yellow>(Cooldown: {3}s)</color>
-Skill_Fireball_Name,파이어볼,Fireball
-Skill_Fireball_Desc,적을 추격하는 불꽃을 소환해 주변 최대 {0}명의 적에게 소환해 <color=white>{1}<color/>의 대미지로 {2}번 피해를 입힙니다. 타격받은 적은 {3}% 확률로 화상 상태가 됩니다.<color=yellow>(쿨타임 {4}초)</color>,"Summons homing flames that chase enemies, hitting up to {0} nearby targets for <color=white>{1}</color> damage {2} times. Hit enemies have a {3}% chance to be inflicted with Burn. <color=yellow>(Cooldown: {4}s)</color>"
+Skill_Charge_Desc,최대 {targetCount}명의 적에게 돌진해 <color=white>{damage}%</color>의 대미지를 입히고| 타격당 플레이어는 최대 체력의 3%만큼 체력을 회복합니다.<color=yellow>(쿨타임 {cooldown}초)</color>,Charge at up to {targetCount} enemies| dealing <color=white>{damage}%</color> damage. The player recovers HP equal to 3% of their max health for each enemy hit. <color=yellow>(Cooldown: {cooldown} sec)</color>
 Skill_Charge_Name,돌진,Charge
-Skill_Charge_Desc,최대 {0}명의 적에게 돌진해 <clolr=whie>{1}</color>의 대미지를 입히고 타격당 플레이어는 최대 체력의 3%만큼 체력을 회복합니다.<color=yellow>(쿨타임 {2}초)</color>,"Charges at up to {0} enemies, dealing <color=white>{1}</color> damage. The player heals for 3% of max HP per enemy hit. <color=yellow>(Cooldown: {2}s)</color>"
+Skill_Count,보유 수량,Skills owned
+Skill_DarkBoom_Desc,어두운 기운이 폭발하며 주변의 적들에게 <color=white>{damage}%</color>의 피해를 {hitCount}회 입힙니다. <color=yellow>(쿨타임 {cooldown}초)</color>,Dark energy explodes| hitting nearby enemies {hitCount} times for <color=white>{damage}%</color> damage. <color=yellow>(Cooldown: {cooldown} sec)</color>
+Skill_DarkBoom_Name,검은 폭탄,Dark Boom
+Skill_DragonBreath_Desc,거대한 불길을 방출합니다. 불길에 닿은 적은 0.2초마다 <color=white>{damage}%</color>의 대미지를 입습니다. <color=yellow>(쿨타임 {cooldown}초)</color>,Unleashes a massive flame. Enemies touched by the flame take <color=white>{damage}%</color> damage every 0.2 seconds. <color=yellow>(Cooldown: {cooldown} sec)</color>
+Skill_DragonBreath_Name,드래곤 브레스,Dragon Breath
+Skill_Effect,보유 효과,Passive Effect 
+Skill_Effect_ExpBonus,경험치 획득량 증가,Exp Bonus
+Skill_Effect_GoldBonus,골드 획득량 증가,Increased Gold Gain
+Skill_Explosion_Desc,광범위한범위에 폭발을 30회 일으킵니다. 휩쓸린 적은 <color=white>{damage}%</color>의 대미지를 {hitCount}회 받고| <color=blue>{chance}%</color>확률로 기절 상태가 됩니다.<color=yellow>(쿨타임 {cooldown}초)</color>,Triggers 30 explosions across a wide area. Enemies caught in the blasts take <color=white>{damage}%</color> damage {hitCount} times and have a <color=blue>{chance}%</color> chance to be stunned. <color=yellow>(Cooldown: {cooldown} sec)</color>
+Skill_Explosion_Name,익스플로전,Explosion
+Skill_Fireball_Desc,적을 추격하는 불꽃을 소환해 주변 최대 {targetCount}명의 적에게 소환해 <color=white>{damage}%</color>의 대미지로 {hitCount}번 피해를 입힙니다. 타격받은 적은 {chance}% 확률로 화상 상태가 됩니다.<color=yellow>(쿨타임 {cooldown}초)</color>,Summons a homing flame that chases and strikes up to {targetCount} nearby enemies {hitCount} times| dealing <color=white>{damage}%</color> damage. Hit enemies have a {chance}% chance to be burned. <color=yellow>(Cooldown: {cooldown} sec)</color>
+Skill_Fireball_Name,파이어볼,Fireball
+Skill_HolyBurst_Desc,빛의 에너지를 소환해 주변 최대 {targetCount}명의 적에게 <color=white>{damage}%</color>의 대미지로 {hitCount}번 피해를 입힙니다. <color=yellow>(쿨타임 {cooldown}초)</color>,Summons light energy to strike up to {targetCount} nearby enemies {hitCount} times| dealing <color=white>{damage}%</color> damage. <color=yellow>(Cooldown: {cooldown} sec)</color>
+Skill_HolyBurst_Name,홀리 버스트,Holy Burst
+Skill_IceArrow_Desc,전방에 얼음 화살을 5개 발사해 타격받은 적은 <color=white>{damage}%</color>의 대미지를 입고| <color=blue>{chance}%</color>확률로 빙결 상태가 됩니다. <color=yellow>(쿨타임 {cooldown}초)</color>,Fires 5 ice arrows forward. Enemies hit take <color=white>{damage}</color> damage and have a <color=blue>{chance}%</color> chance to be frozen. <color=yellow>(Cooldown: {cooldown} sec)</color>
+Skill_IceArrow_Name,아이스 애로우,Ice Arrow
+Skill_Lightning_Desc,적 위치에 번개를 내리치며 타격받은 적은 <color=white>{damage}%</color>의 대미지로 {hitCount}번 피해를 입습니다. 타격받은 적은 <color=blue>{chance}%</color>확률로 감전상태가 됩니다. <color=yellow>(쿨타임 {cooldown}초)</color>,Strikes lightning at enemy locations| dealing <color=white>{damage}%</color> damage {hitCount} times to each enemy hit. Enemies hit have a <color=blue>{chance}%</color> chance to be electrified. <color=yellow>(Cooldown: {cooldown} sec)</color>
+Skill_Lightning_Name,라이트닝,Lightning
+Stat_Attack,공격력,Attack
+Stat_AttackSpeed,공격속도,Attack Speed
+Stat_CriticalChance,크리티컬 확률,Critical Chance
+Stat_CriticalDamage,크리티컬 대미지,Critical Damage
+Stat_Health,체력,Health
+Stat_MoveSpeed,이동속도,Move Speed
+UI_Armor,방어구,Armor
+UI_BatchSynthesis,일괄 합성,Batch Synthesis
+UI_Consumables,소모품,Consumable Item
+UI_Equip,장착 효과,Equip
+UI_Equip,장착,Equip
+UI_Equipped,장착중,Equipped
+UI_EquippedEffect,장착 효과,Equipped Effect
 UI_GoMaxStage,최대 스테이지로,Go To Max Stage
+UI_Grade,단계,Stage
+UI_ItemSynthesisDesc,이 장비 5개를 소모해 다음 등급 장비를 획득합니다.,Use 5 of these equipment to obtain the next class of equipment.
+UI_LevelUp,레벨 업,Level Up
+UI_LevelUp,레벨 업,Level Up
+UI_MyLevel,내 레벨,Level
+UI_Necklace,목걸이,Necklace
+UI_Normal,일반,Normal
+UI_OwnedCount,보유 수량,Quantity
+UI_OwnedEffect,보유 효과,Owned Effect
+UI_Package,패키지,Package
+UI_ResetStat,스탯초기화,Reset
+UI_Score,스코어,Score
+UI_Shop,상점,Shop
+UI_Skill,스킬,Skill
 UI_Stage,스테이지,Stage
+UI_Stat,스탯,Stat
+UI_StatPoint,스탯포인트,Stat Point
+UI_Summon,소환,Summon
+UI_Summon10,10회 소환,Summon 10
+UI_Summon30,30회 소환,Summon 30
+UI_SummonArmor,방어구 소환,Armor
+UI_SummonNecklace,목걸이 소환,Necklace
+UI_SummonSkill,스킬 소환,Skill
+UI_SummonWeapon,무기 소환,Weapon
+UI_Synthesis,합성,Synthesis
+UI_Synthesis,합성,Synthesis
+UI_Upgrade,업그레이드,Upgrade
+UI_UpgradeMaterial,강화 재료,Upgrade Material
+UI_UpgradeType,강화,Upgrade
+UI_Weapon,무기,Weapon
+Weapon_Sword_01,나무칼,Wood Sword
+Weapon_Sword_02,돌검,Stone Sword
+Weapon_Sword_03,철검,Iron Sword
+Weapon_Sword_04,은검,Silver Sword
+Weapon_Sword_05,대검,Greatsword
+Weapon_Sword_06,시미터,Scimitar
+Weapon_Sword_07,크리스,Kris
+Weapon_Sword_08,피바라기,Bloodthirster
+Weapon_Sword_09,집행검,Executioner Sword
+Weapon_Sword_10,마검,Cursed Sword
+UI_ActiveSkill,액티브 스킬,Active Skill
+UI_PassiveSkill,패시브 스킬,Passive Skill
+Skill_Effect_HealthBonus,체력 보너스,Health Bonus
+Skill_Effect_DamageBonus,대미지 보너스,Damage Bonus

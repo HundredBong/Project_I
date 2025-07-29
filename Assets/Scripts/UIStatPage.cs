@@ -11,10 +11,14 @@ public class UIStatPage : UIPage
     [SerializeField] private GameObject statSlotPrefab;
     [SerializeField] private Transform contentRoot;
     [SerializeField] private Button openUpgradeButton;
+    [SerializeField] private Button resetStatButton;
 
     [Header("업데이트할 텍스트")]
     [SerializeField] private TextMeshProUGUI levelText;
     [SerializeField] private TextMeshProUGUI statPointText;
+    [SerializeField] private TextMeshProUGUI upgradeButtonText;
+    [SerializeField] private TextMeshProUGUI statButtonText;
+    [SerializeField] private TextMeshProUGUI resetStatButtonText;
 
     [HideInInspector] public List<UIStatSlot> slotUIs = new List<UIStatSlot>();
     private void Start()
@@ -29,6 +33,7 @@ public class UIStatPage : UIPage
         }
 
         openUpgradeButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UIGoldUpgradePage>());
+        resetStatButton.onClick.AddListener(() => GameManager.Instance.stats.ResetStats());
     }
 
     protected override void Awake()
@@ -43,28 +48,30 @@ public class UIStatPage : UIPage
 
     private void OnEnable()
     {
+        LanguageManager.OnLanguageChanged += Refresh;
+
         playerStats.OnStatChanged += Refresh;
         Refresh();
     }
 
     private void OnDisable()
     {
+        LanguageManager.OnLanguageChanged -= Refresh;
+
         playerStats.OnStatChanged -= Refresh;
     }
 
     public void Refresh()
     {
-        //UI스탯 슬롯이 아니라 페이지를 새로고침하는거였네
-        //TODO : DataManager.Instance.GetLocalizedText()로 언어별로 가져와햐 함, LanguageManager.OnLanguageChanged 이벤트로 언어 변경시 새로고침도 해야함
-        levelText.text = $"내 레벨 : Lv.{playerStats.level}";
-        statPointText.text = $"스탯포인트 {playerStats.statPoint}/{playerStats.level}";
-
-        //Debug.Log($"[PlayerStats] RefreshAllStatUIs 실행됨, UI개수 : {slotUIs.Count}");
+        levelText.text = $"{DataManager.Instance.GetLocalizedText("UI_MyLevel")} : {playerStats.level}";
+        statPointText.text = $"{DataManager.Instance.GetLocalizedText("UI_StatPoint")} {playerStats.statPoint}/{playerStats.level}";
+        resetStatButtonText.text = $"{DataManager.Instance.GetLocalizedText("UI_ResetStat")}";
+        upgradeButtonText.text = $"{DataManager.Instance.GetLocalizedText("UI_Upgrade")}";
+        statButtonText.text = $"{DataManager.Instance.GetLocalizedText("UI_Stat")}";
 
         foreach (UIStatSlot ui in slotUIs)
         {
             ui.Refresh();
-            //Debug.Log($"[PlayerStats] 새로고침한 UI : {ui.name}");
         }
     }
 }

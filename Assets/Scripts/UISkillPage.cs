@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UISkillPage : UIPage
 {
@@ -16,6 +17,8 @@ public class UISkillPage : UIPage
     [SerializeField] private GameObject passiveSkillScroll;
     [SerializeField] private Button activeSkillButton;
     [SerializeField] private Button passiveSkillButton;
+    [SerializeField] private TextMeshProUGUI activeSkillButtonText;
+    [SerializeField] private TextMeshProUGUI passiveSkillButtonText;
     [SerializeField] private Color selectedColor;
     [SerializeField]private Color unselectedColor;
     [SerializeField] private Button popupOpenButton;
@@ -28,8 +31,9 @@ public class UISkillPage : UIPage
         passiveSkillButton.onClick.AddListener(ShowPassiveSkills);
         popupOpenButton.onClick.AddListener(()=>UIManager.Instance.PopupOpen<SkillEquipPopup>());
 
+        LanguageManager.OnLanguageChanged += RefreshAll;
+
         RefreshAll();
-        LanguageManager.OnLanguageChanged += RefreshAll; 
     }
 
     private void OnDisable()
@@ -79,5 +83,8 @@ public class UISkillPage : UIPage
         {
             ui.Refresh();
         }
+
+        activeSkillButtonText.text = $"{DataManager.Instance.GetLocalizedText("UI_ActiveSkill")}";
+        passiveSkillButtonText.text = $"{DataManager.Instance.GetLocalizedText("UI_PassiveSkill")}";
     }
 }

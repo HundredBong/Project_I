@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +11,9 @@ public class UIGoldUpgradePage : UIPage
     [SerializeField] private Transform slotLoot;
     [SerializeField] private UIGoldUpgradeSlot slotPrefab;
     [SerializeField] private Button openStatPanelButton;
+
+    [SerializeField] private TextMeshProUGUI upgradeButtonText;
+    [SerializeField] private TextMeshProUGUI statButtonText;
 
     private Dictionary<GoldUpgradeType, UIGoldUpgradeSlot> slotDict = new();
 
@@ -37,12 +41,18 @@ public class UIGoldUpgradePage : UIPage
 
     private void OnEnable()
     {
+        LanguageManager.OnLanguageChanged += SetLocalizedText;
+
         stats.OnStatChanged += RefreshAll;
         RefreshAll();
+
+        SetLocalizedText();
     }
 
     private void OnDisable()
     {
+        LanguageManager.OnLanguageChanged -= SetLocalizedText;
+
         stats.OnStatChanged -= RefreshAll;
     }
 
@@ -52,5 +62,11 @@ public class UIGoldUpgradePage : UIPage
         {
             slot.Refresh();
         }
+    }
+
+    private void SetLocalizedText()
+    {
+        upgradeButtonText.text = $"{DataManager.Instance.GetLocalizedText("UI_Upgrade")}";
+        statButtonText.text = $"{DataManager.Instance.GetLocalizedText("UI_Stat")}";
     }
 }

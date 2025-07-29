@@ -913,10 +913,11 @@ MonoBehaviour:
   killCount: 0
   totalKillsRequired: 100
   spawnBatchSize: 20
-  defaultSpawnCount: 30
+  defaultSpawnCount: 0
   _fadeImage: {fileID: 0}
   bossChallengable: 
   bossDefeated: 
+  isStageTransitioning: 0
 --- !u!4 &866138528
 Transform:
   m_ObjectHideFlags: 0
@@ -1017,6 +1018,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  _fadeImage: {fileID: 0}
 --- !u!4 &1203159235
 Transform:
   m_ObjectHideFlags: 0

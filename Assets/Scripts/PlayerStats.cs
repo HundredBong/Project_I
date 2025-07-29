@@ -518,6 +518,23 @@ public class PlayerStats : MonoBehaviour
         health -= damage;
     }
 
+    public void ResetStats()
+    {
+        int totalRefund = 0;
+
+        foreach (StatUpgradeType type in statLevels.Keys)
+        {
+            totalRefund += statLevels[type];
+            statLevels[type] = 0;
+        }
+
+        StatPoint += totalRefund;
+
+        RecalculateStats();
+        GameManager.Instance.statSaver.RequestSave(GetProgressSaveData());
+        OnStatChanged?.Invoke();
+    }
+
     [ContextMenu("다이아부자")]
     private void Test()
     {
