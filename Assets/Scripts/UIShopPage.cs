@@ -8,7 +8,7 @@ public class UIShopPage : UIPage
 {
     [Header("카테고리")]
     [SerializeField] private GameObject summonCategory;
-    [SerializeField] private GameObject normalCategory;
+    [SerializeField] private GameObject generalCategory;
     [SerializeField] private GameObject skillCategory;
     [SerializeField] private GameObject scoreCategory;
     [SerializeField] private GameObject packageCategory;
@@ -16,7 +16,7 @@ public class UIShopPage : UIPage
 
     [Header("각 카테고리 버튼")]
     [SerializeField] private Button summonButton;
-    [SerializeField] private Button normalButton;
+    [SerializeField] private Button generalButton;
     [SerializeField] private Button skillButton;
     [SerializeField] private Button scoreButton;
     [SerializeField] private Button packageButton;
@@ -25,7 +25,7 @@ public class UIShopPage : UIPage
     [Header("텍스트")]
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI summonButtonText;
-    [SerializeField] private TextMeshProUGUI normalButtonText;
+    [SerializeField] private TextMeshProUGUI generalButtonText;
     [SerializeField] private TextMeshProUGUI skillButtonText;
     [SerializeField] private TextMeshProUGUI scoreButtonText;
     [SerializeField] private TextMeshProUGUI packageButtonText;
@@ -43,7 +43,7 @@ public class UIShopPage : UIPage
         categoryObjects = new Dictionary<ShopCategory, GameObject>
         {
             { ShopCategory.Summon, summonCategory },
-            { ShopCategory.Normal, normalCategory },
+            { ShopCategory.Normal, generalCategory },
             { ShopCategory.Skill, skillCategory },
             { ShopCategory.Score, scoreCategory },
             { ShopCategory.Package, packageCategory },
@@ -53,7 +53,7 @@ public class UIShopPage : UIPage
         categoryButtons = new Dictionary<ShopCategory, Button>
         {
             { ShopCategory.Summon, summonButton },
-            { ShopCategory.Normal, normalButton },
+            { ShopCategory.Normal, generalButton },
             { ShopCategory.Skill, skillButton },
             { ShopCategory.Score, scoreButton },
             { ShopCategory.Package, packageButton },
@@ -99,7 +99,7 @@ public class UIShopPage : UIPage
     {
         titleText.text = DataManager.Instance.GetLocalizedText("UI_Shop");
         summonButtonText.text = DataManager.Instance.GetLocalizedText("UI_Summon");
-        normalButtonText.text = DataManager.Instance.GetLocalizedText("UI_Normal");
+        generalButtonText.text = DataManager.Instance.GetLocalizedText("UI_Normal");
         skillButtonText.text = DataManager.Instance.GetLocalizedText("UI_Skill");
         scoreButtonText.text = DataManager.Instance.GetLocalizedText("UI_Score");
         packageButtonText.text = DataManager.Instance.GetLocalizedText("UI_Package");

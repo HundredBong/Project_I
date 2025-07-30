@@ -64,7 +64,7 @@ public class UIStatPage : UIPage
     public void Refresh()
     {
         levelText.text = $"{DataManager.Instance.GetLocalizedText("UI_MyLevel")} : {playerStats.level}";
-        statPointText.text = $"{DataManager.Instance.GetLocalizedText("UI_StatPoint")} {playerStats.statPoint}/{playerStats.level}";
+        statPointText.text = $"{DataManager.Instance.GetLocalizedText("UI_StatPoint")} {playerStats.statPoint}/{playerStats.level - 1}";
         resetStatButtonText.text = $"{DataManager.Instance.GetLocalizedText("UI_ResetStat")}";
         upgradeButtonText.text = $"{DataManager.Instance.GetLocalizedText("UI_Upgrade")}";
         statButtonText.text = $"{DataManager.Instance.GetLocalizedText("UI_Stat")}";

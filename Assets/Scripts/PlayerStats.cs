@@ -29,7 +29,7 @@ public class PlayerStats : MonoBehaviour
     public float maxExp = 10;
 
     [Header("재화")]
-    public int statPoint = 0;
+    public int statPoint = 1;
     public float gold = 0;
     public int diamond = 0;
     public int enhanceStone = 0;
@@ -535,7 +535,10 @@ public class PlayerStats : MonoBehaviour
     {
         int totalRefund = 0;
 
-        foreach (StatUpgradeType type in statLevels.Keys)
+        //foreach돌때 수정할거면 복사해서 수정해야함
+        List<StatUpgradeType> keys = new List<StatUpgradeType>(statLevels.Keys);
+
+        foreach (StatUpgradeType type in keys)
         {
             totalRefund += statLevels[type];
             statLevels[type] = 0;
@@ -546,8 +549,7 @@ public class PlayerStats : MonoBehaviour
         RecalculateStats();
         GameManager.Instance.statSaver.RequestSave(GetProgressSaveData());
         OnStatChanged?.Invoke();
-        OnStatusChanged.Invoke();
-
+        OnStatusChanged?.Invoke();
     }
 
     [ContextMenu("다이아부자")]

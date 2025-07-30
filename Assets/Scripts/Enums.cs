@@ -37,3 +37,9 @@ public enum SummonSubCategory { Weapon, Armor, Necklace, Skill }
 public enum RewardType { Item, Diamond, EnhanceStone, SkillGem }
 
 public enum StateType { None, Idle, Attack, Chase, Dead, Charge }
+
+public enum ShopRewardType { DungeonTicket, Currency, AdRemove }
+
+public enum ShopPriceType { Diamond, SkillGem, Ad, Cash }
+
+public enum ShopLimitType { None, Daily, Weekly, Monthly, Account }

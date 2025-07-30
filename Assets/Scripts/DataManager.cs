@@ -21,6 +21,7 @@ public class DataManager : MonoBehaviour
     private Dictionary<SummonSubCategory, List<int>> summonExpDatas = new Dictionary<SummonSubCategory, List<int>>();
     private Dictionary<SummonSubCategory, Dictionary<int, SummonRateData>> summonRateTable = new Dictionary<SummonSubCategory, Dictionary<int, SummonRateData>>();
     private Dictionary<SummonSubCategory, Dictionary<int, SummonRewardData>> summonRewardTable = new Dictionary<SummonSubCategory, Dictionary<int, SummonRewardData>>();
+    private List<GeneralShopData> generalShopDataList = new List<GeneralShopData>();
 
     private void Awake()
     {
@@ -48,6 +49,7 @@ public class DataManager : MonoBehaviour
         LoadSummonGradeProbabilities();
         LoadSummonStageProbabilities();
         LoadSummonRewardData();
+        LoadGeneralShopData();
     }
 
     private void LoadSpritesData()
@@ -808,21 +810,50 @@ public class DataManager : MonoBehaviour
         return null;
     }
 
-    //public float GetExpData(int level)
-    //{
-    //    if (expTable.ContainsKey(level) == false)
-    //    {
-    //        Debug.LogWarning($"[DataManager] 레벨 {level}에 대한 데이터가 없음");
-    //        return 1000;
-    //    }
+    private void LoadGeneralShopData()
+    {
+        TextAsset asset = Resources.Load<TextAsset>("CSV/GeneralShopData");
+        string[] lines = asset.text.Split('\n');
 
-    //    return expTable[level];
-    //}
-    //private void Test()
-    //{
-    //    float a = summonRateTable[SummonSubCategory.Weapon][1].GradeProbabilities[GradeType.Uncommon];
-    //    float b = summonRateTable[SummonSubCategory.Weapon][1].StageProbabilities[GradeType.Uncommon][1];
-    //}
+        for (int i = 1; i < lines.Length; i++)
+        {
+            if (string.IsNullOrEmpty(lines[i])) { continue; }
+
+            string[] tokens = lines[i].Split(',');
+
+            ShopRewardType rewardType = Enum.Parse<ShopRewardType>(tokens[3].Trim());
+            ShopPriceType priceType = Enum.Parse<ShopPriceType>(tokens[6].Trim());
+            ShopLimitType limitType = Enum.Parse<ShopLimitType>(tokens[9].Trim());
+
+            GeneralShopData generalShopData = new GeneralShopData()
+            {
+                ShopId = tokens[0].Trim(),
+                NameKey = tokens[1].Trim(),
+                IconKey = tokens[2].Trim(),
+                RewardType = rewardType, //3
+                RewardId = tokens[4].Trim(),
+                RewardCount = int.Parse(tokens[5].Trim()),
+                PriceType = priceType, //6
+                PriceAmount = int.Parse(tokens[7].Trim()),
+                PurchaseLimit = int.Parse(tokens[8].Trim()),
+                LimitType = limitType,
+            };
+
+            generalShopDataList.Add(generalShopData);
+        }
+
+        Debug.Log($"{generalShopDataList.Count}개의 데이터를 로드함");
+    }
+
+    public GeneralShopData GetShopDataById(string shopId)
+    {
+        return generalShopDataList.Find(data => data.ShopId == shopId);
+    }
+
+    public List<GeneralShopData> GetAllGeneralShopDatas()
+    {
+        return generalShopDataList;
+    }
 }
 
 [System.Serializable]
@@ -1008,4 +1039,21 @@ public class SummonRewardData
     public RewardType RewardType;
     public string Id;
     public int Amount;
+}
+
+public class GeneralShopData
+{
+    public string ShopId;
+    public string NameKey;
+    public string IconKey;
+
+    public ShopRewardType RewardType;
+    public string RewardId;
+    public int RewardCount;
+
+    public ShopPriceType PriceType;
+    public int PriceAmount;
+
+    public int PurchaseLimit;
+    public ShopLimitType LimitType;
 }
