@@ -116,3 +116,10 @@ UI_PassiveSkill,패시브 스킬,Passive Skill
 Skill_Effect_HealthBonus,체력 보너스,Health Bonus
 Skill_Effect_DamageBonus,대미지 보너스,Damage Bonus
 UI_Awaken,각성,Awaken
+Shop_EnhanceDengeonTicket,강화 던전 입장권 ,Enhance Dengeon Ticket 
+UI_EA,개,Ea
+Shop_SoldOut,모든 상품을 구매했습니다.,purchased all the items.
+UI_Daily,일간,Daily
+UI_Account,계정당,Account
+UI_Weekly,주간,Weekly
+UI_Monthly,월간,Monthly

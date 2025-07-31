@@ -534,8 +534,10 @@ MonoBehaviour:
   itemLimitText: {fileID: 9206527424236160175}
   itemPriceText: {fileID: 1609194442616993727}
   itemSoldOutText: {fileID: 3321937986855788584}
+  itemPurchasedText: {fileID: 9206527424236160175}
   itemIcon: {fileID: 3686630133377384173}
   priceIconImage: {fileID: 1419586467998347133}
+  soldOutObject: {fileID: 7098743578949790701}
 --- !u!1 &2804041586525822358
 GameObject:
   m_ObjectHideFlags: 0
@@ -811,7 +813,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uBAA8\uB4E0 \uC0C1\uD488\uC744 \uAD6C\uD574\uD588\uC2B5\uB2C8\uB2E4."
+  m_text: "\uBAA8\uB4E0 \uC0C1\uD488\uC744 \uAD6C\uB9E4\uD588\uC2B5\uB2C8\uB2E4."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7d7bd7ee46c707a40bc5a83de0312c36, type: 2}
   m_sharedMaterial: {fileID: -2530527467424470486, guid: 7d7bd7ee46c707a40bc5a83de0312c36, type: 2}
@@ -945,7 +947,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC544\uC774\uD15C \uC774\uB984 1000\uAC1C"
+  m_text: Enhance Dengeon Ticket 5EA
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7d7bd7ee46c707a40bc5a83de0312c36, type: 2}
   m_sharedMaterial: {fileID: -2530527467424470486, guid: 7d7bd7ee46c707a40bc5a83de0312c36, type: 2}
@@ -972,7 +974,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
+  m_fontSize: 23.65
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1

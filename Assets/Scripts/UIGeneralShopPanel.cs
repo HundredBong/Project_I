@@ -7,7 +7,7 @@ public class UIGeneralShopPanel : MonoBehaviour
     [SerializeField] private GameObject _contentPrefab;
     [SerializeField] private RectTransform _contentRoot;
 
-    private List<UIGeneralShopSlot> _slots;
+    private List<UIGeneralShopSlot> _slots = new List<UIGeneralShopSlot>();
 
     private void OnEnable()
     {
