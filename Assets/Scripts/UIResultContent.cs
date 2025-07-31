@@ -4,10 +4,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIResultContent : MonoBehaviour, IPooledObject
+public class UIResultContent : PooledUI
 {
-    public GameObject prefabReference { get; set; }
-
     [SerializeField] private TextMeshProUGUI gradeText;
     [SerializeField] private Image icon;
 

@@ -537,6 +537,7 @@ MonoBehaviour:
   itemPurchasedText: {fileID: 9206527424236160175}
   itemIcon: {fileID: 3686630133377384173}
   priceIconImage: {fileID: 1419586467998347133}
+  purchaseButton: {fileID: 0}
   soldOutObject: {fileID: 7098743578949790701}
 --- !u!1 &2804041586525822358
 GameObject:

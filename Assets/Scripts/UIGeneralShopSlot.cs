@@ -67,7 +67,7 @@ public class UIGeneralShopSlot : MonoBehaviour
                 break;
         }
 
-        purchaseButton.onClick.RemoveAllListeners();
+        purchaseButton?.onClick.RemoveAllListeners();
 
         Refresh();
     }

@@ -27,8 +27,8 @@ public class UISummonResultPopup : UIPopup
 
         foreach (UIResultContent content in _contents)
         {
-            content.transform.SetParent(ObjectPoolManager.Instance.contentPool.transform ?? null);
-            ObjectPoolManager.Instance.contentPool.Return(content);
+            content.transform.SetParent(ObjectPoolManager.Instance.uiPool.transform ?? null);
+            ObjectPoolManager.Instance.uiPool.Return(content);
         }
 
         _contents.Clear();
@@ -45,8 +45,8 @@ public class UISummonResultPopup : UIPopup
 
         foreach (UIResultContent content in _contents)
         {
-            content.transform.SetParent(ObjectPoolManager.Instance.contentPool.transform ?? null);
-            ObjectPoolManager.Instance.contentPool.Return(content);
+            content.transform.SetParent(ObjectPoolManager.Instance.uiPool.transform ?? null);
+            ObjectPoolManager.Instance.uiPool.Return(content);
         }
 
         _contents.Clear();
@@ -68,7 +68,7 @@ public class UISummonResultPopup : UIPopup
         while (data.Count != 0)
         {
             yield return wait;
-            UIResultContent content = ObjectPoolManager.Instance.contentPool.GetResult();
+            UIResultContent content = ObjectPoolManager.Instance.uiPool.GetResult();
             _contents.Add(content);
 
             content.transform.SetParent(contentRoot);
@@ -81,7 +81,7 @@ public class UISummonResultPopup : UIPopup
         while (data.Count != 0)
         {
             yield return wait;
-            UIResultContent content = ObjectPoolManager.Instance.contentPool.GetResult();         
+            UIResultContent content = ObjectPoolManager.Instance.uiPool.GetResult();         
             _contents.Add(content);
 
             content.transform.SetParent(contentRoot);

@@ -12,6 +12,7 @@ public class ObjectPoolManager : MonoBehaviour
     public ProjectilePool projectilePool;
     public ParticlePool particlePool;
     public ContentPool contentPool;
+    public UIPool uiPool;
 
     private void Awake()
     {
