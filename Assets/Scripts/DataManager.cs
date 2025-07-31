@@ -822,8 +822,8 @@ public class DataManager : MonoBehaviour
             string[] tokens = lines[i].Split(',');
 
             ShopRewardType rewardType = Enum.Parse<ShopRewardType>(tokens[3].Trim());
-            ShopPriceType priceType = Enum.Parse<ShopPriceType>(tokens[6].Trim());
-            ShopLimitType limitType = Enum.Parse<ShopLimitType>(tokens[9].Trim());
+            ShopPriceType priceType = Enum.Parse<ShopPriceType>(tokens[5].Trim());
+            ShopLimitType limitType = Enum.Parse<ShopLimitType>(tokens[8].Trim());
 
             GeneralShopData generalShopData = new GeneralShopData()
             {
@@ -831,18 +831,17 @@ public class DataManager : MonoBehaviour
                 NameKey = tokens[1].Trim(),
                 IconKey = tokens[2].Trim(),
                 RewardType = rewardType, //3
-                RewardId = tokens[4].Trim(),
-                RewardCount = int.Parse(tokens[5].Trim()),
-                PriceType = priceType, //6
-                PriceAmount = int.Parse(tokens[7].Trim()),
-                PurchaseLimit = int.Parse(tokens[8].Trim()),
+                RewardCount = int.Parse(tokens[4].Trim()),
+                PriceType = priceType, //5
+                PriceAmount = int.Parse(tokens[6].Trim()),
+                PurchaseLimit = int.Parse(tokens[7].Trim()),
                 LimitType = limitType,
             };
 
             generalShopDataList.Add(generalShopData);
         }
 
-        Debug.Log($"{generalShopDataList.Count}개의 데이터를 로드함");
+        //Debug.Log($"{generalShopDataList.Count}개의 데이터를 로드함");
     }
 
     public GeneralShopData GetShopDataById(string shopId)
@@ -1048,7 +1047,6 @@ public class GeneralShopData
     public string IconKey;
 
     public ShopRewardType RewardType;
-    public string RewardId;
     public int RewardCount;
 
     public ShopPriceType PriceType;

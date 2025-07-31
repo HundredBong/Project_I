@@ -11,7 +11,7 @@ public class ContentPool : GenericPoolManager<UIResultContent>
         Preload(resultPrefab, 30);
     }
 
-    public UIResultContent GetContent()
+    public UIResultContent GetResult()
     {
         return Get(resultPrefab);
     }

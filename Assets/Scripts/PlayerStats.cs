@@ -375,10 +375,10 @@ public class PlayerStats : MonoBehaviour
                 maxHealth += value;
                 break;
             case SkillEffectType.CriticalDamageBonus:
-                criticalDamage += value; 
+                criticalDamage += value;
                 break;
             case SkillEffectType.CriticalChanceBonus:
-                criticalChance += value; 
+                criticalChance += value;
                 break;
         }
     }
@@ -484,7 +484,26 @@ public class PlayerStats : MonoBehaviour
         {
             Debug.Log($"[PlayerStats] {type}, {playerProgress[type]}, {value:F1}, {amount}");
 
-            playerProgress[type] -= amount;          
+            playerProgress[type] -= amount;
+            return true;
+        }
+        return false;
+    }
+
+
+
+    public bool HasEnoughCurrency(PlayerProgressType type, int amount)
+    {
+        if (type == PlayerProgressType.MaxExp || type == PlayerProgressType.CurrentExp)
+        {
+            Debug.LogWarning($"[PlayerStats] 사용할 수 없는 타입, {type}");
+        }
+
+
+        if (playerProgress.TryGetValue(type, out float value) && value >= amount)
+        {
+            Debug.Log($"[PlayerStats] {type}, {playerProgress[type]}, {value:F1}, {amount}");
+
             return true;
         }
         return false;
@@ -550,6 +569,32 @@ public class PlayerStats : MonoBehaviour
         GameManager.Instance.statSaver.RequestSave(GetProgressSaveData());
         OnStatChanged?.Invoke();
         OnStatusChanged?.Invoke();
+    }
+
+    public void AddCurrency(PlayerProgressType type, int amount)
+    {
+        switch (type)
+        {
+            case PlayerProgressType.Gold:
+                Gold += amount;
+                break;
+            case PlayerProgressType.Diamond:
+                Diamond += amount;
+                break;
+            case PlayerProgressType.StatPoint:
+                StatPoint += amount;
+                break;
+            case PlayerProgressType.EnhanceStone:
+                EnhanceStone += amount;
+                break;
+            case PlayerProgressType.SkillGem:
+                SkillGem += amount;
+                break;
+            default:
+                playerProgress[type] += amount;
+                OnCurrencyChanged?.Invoke();
+                break;
+        }
     }
 
     [ContextMenu("다이아부자")]

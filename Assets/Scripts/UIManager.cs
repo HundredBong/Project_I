@@ -148,7 +148,7 @@ public class UIManager : MonoBehaviour
 
     public void RegisterFadeImage(Image fadeImage)
     {
-        Debug.Log("fadeImage 등록됨");
+        //Debug.Log("fadeImage 등록됨");
         _fadeImage = fadeImage;
     }
 
@@ -158,7 +158,7 @@ public class UIManager : MonoBehaviour
         {
             return;
         }
-        Debug.Log("레지스터 UI호출");
+        //Debug.Log("레지스터 UI호출");
 
         popups.Clear();
         pages.Clear();
@@ -199,7 +199,7 @@ public class UIManager : MonoBehaviour
     { 
         if (_fadeImage != null)
         {
-        Debug.Log("페이드 인 실행됨");
+        //Debug.Log("페이드 인 실행됨");
 
             UITweening.FadeOut(_fadeImage, duration);
         }

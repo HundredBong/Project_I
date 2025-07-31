@@ -19,7 +19,7 @@ public class UIStageInfoPanel : MonoBehaviour
 
     private void OnEnable()
     {
-        Debug.Log($"스테이지 매니저가 널일 수 있나 {(StageManager.Instance == null ? "그럴수도 있죵" : "그럴 수는 없어용")}");
+        //Debug.Log($"스테이지 매니저가 널일 수 있나 {(StageManager.Instance == null ? "그럴수도 있죵" : "그럴 수는 없어용")}");
         SubscribeAsync().Forget();
     }
 

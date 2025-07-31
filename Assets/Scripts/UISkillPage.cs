@@ -71,7 +71,7 @@ public class UISkillPage : UIPage
             slotUIs.Add(ui);
         }
 
-        Debug.Log("[UISkillPage] Ω∫≈≥ ΩΩ∑‘ √ ±‚»≠µ ");
+        //Debug.Log("[UISkillPage] Ω∫≈≥ ΩΩ∑‘ √ ±‚»≠µ ");
 
         ShowActiveSkills(); 
     }

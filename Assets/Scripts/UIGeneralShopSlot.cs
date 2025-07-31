@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 
 public class UIGeneralShopSlot : MonoBehaviour
@@ -18,9 +19,18 @@ public class UIGeneralShopSlot : MonoBehaviour
     [SerializeField] private Image priceIconImage;
 
     [Space(20)]
+    [SerializeField] private Button purchaseButton;
+
+    [Space(20)]
     [SerializeField] private GameObject soldOutObject;
 
     private GeneralShopData _data;
+
+    private Dictionary<ShopPriceType, PlayerProgressType> _priceToProgress = new Dictionary<ShopPriceType, PlayerProgressType>()
+    {
+        { ShopPriceType.Diamond,  PlayerProgressType.Diamond },
+        { ShopPriceType.SkillGem, PlayerProgressType.SkillGem },
+    };
 
     private void OnEnable()
     {
@@ -57,6 +67,7 @@ public class UIGeneralShopSlot : MonoBehaviour
                 break;
         }
 
+        purchaseButton.onClick.RemoveAllListeners();
 
         Refresh();
     }
@@ -95,5 +106,60 @@ public class UIGeneralShopSlot : MonoBehaviour
         }
 
         itemPurchasedText.text = $"{limitType} ? / {_data.PurchaseLimit}";
+    }
+
+    public void OnClickPurchaseButton()
+    {
+        //0. 구매 가능한지 검사
+        //1. Data.PriceType에 따라 재화량 감소
+        //2. RewardType에 따라 분기 작성
+        //4. 현재 구매 제한 횟수 증가
+
+        if (_data.PriceType == ShopPriceType.Ad)
+        {
+            return;
+        }
+
+        int amount = _data.PriceAmount;
+
+        //재화가 충분한지 검사
+        if (TrySpendCurrency(_data.PriceType, amount))
+        {
+            GiveReward(_data.RewardType, amount);
+            Refresh();
+        }
+
+    }
+
+    private bool TrySpendCurrency(ShopPriceType priceType, int amount)
+    {
+        if (_priceToProgress.TryGetValue(priceType, out PlayerProgressType progress) == false)
+        {
+            //광고, 현금 등, 차감할게 없다면
+            return true;
+        }
+
+        return GameManager.Instance.stats.TrySpendItem(progress, amount);
+    }
+
+    private void GiveReward(ShopRewardType rewardType, int amount)
+    {
+        switch (rewardType)
+        {
+            case ShopRewardType.AdRemove:             
+                break;
+            case ShopRewardType.EnhanceDungeonTicket:
+                GameManager.Instance.stats.AddCurrency(PlayerProgressType.EnhanceDungeonTicket, amount);
+                break;
+            case ShopRewardType.SkillDungeonTicket:
+                GameManager.Instance.stats.AddCurrency(PlayerProgressType.SkillDungeonTicket, amount);
+                break;
+            case ShopRewardType.EnhanceStone:
+                GameManager.Instance.stats.AddCurrency(PlayerProgressType.EnhanceStone, amount);
+                break;
+            case ShopRewardType.SkillGem:
+                GameManager.Instance.stats.AddCurrency(PlayerProgressType.SkillGem, amount);
+                break;
+        }
     }
 }

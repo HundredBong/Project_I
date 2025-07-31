@@ -68,7 +68,7 @@ public class UISummonResultPopup : UIPopup
         while (data.Count != 0)
         {
             yield return wait;
-            UIResultContent content = ObjectPoolManager.Instance.contentPool.GetContent();
+            UIResultContent content = ObjectPoolManager.Instance.contentPool.GetResult();
             _contents.Add(content);
 
             content.transform.SetParent(contentRoot);
@@ -81,7 +81,7 @@ public class UISummonResultPopup : UIPopup
         while (data.Count != 0)
         {
             yield return wait;
-            UIResultContent content = ObjectPoolManager.Instance.contentPool.GetContent();         
+            UIResultContent content = ObjectPoolManager.Instance.contentPool.GetResult();         
             _contents.Add(content);
 
             content.transform.SetParent(contentRoot);
