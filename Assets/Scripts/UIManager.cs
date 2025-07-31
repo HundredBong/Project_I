@@ -18,6 +18,11 @@ public class UIManager : MonoBehaviour
     private UIPage currentPage;
     [SerializeField] private Image _fadeImage;
 
+    private Transform _toastRoot;
+
+    public Transform ToastRoot { get { return _toastRoot; } }
+
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -179,6 +184,17 @@ public class UIManager : MonoBehaviour
             popups.Add(popup);
         }
 
+        ToastRoot root = FindObjectOfType<ToastRoot>(true);
+
+        if (root != null)
+        {
+            _toastRoot = root.transform;
+        }
+        else
+        {
+            Debug.LogWarning("[UIManager] ToastRoot를 찾지 못함");
+            _toastRoot = null;
+        }
         Init();
     }
 
@@ -196,10 +212,10 @@ public class UIManager : MonoBehaviour
     }
 
     public void FadeOut(float duration)
-    { 
+    {
         if (_fadeImage != null)
         {
-        //Debug.Log("페이드 인 실행됨");
+            //Debug.Log("페이드 인 실행됨");
 
             UITweening.FadeOut(_fadeImage, duration);
         }

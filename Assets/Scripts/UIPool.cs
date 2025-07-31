@@ -5,10 +5,14 @@ using UnityEngine;
 public class UIPool : GenericPoolManager<PooledUI>
 {
     public GameObject resultPrefab;
+    public GameObject toastMessagePrefab;
+    int index = 0;
 
     public void Start()
     {
         Preload(resultPrefab, 30);
+        Preload(toastMessagePrefab, 10);
+
     }
 
     public T GetUI<T>(GameObject prefab) where T : PooledUI
@@ -19,5 +23,26 @@ public class UIPool : GenericPoolManager<PooledUI>
     public UIResultContent GetResult()
     {
         return base.Get(resultPrefab) as UIResultContent;
+    }
+
+    public UIToastMessage GetMessage()
+    {
+        return base.Get(toastMessagePrefab) as UIToastMessage;
+    }
+
+    private void Test()
+    {
+        index++;
+        UIToastMessage message = GetMessage();
+        if (message == null) { Debug.LogError("³Î"); return; }
+        message.Init($"TEST {index}");
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Test();
+        }
     }
 }

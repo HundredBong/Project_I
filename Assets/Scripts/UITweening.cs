@@ -1,8 +1,9 @@
 using UnityEngine.UI;
 using DG.Tweening;
 using UnityEngine;
+using System;
 
-public static class UITweening 
+public static class UITweening
 {
     public static void PlayShine(Image image)
     {
@@ -27,4 +28,26 @@ public static class UITweening
 
         fadeImage.DOFade(1f, duration).SetEase(Ease.InQuad);
     }
+
+    public static void PlayToast(CanvasGroup group, float totalTime = 1.5f, Action onComplete = null)
+    {
+        group.alpha = 0f;
+        Vector3 startPos = Vector3.zero;
+        Vector3 endPos = new Vector3(0, 50, 0);
+        group.transform.localPosition = startPos; //ToastRoot의 앵커로 오도록 
+
+        DOTween.Kill(group.transform); //혹시 남아있는 트윈 방지
+
+        Sequence seq = DOTween.Sequence();
+
+        //알파값을 0 ~ 1로 0.2초간 변화
+        //변화하면서 동시에 1.5초간 위로 올라감
+        //올라가는게 끝나면 1초간 사라지기 시작, 총 2.5초
+        //끝나면 콜백 실행
+
+        //CanvasGroup을 인자로 받는 DOFade 따로 있음
+        seq.Append(group.DOFade(1f, 0.2f)).Join(group.transform.DOLocalMove(endPos, totalTime))
+            .Append(group.DOFade(0f, 1f).OnComplete(() => onComplete?.Invoke()));
+    }
 }
+
