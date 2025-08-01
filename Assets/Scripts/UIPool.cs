@@ -52,11 +52,11 @@ public class UIPool : GenericPoolManager<PooledUI>
         reward.Init(DataManager.Instance.GetSpriteByKey("UI_EnhanceStone"), index);
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Test2();
-        }
-    }
+    //private void Update()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.Space))
+    //    {
+    //        Test2();
+    //    }
+    //}
 }
