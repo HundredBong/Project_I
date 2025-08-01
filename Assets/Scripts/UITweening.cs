@@ -29,7 +29,7 @@ public static class UITweening
         fadeImage.DOFade(1f, duration).SetEase(Ease.InQuad);
     }
 
-    public static void PlayToast(CanvasGroup group, float totalTime = 1.5f, Action onComplete = null)
+    public static void PlayToast(CanvasGroup group, float moveTime = 1.5f, Action onComplete = null)
     {
         group.alpha = 0f;
         Vector3 startPos = Vector3.zero;
@@ -46,7 +46,7 @@ public static class UITweening
         //끝나면 콜백 실행
 
         //CanvasGroup을 인자로 받는 DOFade 따로 있음
-        seq.Append(group.DOFade(1f, 0.2f)).Join(group.transform.DOLocalMove(endPos, totalTime))
+        seq.Append(group.DOFade(1f, 0.2f)).Join(group.transform.DOLocalMove(endPos, moveTime))
             .Append(group.DOFade(0f, 1f).OnComplete(() => onComplete?.Invoke()));
     }
 }

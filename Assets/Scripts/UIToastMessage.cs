@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-[RequireComponent(typeof(CanvasGroup), typeof(TextMeshProUGUI))]
+[RequireComponent(typeof(CanvasGroup))]
 public class UIToastMessage : PooledUI
 {
+    [SerializeField] private TextMeshProUGUI _messageText;
+
     private CanvasGroup _cg;
-    private TextMeshProUGUI _messageText;
-    private const float DURATION = 1.5f;
+    private const float MOVE_TIME = 1.5f;
 
     private void Awake()
     {
         _cg = GetComponent<CanvasGroup>();
-        _messageText = GetComponent<TextMeshProUGUI>();
     }
 
     public void Init(string message)
@@ -31,7 +31,7 @@ public class UIToastMessage : PooledUI
             transform.SetParent(root);
         }
         _cg.alpha = 0;
-        UITweening.PlayToast(_cg, DURATION, () => ObjectPoolManager.Instance.uiPool.Return(this));
+        UITweening.PlayToast(_cg, MOVE_TIME, () => ObjectPoolManager.Instance.uiPool.Return(this));
 
         //DelayCallManager.Instance.CallLater(DURATION, () => ObjectPoolManager.Instance.uiPool.Return(this));
     }

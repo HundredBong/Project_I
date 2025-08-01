@@ -980,7 +980,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resultPrefab: {fileID: 4133906928501448182, guid: 35343baa4f0271745b33b2a7ad0e5be2, type: 3}
-  toastMessagePrefab: {fileID: 5297231531787661792, guid: 6a14e45df0a88f840b5b574038b8a08a, type: 3}
+  toastMessagePrefab: {fileID: 5398472024194139556, guid: fbad3cbbd860d5947acb12da64447048, type: 3}
+  toastRewardPrefab: {fileID: 2623857179059229367, guid: 7d8738b28e8e6674f83aad4c5f5e0614, type: 3}
 --- !u!1 &1103564109
 GameObject:
   m_ObjectHideFlags: 0
