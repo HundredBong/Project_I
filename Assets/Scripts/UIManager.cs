@@ -224,4 +224,10 @@ public class UIManager : MonoBehaviour
             Debug.LogWarning("[UIManager] fadeImage가 존재하지 않음");
         }
     }
+
+    [ContextMenu("슬라이더 테스트")]
+    private void Test()
+    {
+        PopupOpen<UISliderPopup>().Init("no", "UI_Gold", 10, (x) => { Debug.Log("테스트 완료"); });
+    }
 }

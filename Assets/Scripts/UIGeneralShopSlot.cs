@@ -68,6 +68,7 @@ public class UIGeneralShopSlot : MonoBehaviour
         }
 
         purchaseButton?.onClick.RemoveAllListeners();
+        purchaseButton?.onClick.AddListener(OnClickPurchaseButton);
 
         Refresh();
     }
@@ -117,18 +118,45 @@ public class UIGeneralShopSlot : MonoBehaviour
 
         if (_data.PriceType == ShopPriceType.Ad)
         {
+            //광고일시 리턴
             return;
         }
 
-        int amount = _data.PriceAmount;
-
         //재화가 충분한지 검사
-        if (TrySpendCurrency(_data.PriceType, amount))
-        {
-            GiveReward(_data.RewardType, amount);
-            Refresh();
-        }
+        PlayerProgressType progress = _priceToProgress[_data.PriceType];
+        bool hasEnoughCurrency = GameManager.Instance.stats.HasEnoughCurrency(progress, _data.PriceAmount);
 
+        //충분하다면 재화 차감 시도
+        if (hasEnoughCurrency)
+        {
+            int priceAmount = _data.PriceAmount;
+            int max = GetMaxAmount(progress, priceAmount);
+
+            UIManager.Instance.PopupOpen<UISliderPopup>().Init(_data.IconKey, _data.NameKey, max, (int selectedCount) =>
+            {
+                int totalPrice = selectedCount * _data.PriceAmount;
+
+                if (TrySpendCurrency(_data.PriceType, totalPrice))
+                {
+                    //차감됐다면 보상 지급 및 UI 새로고침
+                    GiveReward(_data.RewardType, selectedCount);
+                    ObjectPoolManager.Instance.uiPool.GetReward().Init(_data.IconKey, selectedCount);
+                    Refresh();
+                }
+            });
+        }
+        else
+        {
+            ObjectPoolManager.Instance.uiPool.GetMessage().Init("Warning_NotEnoughCurrency");
+            return;
+        }
+    }
+
+    private int GetMaxAmount(PlayerProgressType progress, int priceAmount)
+    {
+        int progressAmount = (int)GameManager.Instance.stats.GetProgress(progress);
+
+        return progressAmount / priceAmount;
     }
 
     private bool TrySpendCurrency(ShopPriceType priceType, int amount)
@@ -137,6 +165,7 @@ public class UIGeneralShopSlot : MonoBehaviour
         {
             //광고, 현금 등, 차감할게 없다면
             return true;
+            //추후 관고 연동
         }
 
         return GameManager.Instance.stats.TrySpendItem(progress, amount);
@@ -146,7 +175,7 @@ public class UIGeneralShopSlot : MonoBehaviour
     {
         switch (rewardType)
         {
-            case ShopRewardType.AdRemove:             
+            case ShopRewardType.AdRemove:
                 break;
             case ShopRewardType.EnhanceDungeonTicket:
                 GameManager.Instance.stats.AddCurrency(PlayerProgressType.EnhanceDungeonTicket, amount);

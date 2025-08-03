@@ -1,2 +1,2 @@
 ShopId,NameKey,IconKey,RewardType,RewardCount,PriceType,PriceAmount,PurchaseLimit,LimitType
-Shop_EnhanceDungeonTicket,Shop_EnhanceDungeonTicket,Shop_EnhanceDungeonTicket,EnhanceDungeonTicket,5,Diamond,1000,2,Daily
+Shop_EnhanceDungeonTicket,Shop_EnhanceDungeonTicket,Shop_EnhanceDungeonTicket,EnhanceDungeonTicket,5,Diamond,100000,2,Daily

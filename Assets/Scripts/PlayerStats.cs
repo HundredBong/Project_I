@@ -471,23 +471,44 @@ public class PlayerStats : MonoBehaviour
         OnStatChanged?.Invoke(); //(UIStatPage) playerStats.OnStatChanged += Refresh;
     }
 
-    //강화용, 골드 제외
+
     public bool TrySpendItem(PlayerProgressType type, int amount)
     {
-        if (type == PlayerProgressType.Gold || type == PlayerProgressType.MaxExp || type == PlayerProgressType.CurrentExp)
+        if (amount <= 0)
         {
-            Debug.LogWarning($"[PlayerStats] 사용할 수 없는 타입, {type}");
+            Debug.LogWarning("[PlayerStats] 잘못된 차감 요청");
+            return false;
         }
 
-
-        if (playerProgress.TryGetValue(type, out float value) && value >= amount)
+        if (playerProgress.TryGetValue(type, out float value) == false || value < amount)
         {
-            Debug.Log($"[PlayerStats] {type}, {playerProgress[type]}, {value:F1}, {amount}");
-
-            playerProgress[type] -= amount;
-            return true;
+            return false;
         }
-        return false;
+
+        switch (type)
+        {
+            case PlayerProgressType.Gold:
+                Gold -= amount;
+                break;
+            case PlayerProgressType.Diamond:
+                Diamond -= amount;
+                break;
+            case PlayerProgressType.StatPoint:
+                StatPoint -= amount;
+                break;
+            case PlayerProgressType.EnhanceStone:
+                EnhanceStone -= amount;
+                break;
+            case PlayerProgressType.SkillGem:
+                SkillGem -= amount;
+                break;
+            default:
+                playerProgress[type] -= amount;  
+                OnCurrencyChanged?.Invoke();
+                break;
+        }
+
+        return true;
     }
 
 

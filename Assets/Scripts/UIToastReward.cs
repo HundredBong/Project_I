@@ -68,7 +68,7 @@ public class UIToastReward : PooledUI
         _cg.alpha = 0;
         UITweening.PlayToast(_cg, MOVE_TIME, () => ObjectPoolManager.Instance.uiPool.Return(this));
     }
-    public void Init(Sprite rewardImage, int rewardCount)
+    public void Init(string rewardIconKey, int rewardCount)
     {
         _rewardTitle.text = DataManager.Instance.GetLocalizedText("UI_ToastReward");
 
@@ -96,7 +96,7 @@ public class UIToastReward : PooledUI
         //이미 있는게 다시 Init되지는 않음. 애초에 사용중이고 풀에 들어가있어야 Init이 실행될거임.
         //그럼 이전에 Init한게 현재 Init에 영향을 주지는 않을거임. 아마,
 
-        _rewardIcons[0].sprite = rewardImage;
+        _rewardIcons[0].sprite = DataManager.Instance.GetSpriteByKey(rewardIconKey);
         _rewardIcons[0].gameObject.SetActive(true);
 
         bool isZero = rewardCount == 0;

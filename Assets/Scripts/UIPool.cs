@@ -35,28 +35,4 @@ public class UIPool : GenericPoolManager<PooledUI>
     {
         return base.Get(toastRewardPrefab) as UIToastReward;
     }
-
-    private void Test()
-    {
-        index++;
-        UIToastMessage message = GetMessage();
-        if (message == null) { Debug.LogError("³Î"); return; }
-        message.Init($"TEST {index}");
-    }
-
-    private void Test2()
-    {
-        index++;
-        UIToastReward reward = GetReward();
-        if (reward == null) { Debug.LogError("³Î"); return; }
-        reward.Init(DataManager.Instance.GetSpriteByKey("UI_EnhanceStone"), index);
-    }
-
-    //private void Update()
-    //{
-    //    if (Input.GetKeyDown(KeyCode.Space))
-    //    {
-    //        Test2();
-    //    }
-    //}
 }
