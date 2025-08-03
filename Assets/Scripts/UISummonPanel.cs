@@ -132,8 +132,8 @@ public class UISummonPanel : MonoBehaviour
         //GameManager.Instance.statSaver.SaveSummonProgress(GameManager.Instance.SummonManager.GetSummonProgressData());
 
         //소환 레벨 텍스트, 이미지 fill 초기화
-        int level = GameManager.Instance.SummonManager.GetLevel(category);
-        int currentExp = GameManager.Instance.SummonManager.GetExp(category);
+        int level = GameManager.Instance.ShopManager.GetLevel(category);
+        int currentExp = GameManager.Instance.ShopManager.GetExp(category);
         int maxExp = DataManager.Instance.GetSummonMaxExp(category, level);
 
         summonLevelText.text = $"{level}"; //SumonManager에서 가져온 카테고리별 레벨
@@ -162,7 +162,7 @@ public class UISummonPanel : MonoBehaviour
             for (int i = 0; i < count; i++)
             {
                 //현재 카테고리의 레벨 계산
-                int summonLevel = GameManager.Instance.SummonManager.GetLevel(category);
+                int summonLevel = GameManager.Instance.ShopManager.GetLevel(category);
                 //현재 레벨로 뽑을 아이템의 등급 계산
                 GradeType grade = DataManager.Instance.GetRandomGrade(category, summonLevel);
                 //레벨과 등급으로 아이템의 단계 계산
@@ -178,9 +178,9 @@ public class UISummonPanel : MonoBehaviour
             }
 
             //count 만큼 경험치 증가
-            GameManager.Instance.SummonManager.AddExp(category, count);
+            GameManager.Instance.ShopManager.AddExp(category, count);
             //뽑기 정보 저장
-            GameManager.Instance.statSaver.SaveSummonProgressAsync(GameManager.Instance.SummonManager.BuildSummonProgressData()).Forget();
+            GameManager.Instance.statSaver.SaveSummonProgressAsync(GameManager.Instance.ShopManager.BuildSummonProgressData()).Forget();
             //인벤토리 정보 저장
             GameManager.Instance.statSaver.SaveInventoryDataAsync(InventoryManager.Instance.BuildSaveData()).Forget();
             //재화 정보 저장
@@ -214,7 +214,7 @@ public class UISummonPanel : MonoBehaviour
             for (int i = 0; i < count; i++)
             {
                 //현재 카테고리의 레벨 계산
-                int summonLevel = GameManager.Instance.SummonManager.GetLevel(category);
+                int summonLevel = GameManager.Instance.ShopManager.GetLevel(category);
                 //현재 레벨로 뽑을 스킬 등급 계산
                 GradeType grade = DataManager.Instance.GetRandomGrade(category, summonLevel);
                 //스킬 등급으로 스킬 아이디 뽑기
@@ -227,9 +227,9 @@ public class UISummonPanel : MonoBehaviour
             }
 
             //count 만큼 경험치 증가
-            GameManager.Instance.SummonManager.AddExp(category, count);
+            GameManager.Instance.ShopManager.AddExp(category, count);
             //뽑기 정보 저장
-            GameManager.Instance.statSaver.SaveSummonProgressAsync(GameManager.Instance.SummonManager.BuildSummonProgressData()).Forget();
+            GameManager.Instance.statSaver.SaveSummonProgressAsync(GameManager.Instance.ShopManager.BuildSummonProgressData()).Forget();
             //재화 정보 저장
             GameManager.Instance.statSaver.SavePlayerProgressDataAsync(GameManager.Instance.stats.GetProgressSaveData()).Forget();
             //스킬 정보 저장

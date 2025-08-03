@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
     public bool summonReady = false;
     public bool loadSceneReady = false;
 
-    public ShopSummonManager SummonManager { get; private set; }
+    public ShopManager ShopManager { get; private set; }
 
     private void Awake()
     {
@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         LanguageManager.SetLanguage(System.Enum.Parse<LanguageType>(LocalSetting.LoadLanguage()));
-        SummonManager = new ShopSummonManager();
+        ShopManager = new ShopManager();
 
         FindComponent();
     }
@@ -126,13 +126,27 @@ public class GameManager : MonoBehaviour
         {
             foreach (SummonSubCategory category in Enum.GetValues(typeof(SummonSubCategory)))
             {
-                SummonManager.AddExp(category, 0);
-                SummonManager.SetLevel(category, 1);
+                ShopManager.AddExp(category, 0);
+                ShopManager.SetLevel(category, 1);
             }
 
-            await statSaver.SaveSummonProgressAsync(SummonManager.BuildSummonProgressData());
+            await statSaver.SaveSummonProgressAsync(ShopManager.BuildSummonProgressData());
         }
-        SummonManager.Init(summonProgressData);
+        ShopManager.InitSummonProgressData(summonProgressData);
+
+        var purchaseProgressData = await statSaver.LoadPurchaseData();
+
+        if (purchaseProgressData == null || purchaseProgressData.PurchaseEntries.Count == 0)
+        {
+
+            purchaseProgressData.PurchaseEntries["Dummy"] = new ShopPurchaseEntry
+            {
+                PurchaseCount = 1,
+                LastPurchased = DateTime.UtcNow.ToString("o")
+            };
+            await statSaver.SavePurchaseData(purchaseProgressData);
+        }
+        ShopManager.InitPurchaseData(purchaseProgressData);
         summonReady = true;
 
         loadSceneReady = true;

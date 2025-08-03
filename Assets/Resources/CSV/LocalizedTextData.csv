@@ -123,3 +123,9 @@ UI_Daily,일간,Daily
 UI_Account,계정당,Account
 UI_Weekly,주간,Weekly
 UI_Monthly,월간,Monthly
+Warning_NotEnoughCurrency,재화가 부족합니다.,Not Enough Currency.
+Shop_EnhanceDungeonTicket,강화석 던전 입장권,Enhance Dengeon Ticket 
+UI_Confirm,확인,Confirm
+UI_Cancel,취소,Cancel
+UI_PurchaseMessage,구매하시겠습니까? ,Would you like to purchase it?
+UI_ToastReward,획득 완료!,You got it! 

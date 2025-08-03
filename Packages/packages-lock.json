@@ -194,6 +194,13 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+    "com.unity.nuget.newtonsoft-json": {
+      "version": "3.2.1",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
     "com.unity.render-pipelines.core": {
       "version": "14.0.11",
       "depth": 1,
@@ -291,6 +298,13 @@
         "com.unity.modules.jsonserialize": "1.0.0"
       },
       "url": "https://packages.unity.com"
+    },
+    "jillejr.newtonsoft.json-for-unity": {
+      "version": "https://github.com/jilleJr/Newtonsoft.Json-for-Unity.git?path=Src/Newtonsoft.Json-for-Unity",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "2a26db68c98003f28749203378a3863afa5e6885"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",

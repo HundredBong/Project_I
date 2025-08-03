@@ -75,10 +75,32 @@ public class UIGeneralShopSlot : MonoBehaviour
 
     private void Refresh()
     {
-        soldOutObject.SetActive(false); //바꿔야 함
+        bool isSoldOut = GameManager.Instance.ShopManager.IsLimitExceeded(_data.ShopId, _data.LimitType, _data.PurchaseLimit);
+
+        soldOutObject.SetActive(isSoldOut);
+        purchaseButton.interactable = !isSoldOut;
+
+        int currentCount = 0;
+        ShopPurchaseEntry entry = GameManager.Instance.ShopManager.GetPurchaseEntry(_data.ShopId);
+
+        currentCount = entry.PurchaseCount;
+
+        bool isReset = false;
+
+        if (string.IsNullOrEmpty(entry.LastPurchased) == false)
+        {
+            if (DateTime.TryParse(entry.LastPurchased, out DateTime lastPurchasedTime))
+            {
+                isReset = GameManager.Instance.ShopManager.IsLimitReset(lastPurchasedTime, _data.LimitType);
+                if (isReset)
+                {
+                    currentCount = 0;
+                }
+            }
+        }
 
         itemNameText.text = $"{DataManager.Instance.GetLocalizedText(_data.NameKey)} {_data.RewardCount}{DataManager.Instance.GetLocalizedText("UI_EA")}";
-        itemLimitText.text = $"? / {_data.PurchaseLimit}"; //currentLimitCount같은거 필요함
+        itemLimitText.text = $"{currentCount} / {_data.PurchaseLimit}"; //currentLimitCount같은거 필요함
         itemPriceText.text = _data.PriceAmount.ToString();
         itemSoldOutText.text = $"{DataManager.Instance.GetLocalizedText($"Shop_SoldOut")}";
 
@@ -106,7 +128,7 @@ public class UIGeneralShopSlot : MonoBehaviour
             }
         }
 
-        itemPurchasedText.text = $"{limitType} ? / {_data.PurchaseLimit}";
+        itemPurchasedText.text = $"{limitType} {currentCount} / {_data.PurchaseLimit}";
     }
 
     public void OnClickPurchaseButton()
@@ -140,6 +162,7 @@ public class UIGeneralShopSlot : MonoBehaviour
                 {
                     //차감됐다면 보상 지급 및 UI 새로고침
                     GiveReward(_data.RewardType, selectedCount);
+                    GameManager.Instance.ShopManager.UpdatePurchase(_data.ShopId, selectedCount);
                     ObjectPoolManager.Instance.uiPool.GetReward().Init(_data.IconKey, selectedCount);
                     Refresh();
                 }
@@ -154,9 +177,24 @@ public class UIGeneralShopSlot : MonoBehaviour
 
     private int GetMaxAmount(PlayerProgressType progress, int priceAmount)
     {
+        //TODO : LIMIT
         int progressAmount = (int)GameManager.Instance.stats.GetProgress(progress);
+        int maxCurrency = progressAmount / priceAmount;
 
-        return progressAmount / priceAmount;
+        int currentCount = 0;
+
+        ShopPurchaseEntry entry = GameManager.Instance.ShopManager.GetPurchaseEntry(_data.ShopId);
+
+        currentCount = entry.PurchaseCount;
+
+        if (GameManager.Instance.ShopManager.IsLimitExceeded(_data.ShopId, _data.LimitType, _data.PurchaseLimit))
+        {
+            currentCount = 0;
+        }
+
+        int maxLimit = _data.PurchaseLimit - currentCount;
+
+        return Mathf.Max(0, Mathf.Min(maxCurrency, maxLimit));
     }
 
     private bool TrySpendCurrency(ShopPriceType priceType, int amount)

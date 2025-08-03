@@ -18,7 +18,7 @@ public class SummonRewardPannel : MonoBehaviour
     public void Refresh(SummonSubCategory category)
     {
         this.category = category;
-        int currentLevel = GameManager.Instance.SummonManager.GetLevel(category); //플레이어가 현재 도달한 소환 레벨
+        int currentLevel = GameManager.Instance.ShopManager.GetLevel(category); //플레이어가 현재 도달한 소환 레벨
         int targetLevel = -1; //UI에 표시할 보상 레벨
 
         //안받은 보상이 있는지 검사
@@ -31,7 +31,7 @@ public class SummonRewardPannel : MonoBehaviour
             }
 
             //보상은 존재하나 받지 않았다면
-            if (GameManager.Instance.SummonManager.HasClaimed(category, i) == false)
+            if (GameManager.Instance.ShopManager.HasClaimed(category, i) == false)
             {
                 targetLevel = i;
                 break;
@@ -72,7 +72,7 @@ public class SummonRewardPannel : MonoBehaviour
         claimButton.onClick.AddListener(OnClickClaim);
 
         //표시 중인 level이 플레이어의 현재 소환 레벨 이하이고, 보상을 받지 않았다면 true
-        bool canClaim = level <= currentLevel && GameManager.Instance.SummonManager.HasClaimed(category, level) == false;
+        bool canClaim = level <= currentLevel && GameManager.Instance.ShopManager.HasClaimed(category, level) == false;
 
         claimButton.interactable = canClaim;
         claimButton.gameObject.SetActive(rewardData != null);
@@ -81,7 +81,7 @@ public class SummonRewardPannel : MonoBehaviour
     public void OnClickClaim()
     {
         //중복 보상 방지
-        if (GameManager.Instance.SummonManager.HasClaimed(category, level))
+        if (GameManager.Instance.ShopManager.HasClaimed(category, level))
         {
             Debug.LogWarning("[SummonRewardPannel] 이미 받은 보상임");
             claimButton.interactable = false;
@@ -104,7 +104,7 @@ public class SummonRewardPannel : MonoBehaviour
                 break;
         }
 
-        GameManager.Instance.SummonManager.ClaimReward(category, level);
+        GameManager.Instance.ShopManager.ClaimReward(category, level);
         Refresh(category);
     }
 

@@ -17,12 +17,23 @@ public class UISliderPopup : UIPopup
     [SerializeField] private Button _confirmButton;
     [SerializeField] private Button _cancelButton;
 
+    [Space(20)]
+    [SerializeField] private TextMeshProUGUI _confirmButtonText;
+    [SerializeField] private TextMeshProUGUI _cancelButtonText;
+
+
     private Action<int> _onConfirm;
 
-    public void Init(string iconKey, string itemNameKey, int maxValue, Action<int> onConfirm)
+    public void Init(string iconKey, string itemNameKey, int maxValue, Action<int> onConfirm,
+        string contentText = "UI_PurchaseMessage", string confirmText = "UI_Confirm", string cancelText = "UI_Cancel")
     {
         _icon.sprite = DataManager.Instance.GetSpriteByKey(iconKey);
         _nameText.text = DataManager.Instance.GetLocalizedText(itemNameKey);
+
+        _contentText.text = DataManager.Instance.GetLocalizedText(contentText);
+        _confirmButtonText.text = DataManager.Instance.GetLocalizedText(confirmText);
+        _cancelButtonText.text = DataManager.Instance.GetLocalizedText(cancelText);
+
         _slider.maxValue = maxValue;
         _slider.value = 1;
 
