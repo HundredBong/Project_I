@@ -5,10 +5,6 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-
-
-
-    private bool isAttacking;
     public bool IsFlip { get; private set; }
 
 
