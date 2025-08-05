@@ -22,6 +22,8 @@ public class DataManager : MonoBehaviour
     private Dictionary<SummonSubCategory, Dictionary<int, SummonRateData>> summonRateTable = new Dictionary<SummonSubCategory, Dictionary<int, SummonRateData>>();
     private Dictionary<SummonSubCategory, Dictionary<int, SummonRewardData>> summonRewardTable = new Dictionary<SummonSubCategory, Dictionary<int, SummonRewardData>>();
     private List<GeneralShopData> generalShopDataList = new List<GeneralShopData>();
+    private Dictionary<DungeonType, DungeonData> dungeonDataTable = new Dictionary<DungeonType, DungeonData>();
+    private Dictionary<DungeonType, Dictionary<int, DungeonLevelData>> dungeonLevelDataTable = new Dictionary<DungeonType, Dictionary<int, DungeonLevelData>>();
 
     private void Awake()
     {
@@ -50,6 +52,8 @@ public class DataManager : MonoBehaviour
         LoadSummonStageProbabilities();
         LoadSummonRewardData();
         LoadGeneralShopData();
+        LoadDungeonData();
+        LoadDungeonLevelData();
     }
 
     private void LoadSpritesData()
@@ -844,6 +848,33 @@ public class DataManager : MonoBehaviour
         //Debug.Log($"{generalShopDataList.Count}개의 데이터를 로드함");
     }
 
+    private void LoadDungeonData()
+    {
+        TextAsset asset = Resources.Load<TextAsset>("CSV/DungeonData");
+        string[] lines = asset.text.Split('\n');
+
+        for (int i = 1; i < lines.Length; i++)
+        {
+            if (string.IsNullOrEmpty(lines[i])) continue;
+
+            string[] tokens = lines[i].Split(',');
+
+            DungeonType dungeonType = Enum.Parse<DungeonType>(tokens[0].Trim());
+
+            DungeonData dungeonData = new DungeonData()
+            {
+                DungeonType = dungeonType,
+                DungeonSpriteKey = tokens[1].Trim(),
+                NameKey = tokens[2].Trim(),
+                DescKey = tokens[3].Trim(),
+                TicketType = Enum.Parse<PlayerProgressType>(tokens[4].Trim()),
+            };
+
+            dungeonDataTable.Add(dungeonType, dungeonData);
+        }
+
+    }
+
     public GeneralShopData GetShopDataById(string shopId)
     {
         return generalShopDataList.Find(data => data.ShopId == shopId);
@@ -852,6 +883,98 @@ public class DataManager : MonoBehaviour
     public List<GeneralShopData> GetAllGeneralShopDatas()
     {
         return generalShopDataList;
+    }
+
+
+    //private Dictionary<int, Dictionary<DungeonType, DungeonRewardData>> dungeonRewardTable = new Dictionary<int, Dictionary<DungeonType, DungeonRewardData>>();
+    //private Dictionary<DungeonType, DungeonData> dungeonDataTable = new Dictionary<DungeonType, DungeonData>();
+
+    public int GetDungeonDataCount()
+    {
+        return dungeonDataTable.Count;
+    }
+
+    public DungeonData GetDungeonData(DungeonType type)
+    {
+        if (dungeonDataTable.TryGetValue(type, out DungeonData data))
+        {
+            return data;
+        }
+
+        return null;
+    }
+
+    public Dictionary<DungeonType, DungeonData> GetAllDungeonData()
+    {
+        return dungeonDataTable;
+    }
+
+    private void LoadDungeonLevelData()
+    {
+        TextAsset asset = Resources.Load<TextAsset>("CSV/DUngeonLevelData");
+        string[] lines = asset.text.Split('\n');
+
+
+        for (int i = 1; i < lines.Length; i++)
+        {
+            if (string.IsNullOrEmpty(lines[i])) continue;
+
+            string[] tokens = lines[i].Split(',');
+
+            DungeonType type = Enum.Parse<DungeonType>(tokens[0].Trim());
+
+            int level = int.Parse(tokens[1].Trim());
+
+            string[] rewards = tokens[2].Split(';');
+            List<PlayerProgressType> currencies = new List<PlayerProgressType>();
+            for (int k = 0; k < rewards.Length; k++)
+            {
+                currencies.Add(Enum.Parse<PlayerProgressType>(rewards[k].Trim()));
+            }
+
+            string[] amounts = tokens[3].Split(';');
+            List<int> amountList = new List<int>();
+            for (int j = 0; j < amounts.Length; j++)
+            {
+                amountList.Add(int.Parse(amounts[j]));
+            }
+
+            string[] spriteKeys = tokens[4].Split(';');
+            List<string> spriteKeyList = new List<string>();
+            for (int h = 0; h < spriteKeys.Length; h++)
+            {
+                spriteKeyList.Add(spriteKeys[h].Trim());
+            }
+
+            string[] enemyIds = tokens[5].Split(';');
+            List<EnemyId> enemyIdList = new List<EnemyId>();
+            for (int g = 0; g < enemyIds.Length; g++)
+            {
+                enemyIdList.Add(Enum.Parse<EnemyId>(enemyIds[g].Trim()));
+            }
+
+            DungeonLevelData levelData = new DungeonLevelData()
+            {
+                DungeonType = type,
+                Level = level,
+                Currencies = currencies,
+                Amounts = amountList,
+                SpriteKeys = spriteKeyList,
+                EnemyIds = enemyIdList,
+                HPRate = float.Parse(tokens[6].Trim()),
+                ATKRate = float.Parse(tokens[7].Trim()),
+                DEFRate = float.Parse(tokens[8].Trim()),
+            };
+
+            if (dungeonLevelDataTable.TryGetValue(type, out var table) == false)
+            {
+                table = new Dictionary<int, DungeonLevelData>();
+                dungeonLevelDataTable.Add(type, table);
+            }
+
+            table[level] = levelData;
+        }
+
     }
 }
 
@@ -1054,4 +1177,26 @@ public class GeneralShopData
 
     public int PurchaseLimit;
     public ShopLimitType LimitType;
+}
+
+public class DungeonData
+{
+    public DungeonType DungeonType;
+    public string DungeonSpriteKey;
+    public string NameKey;
+    public string DescKey;
+    public PlayerProgressType TicketType;
+}
+
+public class DungeonLevelData
+{
+    public DungeonType DungeonType;
+    public int Level;
+    public List<PlayerProgressType> Currencies;
+    public List<int> Amounts;
+    public List<string> SpriteKeys;
+    public List<EnemyId> EnemyIds;
+    public float HPRate;
+    public float ATKRate;
+    public float DEFRate;
 }

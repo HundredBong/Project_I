@@ -1,0 +1,3 @@
+DungeonType,DungeonSpriteKey,NameKey,DescKey,TicketType
+EnhanceDungeon,UI_EnhanceDungeon,UI_EnhanceDungeonName,UI_EnhanceDungeonDesc,EnhanceDungeonTicket
+SkillDungeon,UI_SkillDungeon,UI_SkillDungeonName,UI_SkillDungeonDesc,SkillDungeonTicket

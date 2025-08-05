@@ -129,3 +129,7 @@ UI_Confirm,확인,Confirm
 UI_Cancel,취소,Cancel
 UI_PurchaseMessage,구매하시겠습니까? ,Would you like to purchase it?
 UI_ToastReward,획득 완료!,You got it! 
+UI_EnhanceDungeonName,장비 강화 던전,Enhance Stone Dengeon
+UI_SkillDungeonName,스킬 강화 던전,Skill Gem Dungeon
+UI_EnhanceDungeonDesc,장비 강화석을 획득할 수 있는 던전,장비 강화석을 획득할 수 있는 던전(영어)
+UI_SkillDungeonDesc,스킬 강화석을 획득할 수 있는 던전,스킬 강화석을 획득할 수 있는 던전인데영어

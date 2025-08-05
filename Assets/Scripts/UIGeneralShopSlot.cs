@@ -100,7 +100,7 @@ public class UIGeneralShopSlot : MonoBehaviour
         }
 
         itemNameText.text = $"{DataManager.Instance.GetLocalizedText(_data.NameKey)} {_data.RewardCount}{DataManager.Instance.GetLocalizedText("UI_EA")}";
-        itemLimitText.text = $"{currentCount} / {_data.PurchaseLimit}"; //currentLimitCount같은거 필요함
+        itemLimitText.text = $"{currentCount} / {_data.PurchaseLimit}";
         itemPriceText.text = _data.PriceAmount.ToString();
         itemSoldOutText.text = $"{DataManager.Instance.GetLocalizedText($"Shop_SoldOut")}";
 

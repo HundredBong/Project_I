@@ -1,4 +1,4 @@
-public enum EnemyType { None = -1, Melee = 0, Range = 1, Boss = 2 } //None = -1 : 디폴트값으로 사용하기 좋음, 나중에 설정이 안된 상태 체크할 때 유용함.
+public enum EnemyType { None = -1, Melee = 0, Range = 1, Boss = 2 }
 
 public enum EnemyId { Skeleton_Knight, Skeleton_Archer, Skeleton_Warrior, Skeleton_Shield }
 
@@ -43,3 +43,5 @@ public enum ShopRewardType { AdRemove, EnhanceDungeonTicket, SkillDungeonTicket,
 public enum ShopPriceType { Diamond, SkillGem, Ad, Cash }
 
 public enum ShopLimitType { None, Daily, Weekly, Monthly, Account }
+
+public enum DungeonType { None = -1, EnhanceDungeon, SkillDungeon }
