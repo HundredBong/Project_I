@@ -32,6 +32,10 @@ public class StageManager : MonoBehaviour
 
     public bool isStageTransitioning = false;
     public bool IsChallenging { get; private set; }
+
+    private DungeonType _dungeonType = DungeonType.None;
+    private Dictionary<DungeonType, int> _dungeonClearedLevelData = new Dictionary<DungeonType, int>();
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -68,6 +72,12 @@ public class StageManager : MonoBehaviour
         MaxClearedStage = data.MaxClearedStageId;
         bossChallengable = data.BossChallengable ?? new bool[DataManager.Instance.stageDataTable.Count];
         bossDefeated = data.BossDefeated ?? new bool[DataManager.Instance.stageDataTable.Count];
+    }
+
+    public void SetDungeonData(DungeonSaveData data)
+    {
+        //서버에서 최대 클리어 레벨 불러와서 세팅
+        _dungeonClearedLevelData = data.DungeonClearedData;
     }
 
     public void StartStage()
@@ -233,7 +243,7 @@ public class StageManager : MonoBehaviour
         return currentStage;
     }
 
-    public void GoToStage(int stage) 
+    public void GoToStage(int stage)
     {
         if (stage > MaxClearedStage + 1 || stage < 1 || stage == currentStage)
         {
@@ -261,4 +271,15 @@ public class StageManager : MonoBehaviour
             ResetStage(FADE_DURATION);
         });
     }
+
+    public void SetStageType(DungeonType type)
+    {
+        _dungeonType = type;
+    }
+
+    public int GetMaxClearedLevel(DungeonType type)
+    {
+        return _dungeonClearedLevelData[type];
+    }
+
 }

@@ -976,6 +976,11 @@ public class DataManager : MonoBehaviour
         }
 
     }
+
+    public DungeonLevelData GetDungeonLevelData(DungeonType type, int level)
+    {
+        return dungeonLevelDataTable[type][level];
+    }
 }
 
 [System.Serializable]

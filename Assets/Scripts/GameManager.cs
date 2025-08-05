@@ -138,7 +138,6 @@ public class GameManager : MonoBehaviour
 
         if (purchaseProgressData == null || purchaseProgressData.PurchaseEntries.Count == 0)
         {
-
             purchaseProgressData.PurchaseEntries["Dummy"] = new ShopPurchaseEntry
             {
                 PurchaseCount = 1,
@@ -148,6 +147,25 @@ public class GameManager : MonoBehaviour
         }
         ShopManager.InitPurchaseData(purchaseProgressData);
         summonReady = true;
+
+        var dungeonClearedData = await statSaver.LoadDungeonClearedData();
+
+        if (dungeonClearedData == null)
+        {
+            dungeonClearedData = new DungeonSaveData();
+        }
+
+        //게임을 처음 시작한 경우
+        if (dungeonClearedData.DungeonClearedData.Count == 0)
+        {
+            //모든 레벨을 1로 초기화
+            foreach (DungeonType item in Enum.GetValues(typeof(DungeonType)))
+            {
+                dungeonClearedData.DungeonClearedData[item] = 1;
+            }
+
+            statSaver.SaveDungeonClearedData(dungeonClearedData).Forget();
+        }
 
         loadSceneReady = true;
     }

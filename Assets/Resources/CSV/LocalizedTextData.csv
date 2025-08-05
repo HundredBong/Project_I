@@ -133,3 +133,7 @@ UI_EnhanceDungeonName,장비 강화 던전,Enhance Stone Dengeon
 UI_SkillDungeonName,스킬 강화 던전,Skill Gem Dungeon
 UI_EnhanceDungeonDesc,장비 강화석을 획득할 수 있는 던전,장비 강화석을 획득할 수 있는 던전(영어)
 UI_SkillDungeonDesc,스킬 강화석을 획득할 수 있는 던전,스킬 강화석을 획득할 수 있는 던전인데영어
+HUD_Dungeon,던전,Dungeon
+UI_Dungeon,던전,Dungeon
+UI_EnhanceDungeonTicket,장비 던전 입장권 ,Enhance Dungeon Ticket
+UI_SkillDungeonTicket,스킬 던전 입장권,Skill Dungeon Ticket

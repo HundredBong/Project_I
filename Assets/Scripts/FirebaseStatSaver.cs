@@ -159,7 +159,7 @@ public class FirebaseStatSaver : MonoBehaviour
                 {
                     firstResult = json;
                 }
-                if (duration < DURATION_THRESHOLD-0.02f && json == firstResult)
+                if (duration < DURATION_THRESHOLD - 0.02f && json == firstResult)
                 {
                     Debug.LogWarning($"[StageData] 캐시 데이터 감지, 재요청 {i + 1}/{MAX_RETRY_COUNT}");
                     await UniTask.Delay(RETRY_DELAY_MS);
@@ -497,6 +497,63 @@ public class FirebaseStatSaver : MonoBehaviour
         await UniTask.SwitchToMainThread();
         throw new Exception($"[ShopPurchaseData] 구매 정보 불러오기 {MAX_RETRY_COUNT}회 연속 실패함");
     }
+
+    public async UniTask SaveDungeonClearedData(DungeonSaveData data)
+    {
+        string json = JsonConvert.SerializeObject(data);
+        string userId = "test_user";
+        string path = $"users/{userId}/DungeonClearedData";
+
+        try
+        {
+            await dbRef.Child(path).SetRawJsonValueAsync(json);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[FirebaseStatSaver] 던전 정보 저장 실패, {e}");
+        }
+    }
+
+    public async UniTask<DungeonSaveData> LoadDungeonClearedData()
+    {
+        string userId = "test_user";
+        string path = $"users/{userId}/DungeonClearedData";
+        string firstResult = null;
+
+        for (int i = 0; i < MAX_RETRY_COUNT; i++)
+        {
+            float start = Time.realtimeSinceStartup;
+            try
+            {
+                DataSnapshot snapshot = await dbRef.Child(path).GetValueAsync();
+                string json = snapshot.GetRawJsonValue();
+
+                float duration = Time.realtimeSinceStartup - start;
+
+                if (firstResult == null)
+                {
+                    firstResult = json;
+                }
+                else if (duration < DURATION_THRESHOLD && firstResult == json)
+                {
+                    Debug.LogWarning($"[DungeonClearedData] 캐시 데이터 감지, 재요청 {i + 1}/ {MAX_RETRY_COUNT}");
+                    await UniTask.Delay(RETRY_DELAY_MS);
+                    continue;
+                }
+                DungeonSaveData data = string.IsNullOrEmpty(json) ? new DungeonSaveData() : JsonConvert.DeserializeObject<DungeonSaveData>(json);
+                await UniTask.SwitchToMainThread();
+                return data;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[재시도 {i + 1}/{MAX_RETRY_COUNT}] 던전 정보 불러오기 실패, {e}");
+                await UniTask.Delay(RETRY_DELAY_MS);
+            }
+        }
+
+        await UniTask.SwitchToMainThread();
+        throw new Exception($"[DungeonClearedData] 던전 정보 불러오기 {MAX_RETRY_COUNT}회 연속 실패함");
+    }
 }
 
 [System.Serializable]
@@ -616,4 +673,10 @@ public class ShopPurchaseEntry
 public class ShopPurchaseData
 {
     public Dictionary<string, ShopPurchaseEntry> PurchaseEntries = new Dictionary<string, ShopPurchaseEntry>();
+}
+
+[System.Serializable]
+public class DungeonSaveData
+{
+    public Dictionary<DungeonType, int> DungeonClearedData = new Dictionary<DungeonType, int>();
 }

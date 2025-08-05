@@ -22,8 +22,9 @@ public class UIDungeonInfoPopup : UIPopup
     [SerializeField] private Button _negetiveButton;
 
     [Space(20)]
-    [SerializeField] private Image[] rewardImages;
-    [SerializeField] private TextMeshProUGUI[] rewardAmountTexts;
+    [SerializeField] private Image[] _rewardImages;
+    [SerializeField] private TextMeshProUGUI[] _rewardAmountTexts;
+    [SerializeField] private GameObject[] _rewardPrefabs;
 
     private DungeonData _data;
     private int _currentStage;
@@ -48,6 +49,8 @@ public class UIDungeonInfoPopup : UIPopup
     {
         _data = dungeonData;
         _currentStage = 0; //파이어베이스에서 불러온 값으로 적용
+
+        Refresh();
     }
 
     private void Refresh()
@@ -101,5 +104,6 @@ public class UIDungeonInfoPopup : UIPopup
         //씬 만들고 이름 넣어야 함
         //선택한 레벨정보를 다음 씬에 넘겨줘야 함
         LoadingSceneController.LoadScene("");
+        StageManager.Instance.SetStageType(_data.DungeonType);
     }
 }

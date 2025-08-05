@@ -11,14 +11,14 @@ public class UIHUDMenu : MonoBehaviour
     [SerializeField] private Button statButton;
     [SerializeField] private Button skillButton;
     [SerializeField] private Button inventoryButton;
-    [SerializeField] private Button menuButton;
+    [SerializeField] private Button dungeonButton;
 
     [Header("Texts")]
     [SerializeField] private TextMeshProUGUI shopText;
     [SerializeField] private TextMeshProUGUI statText;
     [SerializeField] private TextMeshProUGUI skillText;
     [SerializeField] private TextMeshProUGUI inventoryText;
-    [SerializeField] private TextMeshProUGUI menuText;
+    [SerializeField] private TextMeshProUGUI dungeonButtonText;
 
     [Space(20)]
     [SerializeField] private TextMeshProUGUI stageGoldText;
@@ -44,7 +44,7 @@ public class UIHUDMenu : MonoBehaviour
         statButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UIGoldUpgradePage>());
         skillButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UISkillPage>());
         inventoryButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UIInventoryPage>());
-        //menuButton.onClick.AddListener(() => UIManager.Instance.PageOpen<>());
+        dungeonButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UIDungeonPage>());
 
         //-----------------------------------------------------------------------------------------
 
@@ -63,7 +63,7 @@ public class UIHUDMenu : MonoBehaviour
         statText.text = DataManager.Instance.GetLocalizedText("HUD_Stat");
         skillText.text = DataManager.Instance.GetLocalizedText("HUD_Skill");
         inventoryText.text = DataManager.Instance.GetLocalizedText("HUD_Inventory");
-        menuText.text = DataManager.Instance.GetLocalizedText("HUD_Menu");
+        dungeonButtonText.text = DataManager.Instance.GetLocalizedText("HUD_Dungeon");
     }
 
     private void RefreshCurrency()

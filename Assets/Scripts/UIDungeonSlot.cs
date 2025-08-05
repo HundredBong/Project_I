@@ -18,8 +18,8 @@ public class UIDungeonSlot : MonoBehaviour
     {
         _data = data;
 
-        _dungeonNameText.text = DataManager.Instance.GetLocalizedText($"UI_{_data.NameKey}");
-        _dungeonDescText.text = DataManager.Instance.GetLocalizedText($"UI_{_data.DescKey}");
+        _dungeonNameText.text = DataManager.Instance.GetLocalizedText($"{_data.NameKey}");
+        _dungeonDescText.text = DataManager.Instance.GetLocalizedText($"{_data.DescKey}");
         _dungeonTicketText.text = DataManager.Instance.GetLocalizedText($"UI_{_data.TicketType}");
 
 
