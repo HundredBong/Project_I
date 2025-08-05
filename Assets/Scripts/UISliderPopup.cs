@@ -73,11 +73,64 @@ public class UISliderPopup : UIPopup
         _cancelButton.onClick.AddListener(() => Close());
     }
 
+    public void Init(DungeonType type, int level, string iconKey, string itemNameKey, int maxValue, Action<int> onConfirm,
+        string contentText = "UI_PurchaseMessage", string confirmText = "UI_Confirm", string cancelText = "UI_Cancel")
+    {
+        _icon.sprite = DataManager.Instance.GetSpriteByKey(iconKey);
+        _nameText.text = DataManager.Instance.GetLocalizedText(itemNameKey);
+
+        _contentText.text = DataManager.Instance.GetLocalizedText(contentText);
+        _confirmButtonText.text = DataManager.Instance.GetLocalizedText(confirmText);
+        _cancelButtonText.text = DataManager.Instance.GetLocalizedText(cancelText);
+
+        _slider.maxValue = maxValue;
+        _slider.value = 1;
+        _onConfirm = onConfirm;
+
+        DungeonLevelData data = DataManager.Instance.GetDungeonLevelData(type, level);
+        int amount = data.Amounts[0];
+
+        _countText.text = (((int)_slider.value) * amount).ToString();
+        _slider.onValueChanged.RemoveAllListeners();
+        _slider.onValueChanged.AddListener((value) => UpdateRewardText(amount));
+
+        _positiveButton.onClick.RemoveAllListeners();
+        _positiveButton.onClick.AddListener(() =>
+        {
+            if (_slider.value < _slider.maxValue)
+            {
+                _slider.value += 1;
+            }
+        });
+
+        _negativeButton.onClick.RemoveAllListeners();
+        _negativeButton.onClick.AddListener(() =>
+        {
+            if (_slider.value > _slider.minValue)
+            {
+                _slider.value -= 1;
+            }
+        });
+
+        _confirmButton.onClick.RemoveAllListeners();
+        _confirmButton.onClick.AddListener(() =>
+        {
+            _onConfirm?.Invoke((int)_slider.value);
+            Close();
+        });
+
+        _cancelButton.onClick.RemoveAllListeners();
+        _cancelButton.onClick.AddListener(() => Close());
+    }
+
     private void UpdateCountText()
     {
         _countText.text = ((int)_slider.value).ToString();
     }
-
+    private void UpdateRewardText(int amount)
+    {
+        _countText.text = (((int)_slider.value) * amount).ToString();
+    }
     public override void Close()
     {
         _onConfirm = null;

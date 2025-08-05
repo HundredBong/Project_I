@@ -981,6 +981,11 @@ public class DataManager : MonoBehaviour
     {
         return dungeonLevelDataTable[type][level];
     }
+
+    public int GetMaxDungeonLevel(DungeonType type)
+    {
+        return dungeonLevelDataTable[type].Count;
+    }
 }
 
 [System.Serializable]

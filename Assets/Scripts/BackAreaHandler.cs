@@ -9,7 +9,7 @@ public class BackAreaHandler : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         UIManager.Instance.HandleBack();
-        
+       
     }
 }
 

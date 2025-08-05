@@ -503,7 +503,7 @@ public class PlayerStats : MonoBehaviour
                 SkillGem -= amount;
                 break;
             default:
-                playerProgress[type] -= amount;  
+                playerProgress[type] -= amount;
                 OnCurrencyChanged?.Invoke();
                 break;
         }
@@ -616,6 +616,11 @@ public class PlayerStats : MonoBehaviour
                 OnCurrencyChanged?.Invoke();
                 break;
         }
+    }
+
+    public int GetCurrency(PlayerProgressType type)
+    {
+        return (int)playerProgress[type];
     }
 
     [ContextMenu("다이아부자")]

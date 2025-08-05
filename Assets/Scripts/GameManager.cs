@@ -167,6 +167,8 @@ public class GameManager : MonoBehaviour
             statSaver.SaveDungeonClearedData(dungeonClearedData).Forget();
         }
 
+        StageManager.Instance.SetDungeonData(dungeonClearedData);
+
         loadSceneReady = true;
     }
 
