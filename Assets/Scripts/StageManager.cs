@@ -10,31 +10,25 @@ using UnityEngine.UI;
 public class StageManager : MonoBehaviour
 {
     public static StageManager Instance { get; private set; }
-
-    [SerializeField] private int currentStage = 1; //현재 스테이지
-    [SerializeField] private int killCount = 0; //현재 킬 카운트
-    [SerializeField] private int totalKillsRequired = 100; //스테이지 클리어에 필요한 킬 카운트
-    [SerializeField] private int spawnBatchSize = 20; //재생성할 몬스터 수
-    [SerializeField] private int defaultSpawnCount = 30; //기본 몬스터 생성 수
-    [SerializeField] private Image _fadeImage;
     private const float FADE_DURATION = 2f;
 
-    public int MaxClearedStage { get; private set; }
-    public int CurrentStage => currentStage;
+    [SerializeField] public int currentStage = 1; //현재 스테이지///////////
 
-    [SerializeField] private bool[] bossChallengable;
-    [SerializeField] private bool[] bossDefeated;
+
+    public int MaxClearedStage { get; private set; }
+
+    [SerializeField] public bool[] bossChallengable; ////////////////////////
+    [SerializeField] public bool[] bossDefeated;
 
     public event Action<int, int> OnKillUpdated; //현재 킬, 필요 킬
     public event Action<int, bool> OnStageChanged; //현재 스테이지,canBoss
     public event Action<int> OnBossStageEntered; //current
 
-
-    public bool isStageTransitioning = false;
-    public bool IsChallenging { get; private set; }
-
-    private DungeonType _dungeonType = DungeonType.None;
     private Dictionary<DungeonType, int> _dungeonClearedLevelData = new Dictionary<DungeonType, int>();
+
+    //
+
+    private IStageFlow _stageFlow;
 
     private void Awake()
     {
@@ -80,34 +74,48 @@ public class StageManager : MonoBehaviour
         _dungeonClearedLevelData = data.DungeonClearedData;
     }
 
-    public void StartStage()
+    public IStageFlow CreateFlow(DungeonType type)
     {
-        killCount = 0;
-        UIManager.Instance.FadeOut(FADE_DURATION / 2);
-        OnStageChanged?.Invoke(currentStage, bossChallengable[currentStage - 1]); //스테이지 시작할 때마다 현재 스테이지 갱신
-        OnKillUpdated?.Invoke(killCount, totalKillsRequired);
-        DelayCallManager.Instance.CallLater(FADE_DURATION / 2, () => SpawnManager.Instance.SpawnEnemiesForCurrentStage(defaultSpawnCount));
+        return type switch
+        {
+            DungeonType.None => new IdleStageFlow(this),
+            _ => null
+        };
+    }
+
+    public void StartStage(DungeonType type = DungeonType.None)
+    {
+        _stageFlow = CreateFlow(type);
+
+        _stageFlow.Start();
+
+        //killCount = 0;
+        //UIManager.Instance.FadeOut(FADE_DURATION / 2);
+        //OnStageChanged?.Invoke(currentStage, bossChallengable[currentStage - 1]); //스테이지 시작할 때마다 현재 스테이지 갱신
+        //OnKillUpdated?.Invoke(killCount, totalKillsRequired);
+        //DelayCallManager.Instance.CallLater(FADE_DURATION / 2, () => SpawnManager.Instance.SpawnEnemiesForCurrentStage(defaultSpawnCount));
     }
 
 
     public void NotifyKill()
     {
-        killCount++;
+        _stageFlow.OnEnemyDead();
+        //killCount++;
 
-        //Debug.Log($"킬 카운트 {killCount}, 연산 : {killCount % spawnBatchSize}, bool : {killCount < totalKillsRequired && killCount % spawnBatchSize == 0}");
-        ////다음 스테이지로 넘어가기위한 최대 킬 수에 도달하지 않고, 현재 킬 카운트와 사이즈 연산 값이 0이면 
-        if (killCount < totalKillsRequired && killCount % spawnBatchSize == 0)
-        {
-            SpawnManager.Instance.SpawnEnemiesForCurrentStage(spawnBatchSize);
-        }
+        ////Debug.Log($"킬 카운트 {killCount}, 연산 : {killCount % spawnBatchSize}, bool : {killCount < totalKillsRequired && killCount % spawnBatchSize == 0}");
+        //////다음 스테이지로 넘어가기위한 최대 킬 수에 도달하지 않고, 현재 킬 카운트와 사이즈 연산 값이 0이면 
+        //if (killCount < totalKillsRequired && killCount % spawnBatchSize == 0)
+        //{
+        //    SpawnManager.Instance.SpawnEnemiesForCurrentStage(spawnBatchSize);
+        //}
 
-        OnKillUpdated?.Invoke(killCount, totalKillsRequired);
+        //OnKillUpdated?.Invoke(killCount, totalKillsRequired);
 
-        //현재 킬 카운트가 스테이지 클리어에 필요한만큼 도달하면
-        if (killCount >= totalKillsRequired)
-        {
-            OnStageClear();
-        }
+        ////현재 킬 카운트가 스테이지 클리어에 필요한만큼 도달하면
+        //if (killCount >= totalKillsRequired)
+        //{
+        //    OnStageClear();
+        //}
     }
 
     public void NotifyKillBoss()
@@ -145,40 +153,36 @@ public class StageManager : MonoBehaviour
 
     private void OnStageClear()
     {
-
+        
         //Debug.Log($"current : {currentStage}, max : {MaxClearedStage}, bossChallengable : {bossChallengable[currentStage - 1]}");
 
-        bool canBose = bossChallengable[currentStage - 1];
-        bool climbing = currentStage > MaxClearedStage;// || (currentStage >= MaxClearedStage && canBose);
+        //bool canBose = bossChallengable[currentStage - 1];
+        //bool climbing = currentStage > MaxClearedStage;// || (currentStage >= MaxClearedStage && canBose);
 
 
-        if (climbing)
-        {
-            if (canBose)
-            {
-                StartBossChallenge();
-            }
-            else
-            {
-                bossChallengable[currentStage - 1] = true;
-                ResetStage();
-            }
-        }
-        else
-        {
-            ResetStage();
-        }
+        //if (climbing)
+        //{
+        //    if (canBose)
+        //    {
+        //        StartBossChallenge();
+        //    }
+        //    else
+        //    {
+        //        bossChallengable[currentStage - 1] = true;
+        //        ResetStage();
+        //    }
+        //}
+        //else
+        //{
+        //    ResetStage();
+        //}
 
-        GameManager.Instance.statSaver.SaveStageDataAsync(BuildStageSaveData()).Forget();
-        GameManager.Instance.statSaver.SavePlayerProgressDataAsync(GameManager.Instance.stats.GetProgressSaveData()).Forget();
+        //GameManager.Instance.statSaver.SaveStageDataAsync(BuildStageSaveData()).Forget();
+        //GameManager.Instance.statSaver.SavePlayerProgressDataAsync(GameManager.Instance.stats.GetProgressSaveData()).Forget();
     }
 
     public void StartBossChallenge()
     {
-        if (IsChallenging) { return; }
-
-        IsChallenging = true;
-
         GameManager.Instance.player.transform.position = Vector3.zero;
         ObjectPoolManager.Instance.enemyPool.ReturnAllEnemies();
 
@@ -196,7 +200,7 @@ public class StageManager : MonoBehaviour
         });
     }
 
-    private StageSaveData BuildStageSaveData()
+    public StageSaveData BuildStageSaveData()
     {
         StageSaveData data = new StageSaveData
         {
@@ -209,28 +213,9 @@ public class StageManager : MonoBehaviour
         return data;
     }
 
-    public void ResetStage(float fadeDuration = -1f)
+    public void ResetStage()
     {
-        isStageTransitioning = true;
-
-        ObjectPoolManager.Instance.enemyPool.ReturnAllEnemies();
-
-        DelayCallManager.Instance.CallLater(fadeDuration < 0 ? FADE_DURATION : FADE_DURATION / 2f, () =>
-        {
-            //플레이어 위치 초기화, 기존 몬스터 제거
-            killCount = 0;
-
-            GameManager.Instance.player.transform.position = Vector3.zero;
-            GameManager.Instance.stats.Recovery();
-
-            SpawnManager.Instance.SpawnEnemiesForCurrentStage(defaultSpawnCount);
-
-            OnStageChanged?.Invoke(currentStage, bossChallengable[currentStage - 1]);
-            OnKillUpdated?.Invoke(killCount, totalKillsRequired);
-
-            isStageTransitioning = false;
-            IsChallenging = false;
-        });
+        _stageFlow.ResetStage();
     }
 
     public StageType GetStageType(int stageNumber)
@@ -245,36 +230,18 @@ public class StageManager : MonoBehaviour
 
     public void GoToStage(int stage)
     {
-        if (stage > MaxClearedStage + 1 || stage < 1 || stage == currentStage)
-        {
-            Debug.LogWarning("[StageManager] 잘못된 스테이지 접근");
-            return;
-        }
-
-        if (IsChallenging || isStageTransitioning)
-        {
-            Debug.LogWarning("[StageManager] 현재 스테이지를 변경할 수 없는 상태임");
-            return;
-        }
-
-        isStageTransitioning = true;
-
         if (stage == MaxClearedStage && bossDefeated[stage - 1] == true)
         {
             stage++;
         }
+
         UIManager.Instance.FadeInOut(FADE_DURATION);
 
         DelayCallManager.Instance.CallLater(FADE_DURATION / 2f, () =>
         {
             currentStage = stage;
-            ResetStage(FADE_DURATION);
+            ResetStage();
         });
-    }
-
-    public void SetStageType(DungeonType type)
-    {
-        _dungeonType = type;
     }
 
     public int GetMaxClearedLevel(DungeonType type)
@@ -282,4 +249,18 @@ public class StageManager : MonoBehaviour
         return _dungeonClearedLevelData[type];
     }
 
+    public void InvokeKillUpdated(int killCount, int required)
+    {
+        OnKillUpdated?.Invoke(killCount, required);
+    }
+
+    public void InvokeStageChanged(int killCount, bool canBoss)
+    {
+        OnStageChanged?.Invoke(killCount, canBoss);
+    }
+
+    public void InvokeBossStageEntered(int stage)
+    {
+        OnBossStageEntered?.Invoke(stage);
+    }
 }

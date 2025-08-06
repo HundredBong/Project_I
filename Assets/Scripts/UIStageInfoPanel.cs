@@ -63,7 +63,7 @@ public class UIStageInfoPanel : MonoBehaviour
         //각종 텍스트 초기화
 
         killText.text = $"0 / 100"; 
-        int stage = StageManager.Instance.CurrentStage;
+        int stage = StageManager.Instance.currentStage;
         bool canBoss = false; //즉시 보스에게 도전하지 못하도록 일단 false, 절대 프로퍼티 만들기 귀찮아서 그런거 아님
         stageProgressImage.fillAmount = 0f;
         RefreshStage(stage, canBoss);
@@ -72,7 +72,7 @@ public class UIStageInfoPanel : MonoBehaviour
 
     private void SetLocalizedText()
     {
-        stageText.text = $"{DataManager.Instance.GetLocalizedText("UI_Stage")} {StageManager.Instance.CurrentStage}";
+        stageText.text = $"{DataManager.Instance.GetLocalizedText("UI_Stage")} {StageManager.Instance.currentStage}";
         goToMaxStageText.text = DataManager.Instance.GetLocalizedText("UI_GoMaxStage");
     }
 
