@@ -24,7 +24,7 @@ public class IdleStageFlow : IStageFlow
         UIManager.Instance.FadeOut(FADE_DURATION / 2);
 
         _manager.InvokeKillUpdated(_killCount, _totalKillsRequired);
-        _manager.InvokeStageChanged(_killCount, StageManager.Instance.bossChallengable[StageManager.Instance.currentStage - 1]);
+        _manager.InvokeStageChanged(DungeonType.None, _killCount, StageManager.Instance.bossChallengable[StageManager.Instance.currentStage - 1]);
 
         DelayCallManager.Instance.CallLater(FADE_DURATION / 2, () => SpawnManager.Instance.SpawnEnemiesForCurrentStage(_defaultSpawnCount));
     }
@@ -107,7 +107,7 @@ public class IdleStageFlow : IStageFlow
 
             SpawnManager.Instance.SpawnEnemiesForCurrentStage(_defaultSpawnCount);
 
-            _manager.InvokeStageChanged(_manager.currentStage, _manager.bossChallengable[_manager.currentStage]);
+            _manager.InvokeStageChanged(DungeonType.None, _manager.currentStage, _manager.bossChallengable[_manager.currentStage]);
             _manager.InvokeKillUpdated(_killCount, _totalKillsRequired);
         });
     }

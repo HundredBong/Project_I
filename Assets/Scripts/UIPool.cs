@@ -7,6 +7,8 @@ public class UIPool : GenericPoolManager<PooledUI>
     public GameObject resultPrefab;
     public GameObject toastMessagePrefab;
     public GameObject toastRewardPrefab;
+    public GameObject rewardSlotPrebfab;
+
     int index = 0;
 
     public void Start()
@@ -34,5 +36,10 @@ public class UIPool : GenericPoolManager<PooledUI>
     public UIToastReward GetReward()
     {
         return base.Get(toastRewardPrefab) as UIToastReward;
+    }
+
+    public UIRewardSlot GetRewardSlot()
+    {
+        return base.Get(rewardSlotPrebfab) as UIRewardSlot; 
     }
 }

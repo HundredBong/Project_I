@@ -19,7 +19,7 @@ public class StageManager : MonoBehaviour
     public bool[] bossDefeated;
 
     public event Action<int, int> OnKillUpdated; //현재 킬, 필요 킬
-    public event Action<int, bool> OnStageChanged; //현재 스테이지,canBoss
+    public event Action<DungeonType,int, bool> OnStageChanged; //현재 스테이지,canBoss
     public event Action<int> OnBossStageEntered; //current
 
     private Dictionary<DungeonType, int> _dungeonClearedLevelData = new Dictionary<DungeonType, int>();
@@ -167,9 +167,9 @@ public class StageManager : MonoBehaviour
         OnKillUpdated?.Invoke(killCount, required);
     }
 
-    public void InvokeStageChanged(int killCount, bool canBoss)
+    public void InvokeStageChanged(DungeonType type, int killCount, bool canBoss)
     {
-        OnStageChanged?.Invoke(killCount, canBoss);
+        OnStageChanged?.Invoke(type,killCount, canBoss);
     }
 
     public void InvokeBossStageEntered(int stage)

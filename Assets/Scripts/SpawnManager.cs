@@ -60,7 +60,7 @@ public class SpawnManager : MonoBehaviour
             return;
         }
 
-        List<Vector2> positions = GetRandomPositions(count, 3f, 0f, 100f, 0f, 3f);
+        List<Vector2> positions = GetRandomPositions(count, 2f, 0f, 100f, 0f, 3f);
 
         for (int i = 0; i < count; i++)
         {

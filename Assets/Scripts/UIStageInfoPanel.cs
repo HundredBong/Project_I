@@ -64,9 +64,9 @@ public class UIStageInfoPanel : MonoBehaviour
 
         killText.text = $"0 / 100"; 
         int stage = StageManager.Instance.currentStage;
-        bool canBoss = false; //즉시 보스에게 도전하지 못하도록 일단 false, 절대 프로퍼티 만들기 귀찮아서 그런거 아님
+        bool canBoss = false;
         stageProgressImage.fillAmount = 0f;
-        RefreshStage(stage, canBoss);
+        RefreshStage(DungeonType.None,stage, canBoss);
         SetLocalizedText();
     }
 
@@ -83,34 +83,43 @@ public class UIStageInfoPanel : MonoBehaviour
         stageProgressImage.fillAmount = Mathf.Min(current / (float)required, 1f);
     }
 
-    private void RefreshStage(int stage, bool canBoss)
+    private void RefreshStage(DungeonType type,int stage, bool canBoss)
     {
-        stageText.text = $"{DataManager.Instance.GetLocalizedText("UI_Stage")} {stage}";
+        stageText.text = $"{DataManager.Instance.GetLocalizedText($"UI_{type}")} {stage}";
 
-        bool climbing = stage > StageManager.Instance.maxClearedStage;
-
-        if (climbing)
+        if (type == DungeonType.None)
         {
-            if (canBoss)
+            bool climbing = stage > StageManager.Instance.maxClearedStage;
+
+            if (climbing)
             {
-                bossChallengeButton.gameObject.SetActive(true);
-                bossChallengeButton.interactable = true;
-                goToMaxStageButton.gameObject.SetActive(false);
-                giveUpButton.gameObject.SetActive(false);
+                if (canBoss)
+                {
+                    bossChallengeButton.gameObject.SetActive(true);
+                    bossChallengeButton.interactable = true;
+                    goToMaxStageButton.gameObject.SetActive(false);
+                    giveUpButton.gameObject.SetActive(false);
+                }
+                else
+                {
+                    bossChallengeButton.gameObject.SetActive(true);
+                    bossChallengeButton.interactable = false;
+                    goToMaxStageButton.gameObject.SetActive(false);
+                    giveUpButton.gameObject.SetActive(false);
+                }
             }
             else
             {
-                bossChallengeButton.gameObject.SetActive(true);
-                bossChallengeButton.interactable = false;
-                goToMaxStageButton.gameObject.SetActive(false);
+                bossChallengeButton.gameObject.SetActive(false);
+                goToMaxStageButton.gameObject.SetActive(true);
                 giveUpButton.gameObject.SetActive(false);
             }
         }
         else
         {
             bossChallengeButton.gameObject.SetActive(false);
-            goToMaxStageButton.gameObject.SetActive(true);
-            giveUpButton.gameObject.SetActive(false);
+            goToMaxStageButton.gameObject.SetActive(false);
+            stageSelectButton.gameObject.SetActive(false);
         }
     }
 
