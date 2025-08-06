@@ -24,7 +24,7 @@ public class EnemyDeadState : IState
 
         if (anim != null)
         {
-            anim.SetTrigger("4_Death");
+            anim.SetTrigger("Death");
         }
 
         float deadTime = anim.GetCurrentAnimatorStateInfo(0).length;

@@ -53,7 +53,7 @@ public class PlayerChaseState : IState
         //체력이 0이하라면 Dead상태로 전이
         if (owner.player.Stat.health <= 0)
         {
-            //owner.ChangeState(StateType.Dead);
+            owner.ChangeState(StateType.Dead);
         }
     }
 

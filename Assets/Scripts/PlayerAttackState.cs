@@ -40,7 +40,7 @@ public class PlayerAttackState : IState
 
         if (owner.player.Stat.health <= 0)
         {
-            //owner.ChangeState(StateType.Dead);
+            owner.ChangeState(StateType.Dead);
         }
     }
 

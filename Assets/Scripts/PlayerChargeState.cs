@@ -69,7 +69,7 @@ public class PlayerChargeState : IState
     {
         if (_owner.player.Stat.health <= 0)
         {
-            //_owner.ChangeState(StateType.Dead);
+            _owner.ChangeState(StateType.Dead);
         }
 
         if (_hitCount >= _enemies.Count)

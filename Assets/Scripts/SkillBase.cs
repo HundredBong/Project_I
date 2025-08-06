@@ -24,6 +24,15 @@ public abstract class SkillBase
 
     public bool TryExecute(GameObject owner)
     {
+        //하드코딩, 인터페이스 기반 리팩토링 필요
+        if (owner.gameObject.TryGetComponent<Player>(out Player player))
+        {
+            if (player.IsDead)
+            {
+                return false;
+            }
+        }
+
         if (IsReady == true && IsTargetInRange(owner) == true)
         {
             Execute(owner);

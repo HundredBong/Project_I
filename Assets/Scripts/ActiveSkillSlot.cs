@@ -59,6 +59,12 @@ public class ActiveSkillSlot : MonoBehaviour
 
     private void OnSkillButtonClicked()
     {
+        if (LocalSetting.LoadAutoSkillActivate())
+        {
+            ObjectPoolManager.Instance.uiPool.GetMessage().Init("UI_WhileAutoSkillMode");
+            return;
+        }
+
         if (equippedSkill == null)
         {
             Debug.LogWarning("[ActiveSkillSlot] 장착된 스킬이 없음");
@@ -68,15 +74,21 @@ public class ActiveSkillSlot : MonoBehaviour
         if (isGlobalCooldown)
         {
             Debug.LogWarning("[ActiveSkillSlot] 글로벌 쿨타임 진행중");
+            ObjectPoolManager.Instance.uiPool.GetMessage().Init("UI_GlobalCooldown");
             return;
         }
 
+        //내부적으로 player.IsDead상태라면 false 리턴
         bool success = equippedSkill.TryExecute(GameManager.Instance.player.gameObject);
 
         if (success == true)
         {
             StartCooldown(equippedSkill.Cooldown);
             OnSkillExecuted?.Invoke(this); //글로벌 쿨타임 적용
+        }
+        else
+        {
+            ObjectPoolManager.Instance.uiPool.GetMessage().Init("UI_CantExecute");
         }
     }
 

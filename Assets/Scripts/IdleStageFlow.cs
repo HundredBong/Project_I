@@ -91,7 +91,8 @@ public class IdleStageFlow : IStageFlow
 
     public void OnPlayerDead()
     {
-
+        _manager.currentStage = Mathf.Max(_manager.currentStage - 1, 1);
+        _manager.GoToStage(_manager.currentStage);
     }
 
     public void ResetStage()
@@ -104,7 +105,7 @@ public class IdleStageFlow : IStageFlow
 
             GameManager.Instance.player.transform.position = Vector3.zero;
             GameManager.Instance.stats.Recovery();
-
+            GameManager.Instance.player.StateMachine.ChangeState(StateType.Idle);
             SpawnManager.Instance.SpawnEnemiesForCurrentStage(_defaultSpawnCount);
 
             _manager.InvokeStageChanged(DungeonType.None, _manager.currentStage, _manager.bossChallengable[_manager.currentStage]);

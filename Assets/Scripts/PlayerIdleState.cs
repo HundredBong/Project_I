@@ -11,7 +11,6 @@ public class PlayerIdleState : IState
 
     public void OnEnter()
     {
-
     }
 
     public void OnExit()
@@ -29,7 +28,7 @@ public class PlayerIdleState : IState
 
         if (owner.player.Stat.health <= 0)
         {
-            //owner.ChangeState(StateType.Dead);
+            owner.ChangeState(StateType.Dead);
         }
     }
 
