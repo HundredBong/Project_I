@@ -27,6 +27,8 @@ public class Player : MonoBehaviour
 
     public SpriteRenderer[] SpriteRenderers { get; private set; }
 
+    [SerializeField] private DungeonType _dungeonType;
+
     private void Awake()
     {
         IsDead = false;
@@ -39,6 +41,8 @@ public class Player : MonoBehaviour
         originScale = transform.localScale;
         Vector3 flipVector = new Vector3(-1f, 1f, 1f);
         flipScale = Vector3.Scale(transform.localScale, flipVector);
+
+        GameManager.Instance.RegistPlayer(this);
     }
 
     private void OnEnable()

@@ -60,7 +60,7 @@ public class UIStageSelectPopup : UIPopup
     {
         if (int.TryParse(_stageInputField.text, out int stage))
         {
-            if (stage < 1 || stage > StageManager.Instance.MaxClearedStage + 1)
+            if (stage < 1 || stage > StageManager.Instance.maxClearedStage + 1)
             {
                 Debug.LogWarning("[UIStageSelectPopup] 잘못된 스테이지 접근");
                 return;

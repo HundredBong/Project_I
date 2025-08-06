@@ -204,6 +204,26 @@ public class UIDungeonInfoPopup : UIPopup
     {
         //씬 만들고 이름 넣어야 함
         //선택한 레벨정보를 다음 씬에 넘겨줘야 함
-        LoadingSceneController.LoadScene("");  
+
+        switch (_levelData.DungeonType)
+        {
+            case DungeonType.EnhanceDungeon:
+                StageManager.Instance.enhanceDungeonLevel = _currentLevel;
+                LoadingSceneController.LoadScene("2_EnhanceDungeonScene");
+                break;
+            case DungeonType.SkillDungeon:
+                StageManager.Instance.skillGemDungeonLevel = _currentLevel;
+                break;
+            case DungeonType.None:
+            default:
+                break;
+        }
+    }
+
+    [ContextMenu("테스트")]
+    private void Test()
+    {
+        StageManager.Instance.enhanceDungeonLevel = 1;
+        LoadingSceneController.LoadScene("2_EnhanceDungeonScene");
     }
 }

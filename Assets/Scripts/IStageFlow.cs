@@ -15,4 +15,6 @@ public interface IStageFlow
     void OnPlayerDead();
 
     void ResetStage();
+
+    void GiveReward();
 }

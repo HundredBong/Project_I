@@ -159,6 +159,38 @@ public class Enemy : MonoBehaviour, IPooledObject
         IsBoss = false;
     }
 
+    public async void Initialize(DungeonLevelData data)
+    {
+        await UniTask.WaitUntil(() => StageManager.Instance != null);
+
+        PlayerReference = GameManager.Instance.player;
+
+        if (PlayerReference == null)
+        {
+            Debug.LogError("[Enemy] Player가 Null임");
+        }
+
+        EnemyData enemyData = DataManager.Instance.GetEnemyData(enemyId);
+
+        if (enemyData == null)
+        {
+            Debug.LogWarning($"[Enemy] {enemyId}에 대한 EnemyData가 존재하지 않음");
+            return;
+        }
+
+        maxHealth = enemyData.HP * data.HPRate;
+        health = maxHealth;
+        damage = enemyData.ATK * data.ATKRate;
+        defend = enemyData.DEF * data.DEFRate;
+        moveSpeed = enemyData.SPD;
+        attackRange = enemyData.Range;
+        attackInterval = enemyData.AttackInterval;
+        expValue = 0;
+        goldValue = 0;
+        chaseRange = enemyData.ChaseRange;
+        IsBoss = false;
+    }
+
     public void InitializeBoss(StageData stageData, EnemyData enemyData)
     {
         Debug.Log($"보스 소환, 배율 : {stageData.BossStatRate}, 크기 : {transform.lossyScale}");

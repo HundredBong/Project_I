@@ -180,9 +180,6 @@ public class GameManager : MonoBehaviour
     public void RegistPlayer(Player player)
     {
         this.player = player;
-
-        StageManager.Instance.StartStage();
-
     }
 
 
@@ -212,6 +209,24 @@ public class GameManager : MonoBehaviour
         LoadingSceneController.LoadScene("0_MainScene");
     }
 
+    [MenuItem("Tools/Go To Stage Scene (Game)")]
+    public static void GoToStageScene()
+    {
+        LoadingSceneController.LoadScene("1_StageScene");
+    }
+
+    [MenuItem("Tools/Go To Enhance Dungeon Scene (Game)")]
+    public static void GoToEnhanceDungeonScene()
+    {
+        LoadingSceneController.LoadScene("2_EnhanceDungeonScene");
+    }
+
+    [MenuItem("Tools/Go To Skill Dungeon Scene (Game)")]
+    public static void GoToSkillDungeonScene()
+    {
+        LoadingSceneController.LoadScene("3_SkillDungeonScene");
+    }
+
     [MenuItem("Scenes/Go To Stage Scene (Editor)")]
     private static void OpenStageScene()
     {
@@ -227,6 +242,24 @@ public class GameManager : MonoBehaviour
         if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
         {
             EditorSceneManager.OpenScene("Assets/Scenes/0_MainScene.unity");
+        }
+    }
+
+    [MenuItem("Scenes/Go To Enhance Dungeon (Editor)")]
+    private static void OpenEnhanceDungeonScene()
+    {
+        if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+        {
+            EditorSceneManager.OpenScene("Assets/Scenes/2_EnhanceDungeonScene.unity");
+        }
+    }
+
+    [MenuItem("Scenes/Go To Skill Dungeon (Editor)")]
+    private static void OpenSkillDungeonScene()
+    {
+        if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+        {
+            EditorSceneManager.OpenScene("Assets/Scenes/3_SkillDungeonScene.unity");
         }
     }
 

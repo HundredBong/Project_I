@@ -46,10 +46,22 @@ public class IdleStageFlow : IStageFlow
         }
     }
 
+    public void OnBossDead()
+    {
+        _manager.bossDefeated[_manager.currentStage - 1] = true;
+        GiveReward();
+        _manager.maxClearedStage = Mathf.Max(_manager.maxClearedStage, _manager.currentStage);
+        _manager.GoToStage(_manager.currentStage + 1);
+
+
+        GameManager.Instance.statSaver.SaveStageDataAsync(_manager.BuildStageSaveData()).Forget();
+        GameManager.Instance.statSaver.SavePlayerProgressDataAsync(GameManager.Instance.stats.GetProgressSaveData()).Forget();
+    }
+
     public void OnStageClear()
     {
         bool canBose = _manager.bossChallengable[_manager.currentStage - 1];
-        bool climbing = _manager.currentStage > _manager.MaxClearedStage;
+        bool climbing = _manager.currentStage > _manager.maxClearedStage;
 
         if (climbing)
         {
@@ -96,7 +108,7 @@ public class IdleStageFlow : IStageFlow
             SpawnManager.Instance.SpawnEnemiesForCurrentStage(_defaultSpawnCount);
 
             _manager.InvokeStageChanged(_manager.currentStage, _manager.bossChallengable[_manager.currentStage]);
-            _manager.InvokeKillUpdated(_killCount,_totalKillsRequired);
+            _manager.InvokeKillUpdated(_killCount, _totalKillsRequired);
         });
     }
 
@@ -117,5 +129,25 @@ public class IdleStageFlow : IStageFlow
             GameManager.Instance.stats.Recovery();
             SpawnManager.Instance.SpawnStageBoss();
         });
+    }
+
+    public void GiveReward()
+    {
+        StageData stage = DataManager.Instance.stageDataTable[_manager.currentStage];
+
+        switch (stage.RewardType)
+        {
+            case RewardType.Diamond:
+                GameManager.Instance.stats.Diamond += stage.BossRewardAmount;
+                break;
+            case RewardType.SkillGem:
+                GameManager.Instance.stats.skillGem += stage.BossRewardAmount;
+                break;
+            case RewardType.EnhanceStone:
+                GameManager.Instance.stats.enhanceStone += stage.BossRewardAmount;
+                break;
+            default:
+                break;
+        }
     }
 }

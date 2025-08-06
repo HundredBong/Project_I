@@ -85,13 +85,9 @@ public class UIStageInfoPanel : MonoBehaviour
 
     private void RefreshStage(int stage, bool canBoss)
     {
-        //Debug.Log($"현재 스테이지 : {stage}, 맥스 : {StageManager.Instance.MaxClearedStage}, 보스 여부 : {canBoss}");
-
         stageText.text = $"{DataManager.Instance.GetLocalizedText("UI_Stage")} {stage}";
 
-        bool climbing = stage > StageManager.Instance.MaxClearedStage;// || (stage>= StageManager.Instance.MaxClearedStage && canBoss == );
-        ;
-
+        bool climbing = stage > StageManager.Instance.maxClearedStage;
 
         if (climbing)
         {
@@ -137,7 +133,7 @@ public class UIStageInfoPanel : MonoBehaviour
 
     private void OnMaxStageButtonClicked()
     {
-        StageManager.Instance.GoToStage(StageManager.Instance.MaxClearedStage);
+        StageManager.Instance.GoToStage(StageManager.Instance.maxClearedStage);
     }
 
     private void OnStageSelectButtonClicked()
