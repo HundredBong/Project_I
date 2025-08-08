@@ -1189,7 +1189,7 @@ MonoBehaviour:
   resultPrefab: {fileID: 4133906928501448182, guid: 35343baa4f0271745b33b2a7ad0e5be2, type: 3}
   toastMessagePrefab: {fileID: 5398472024194139556, guid: fbad3cbbd860d5947acb12da64447048, type: 3}
   toastRewardPrefab: {fileID: 2623857179059229367, guid: 7d8738b28e8e6674f83aad4c5f5e0614, type: 3}
-  rewardSlotPrebfab: {fileID: 0}
+  rewardSlotPrebfab: {fileID: 3391573251040031817, guid: d3d506d8b6f136149b0865441b6ec410, type: 3}
 --- !u!1 &1103564109
 GameObject:
   m_ObjectHideFlags: 0

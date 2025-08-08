@@ -58,20 +58,23 @@ public class EnhanceDungeonFlow : IStageFlow
 
         Sprite[] rewardSprites = new Sprite[_levelData.SpriteKeys.Count];
         int[] amounts = new int[_levelData.Amounts.Count];
+        UIRewardSlot[] slots = new UIRewardSlot[_levelData.Amounts.Count];//ObjectPoolManager.Instance.uiPool.GetReward().Init();
 
         for (int i = 0; i < _levelData.SpriteKeys.Count; i++)
         {
             rewardSprites[i] = DataManager.Instance.GetSpriteByKey(_levelData.SpriteKeys[i]);
             amounts[i] = _levelData.Amounts[i];
+            slots[i] = ObjectPoolManager.Instance.uiPool.GetRewardSlot();
+            slots[i].Init(_levelData.SpriteKeys[i], _levelData.Amounts[i]);
         }
 
         //보상 토스트 팝업 띄우기
         ObjectPoolManager.Instance.uiPool.GetReward().Init(rewardSprites, amounts);
-
         GiveReward(); //플레이어한테 보상 지급
 
         //다음 단계, 나가기가 있는 팝업 띄우기
         UIStageResultPopup result = UIManager.Instance.PopupOpen<UIStageResultPopup>();
+
         result.Init(DungeonType.EnhanceDungeon, true, StageManager.Instance.enhanceDungeonLevel,
             () =>
             {
@@ -87,12 +90,28 @@ public class EnhanceDungeonFlow : IStageFlow
 
                 result.Close();
                 LoadingSceneController.LoadScene("1_StageScene");
-            });
+            },
+            slots) ;
+
+
     }
 
     public void OnPlayerDead()
     {
         UIStageResultPopup result = UIManager.Instance.PopupOpen<UIStageResultPopup>();
+
+        Sprite[] rewardSprites = new Sprite[_levelData.SpriteKeys.Count];
+        int[] amounts = new int[_levelData.Amounts.Count];
+        UIRewardSlot[] slots = new UIRewardSlot[_levelData.Amounts.Count];//ObjectPoolManager.Instance.uiPool.GetReward().Init();
+
+        for (int i = 0; i < _levelData.SpriteKeys.Count; i++)
+        {
+            rewardSprites[i] = DataManager.Instance.GetSpriteByKey(_levelData.SpriteKeys[i]);
+            amounts[i] = _levelData.Amounts[i];
+            slots[i] = ObjectPoolManager.Instance.uiPool.GetRewardSlot();
+            slots[i].Init(_levelData.SpriteKeys[i], _levelData.Amounts[i]);
+        }
+
         result.Init(DungeonType.EnhanceDungeon, false, StageManager.Instance.enhanceDungeonLevel,
             () =>
             {
@@ -105,7 +124,8 @@ public class EnhanceDungeonFlow : IStageFlow
                 //나가기 버튼 눌렀을 때
                 result.Close();
                 LoadingSceneController.LoadScene("1_StageScene");
-            });
+            },
+            slots);
     }
 
     public void ResetStage()

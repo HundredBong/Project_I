@@ -26,6 +26,7 @@ public class UIStageResultPopup : UIPopup
 
     private Action _onClickExitButton;
     private WaitForSeconds _wait;
+    private UIRewardSlot[] _rewardSlots;
 
     protected override void Awake()
     {
@@ -33,7 +34,7 @@ public class UIStageResultPopup : UIPopup
         _wait = new WaitForSeconds(1);
     }
 
-    public void Init(DungeonType type, bool isVictory, int stage, Action onClickRetryButton, Action onClickExitButton)
+    public void Init(DungeonType type, bool isVictory, int stage, Action onClickRetryButton, Action onClickExitButton, UIRewardSlot[] slots)
     {
         _popupBackground.color = isVictory ? _victoryColor : _defeatColor;
         _defeatGroup.SetActive(isVictory == false);
@@ -63,6 +64,16 @@ public class UIStageResultPopup : UIPopup
         }
 
         _autoExitCoroutine = StartCoroutine(AutoExitCoroutine());
+
+        for (int i = 0; i < slots.Length; i++)
+        {
+            if (slots[i] != null)
+            {
+                slots[i].transform.SetParent(_resultPrefabRoot, false);
+            }
+        }
+
+        _rewardSlots = slots;
     }
 
     public Transform GetPrefabRoot()
@@ -89,6 +100,15 @@ public class UIStageResultPopup : UIPopup
         {
             StopCoroutine(_autoExitCoroutine);
             _autoExitCoroutine = null;
+        }
+
+        foreach(var slot in _rewardSlots)
+        {
+            if (slot != null)
+            {
+                slot.transform.SetParent(null); 
+                ObjectPoolManager.Instance.uiPool.Return(slot);
+            }
         }
 
         base.Close();
