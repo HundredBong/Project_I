@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -19,14 +20,6 @@ public class UIStageInfoPanel : MonoBehaviour
 
     private void OnEnable()
     {
-        //Debug.Log($"스테이지 매니저가 널일 수 있나 {(StageManager.Instance == null ? "그럴수도 있죵" : "그럴 수는 없어용")}");
-        SubscribeAsync().Forget();
-    }
-
-    private async UniTaskVoid SubscribeAsync()
-    {
-        await UniTask.WaitUntil(() => StageManager.Instance != null);
-
         StageManager.Instance.OnKillUpdated += RefreshKill;
         StageManager.Instance.OnStageChanged += RefreshStage;
         StageManager.Instance.OnBossStageEntered += RefreshBossStage;
@@ -43,7 +36,6 @@ public class UIStageInfoPanel : MonoBehaviour
         giveUpButton.onClick.RemoveAllListeners();
         giveUpButton.onClick.AddListener(OnGiveUpButtonClicked);
     }
-
     private void OnDisable()
     {
         if (StageManager.Instance == null) { return; }
@@ -61,18 +53,12 @@ public class UIStageInfoPanel : MonoBehaviour
     private void Start()
     {
         //각종 텍스트 초기화
-
-        killText.text = $"0 / 100"; 
-        int stage = StageManager.Instance.currentStage;
-        bool canBoss = false;
         stageProgressImage.fillAmount = 0f;
-        RefreshStage(DungeonType.None,stage, canBoss);
         SetLocalizedText();
     }
 
     private void SetLocalizedText()
     {
-        stageText.text = $"{DataManager.Instance.GetLocalizedText("UI_Stage")} {StageManager.Instance.currentStage}";
         goToMaxStageText.text = DataManager.Instance.GetLocalizedText("UI_GoMaxStage");
     }
 
@@ -83,9 +69,10 @@ public class UIStageInfoPanel : MonoBehaviour
         stageProgressImage.fillAmount = Mathf.Min(current / (float)required, 1f);
     }
 
-    private void RefreshStage(DungeonType type,int stage, bool canBoss)
+    private void RefreshStage(DungeonType type, int stage, bool canBoss)
     {
         stageText.text = $"{DataManager.Instance.GetLocalizedText($"UI_{type}")} {stage}";
+        Debug.Log($"타입 : {DataManager.Instance.GetLocalizedText($"UI_{type}")} 스테 : {stage}");
 
         if (type == DungeonType.None)
         {

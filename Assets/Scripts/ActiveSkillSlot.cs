@@ -112,6 +112,28 @@ public class ActiveSkillSlot : MonoBehaviour
         return equippedSkill;
     }
 
+    public void ResetAllCooldowns()
+    {
+        cooldownTotal = 0f;
+        cooldownRemain = 0f;
+        cooldownImage.fillAmount = 0f;
+
+        globalCooldownTotal = 0f;
+        globalCooldownRemain = 0f;
+        isGlobalCooldown = false;
+        globalCooldownImage.fillAmount = 0f;
+
+        if (equippedSkill != null)
+        {
+            equippedSkill.ResetCooldown();
+        }
+
+        if (cooldownText != null)
+        {
+            cooldownText.text = "";
+        }
+    }
+
     private void Update()
     {
         if (cooldownRemain > 0f)

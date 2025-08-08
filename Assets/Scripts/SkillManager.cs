@@ -14,6 +14,8 @@ public class SkillManager : MonoBehaviour
 
     public LayerMask targetMask;
 
+    public Action onRequestResetAllCooldowns;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -195,6 +197,20 @@ public class SkillManager : MonoBehaviour
 
         int requiredCount = data.AwakenRequiredCount[awakenLevel];
         return state.OwnedCount >= requiredCount;
+    }
+
+    public void RequestResetAllCooldowns()
+    {
+        onRequestResetAllCooldowns?.Invoke();
+    }
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            //디버그용, 모든 스킬 쿨타임 초기화
+            RequestResetAllCooldowns();
+        }
     }
 
 

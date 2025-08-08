@@ -41,7 +41,7 @@ public class UIStatusBar : MonoBehaviour
 
     private void Refresh()
     {
-        currentHealthText.text = _stats.health.ToString("F2");
+        currentHealthText.text = Mathf.Max(0, _stats.health).ToString("F2");
         currentExpText.text = _stats.currentExp.ToString("F2");
         currentLevelText.text = $"Lv.{_stats.level}";
 

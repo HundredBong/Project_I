@@ -23,7 +23,6 @@ public class SpawnManager : MonoBehaviour
     public void SpawnEnemiesForCurrentStage(int count)
     {
         int stageId = StageManager.Instance.GetCurrentStage();
-        Debug.Log($"StageId  {stageId}");
         StageData stage = DataManager.Instance.stageDataTable[stageId];
 
         if (stage == null)

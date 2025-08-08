@@ -13,7 +13,7 @@ public class StageManager : MonoBehaviour
 
     //DungeonType.None
     private const float FADE_DURATION = 2f;
-    public int currentStage = 1;
+    public int currentStage;
     public int maxClearedStage;
     public bool[] bossChallengable;
     public bool[] bossDefeated;
@@ -130,6 +130,40 @@ public class StageManager : MonoBehaviour
         return data;
     }
 
+    public DungeonSaveData BuildDungeonSaveData()
+    {
+        Dictionary<DungeonType, int> copy = new Dictionary<DungeonType, int>();
+
+        foreach (var kvp in _dungeonClearedLevelData)
+        {
+            DungeonType type = kvp.Key;
+            int level = kvp.Value;
+
+            copy[type] = level; 
+        }
+
+        DungeonSaveData saveData = new DungeonSaveData
+        {
+            DungeonClearedData = copy
+        };
+
+        return saveData;
+    }
+
+    public void UpdateClearedLevel(DungeonType type, int level)
+    {
+        if (_dungeonClearedLevelData.TryGetValue(type, out int prev))
+        {
+            //이전 레벨보다 인자로 들어온 레벨이 더 높으면 갱신
+            _dungeonClearedLevelData[type] = Mathf.Max(prev, level);
+        }
+        else
+        {
+            //존재하지 않는 타입이면 새로 추가
+            _dungeonClearedLevelData[type] = level;
+        }
+    }
+
     public void ResetStage()
     {
         _stageFlow.ResetStage();
@@ -170,12 +204,12 @@ public class StageManager : MonoBehaviour
 
     public void InvokeKillUpdated(int killCount, int required)
     {
-        OnKillUpdated?.Invoke(killCount, required);
+        OnKillUpdated.Invoke(killCount, required);
     }
 
     public void InvokeStageChanged(DungeonType type, int killCount, bool canBoss)
     {
-        OnStageChanged?.Invoke(type, killCount, canBoss);
+        OnStageChanged.Invoke(type, killCount, canBoss);
     }
 
     public void InvokeBossStageEntered(int stage)

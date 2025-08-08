@@ -210,6 +210,19 @@ public class UIManager : MonoBehaviour
             Debug.LogWarning("[UIManager] fadeImage가 존재하지 않음");
         }
     }
+    public void FadeIn(float duration)
+    {
+        if (_fadeImage != null)
+        {
+            //Debug.Log("페이드 인 실행됨");
+
+            UITweening.FadeIn(_fadeImage, duration);
+        }
+        else
+        {
+            Debug.LogWarning("[UIManager] fadeImage가 존재하지 않음");
+        }
+    }
 
     public void FadeOut(float duration)
     {

@@ -65,4 +65,9 @@ public abstract class SkillBase
         Collider2D[] hitColliders = Physics2D.OverlapCircleAll(owner.transform.position, range, mask);
         return hitColliders.Length > 0;
     }
+
+    public void ResetCooldown()
+    {
+        lastUsedTime = Time.time - skillData.Cooldown;
+    }
 }

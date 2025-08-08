@@ -25,7 +25,7 @@ public class PlayerDeadState : IState
 
     public void OnExit()
     {
-        anim.SetTrigger("Undead");
+        anim?.SetTrigger("Undead");
 
         owner.player.IsDead = false;
     }

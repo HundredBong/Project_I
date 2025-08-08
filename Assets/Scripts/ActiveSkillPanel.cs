@@ -8,6 +8,19 @@ public class ActiveSkillPanel : MonoBehaviour
 {
     [SerializeField] private ActiveSkillSlot[] skillSlots;
 
+    private void OnEnable()
+    {
+        SkillManager.Instance.onRequestResetAllCooldowns += ResetAllCooldowns;
+    }
+
+    private void OnDisable()
+    {
+        if (SkillManager.Instance != null)
+        {
+            SkillManager.Instance.onRequestResetAllCooldowns -= ResetAllCooldowns;
+        }
+    }
+
     private void Start()
     {
         Refresh(SkillManager.Instance.GetEquippedSkills());
@@ -43,5 +56,18 @@ public class ActiveSkillPanel : MonoBehaviour
     public ActiveSkillSlot[] GetSlots()
     {
         return skillSlots;
+    }
+
+    public void ResetAllCooldowns()
+    {
+        foreach (ActiveSkillSlot slot in skillSlots)
+        {
+            if (slot == null || slot.GetEquippedSkill() == null)
+            {
+                continue;
+            }
+
+            slot.ResetAllCooldowns();
+        }
     }
 }

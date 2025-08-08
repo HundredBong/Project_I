@@ -58,6 +58,7 @@ public class UIDungeonInfoPopup : UIPopup
         _positiveButton.onClick.AddListener(OnClickPositiveButton);
         _negetiveButton.onClick.AddListener(OnClickNegativeButton);
         _sweepButton.onClick.AddListener(OnClickSweep);
+        _enterButton.onClick.AddListener(OnClickEnter);
     }
 
     private void OnDisable()
@@ -67,12 +68,14 @@ public class UIDungeonInfoPopup : UIPopup
         _positiveButton.onClick.RemoveListener(OnClickPositiveButton);
         _negetiveButton.onClick.RemoveListener(OnClickNegativeButton);
         _sweepButton.onClick.RemoveListener(OnClickSweep);
+        _enterButton.onClick.RemoveListener(OnClickEnter);
     }
 
     public void Init(DungeonData dungeonData)
     {
         _data = dungeonData;
-
+        _currentLevel = StageManager.Instance.GetMaxClearedLevel(_data.DungeonType);
+        Debug.Log($"current : {_currentLevel}");
         _maxDungeonLevel = DataManager.Instance.GetMaxDungeonLevel(_data.DungeonType);
         _maxClearedLevel = StageManager.Instance.GetMaxClearedLevel(_data.DungeonType);
         _currentLevel = _maxClearedLevel;

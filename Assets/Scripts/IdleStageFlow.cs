@@ -13,6 +13,13 @@ public class IdleStageFlow : IStageFlow
 
     private StageManager _manager;
 
+    private Dictionary<RewardType, PlayerProgressType> _rewardTypeToProgressType = new Dictionary<RewardType, PlayerProgressType>
+    {
+        { RewardType.Diamond, PlayerProgressType.Diamond },
+        { RewardType.SkillGem, PlayerProgressType.SkillGem },
+        { RewardType.EnhanceStone, PlayerProgressType.EnhanceStone }
+    };
+
     public IdleStageFlow(StageManager mamager)
     {
         _manager = mamager;
@@ -24,7 +31,8 @@ public class IdleStageFlow : IStageFlow
         UIManager.Instance.FadeOut(FADE_DURATION / 2);
 
         _manager.InvokeKillUpdated(_killCount, _totalKillsRequired);
-        _manager.InvokeStageChanged(DungeonType.None, _killCount, StageManager.Instance.bossChallengable[StageManager.Instance.currentStage - 1]);
+        _manager.InvokeStageChanged(DungeonType.None, StageManager.Instance.currentStage, StageManager.Instance.bossChallengable[StageManager.Instance.currentStage - 1]);
+        SkillManager.Instance.RequestResetAllCooldowns();
 
         DelayCallManager.Instance.CallLater(FADE_DURATION / 2, () => SpawnManager.Instance.SpawnEnemiesForCurrentStage(_defaultSpawnCount));
     }
@@ -93,6 +101,10 @@ public class IdleStageFlow : IStageFlow
     {
         _manager.currentStage = Mathf.Max(_manager.currentStage - 1, 1);
         _manager.GoToStage(_manager.currentStage);
+
+
+        GameManager.Instance.statSaver.SaveStageDataAsync(_manager.BuildStageSaveData()).Forget();
+        GameManager.Instance.statSaver.SavePlayerProgressDataAsync(GameManager.Instance.stats.GetProgressSaveData()).Forget();
     }
 
     public void ResetStage()
@@ -122,6 +134,7 @@ public class IdleStageFlow : IStageFlow
 
         DelayCallManager.Instance.CallLater(FADE_DURATION / 2f, () =>
         {
+            SkillManager.Instance.RequestResetAllCooldowns();
             _manager.InvokeBossStageEntered(_manager.currentStage);
         });
 
@@ -136,19 +149,22 @@ public class IdleStageFlow : IStageFlow
     {
         StageData stage = DataManager.Instance.stageDataTable[_manager.currentStage];
 
-        switch (stage.RewardType)
-        {
-            case RewardType.Diamond:
-                GameManager.Instance.stats.Diamond += stage.BossRewardAmount;
-                break;
-            case RewardType.SkillGem:
-                GameManager.Instance.stats.skillGem += stage.BossRewardAmount;
-                break;
-            case RewardType.EnhanceStone:
-                GameManager.Instance.stats.enhanceStone += stage.BossRewardAmount;
-                break;
-            default:
-                break;
-        }
+        //switch (stage.RewardType)
+        //{
+        //    case RewardType.Diamond:
+        //        GameManager.Instance.stats.Diamond += stage.BossRewardAmount;
+        //        break;
+        //    case RewardType.SkillGem:
+        //        GameManager.Instance.stats.skillGem += stage.BossRewardAmount;
+        //        break;
+        //    case RewardType.EnhanceStone:
+        //        GameManager.Instance.stats.enhanceStone += stage.BossRewardAmount;
+        //        break;
+        //    default:
+        //        break;
+        //}
+
+        GameManager.Instance.stats.AddCurrency(_rewardTypeToProgressType[stage.RewardType], stage.BossRewardAmount);
+        GameManager.Instance.statSaver.SavePlayerProgressDataAsync(GameManager.Instance.stats.GetProgressSaveData()).Forget();
     }
 }

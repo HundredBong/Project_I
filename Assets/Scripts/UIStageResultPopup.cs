@@ -82,4 +82,15 @@ public class UIStageResultPopup : UIPopup
         }
         _onClickExitButton?.Invoke();
     }
+
+    public override void Close()
+    {
+        if (_autoExitCoroutine != null)
+        {
+            StopCoroutine(_autoExitCoroutine);
+            _autoExitCoroutine = null;
+        }
+
+        base.Close();
+    }
 }
