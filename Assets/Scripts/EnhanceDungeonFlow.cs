@@ -11,6 +11,7 @@ public class EnhanceDungeonFlow : IStageFlow
     private int _requiredCount = 50; //스테이지 클리어에 필요한 킬수 및 스폰할 몬스터 수
 
     private const float FADE_DURATION = 2f;
+    private bool _isCleared = false; //스테이지 클리어 여부
 
     public EnhanceDungeonFlow(StageManager manager)
     {
@@ -21,6 +22,8 @@ public class EnhanceDungeonFlow : IStageFlow
 
     public void Start()
     {
+        _isCleared = false;
+
         _killCount = 0;
         GameManager.Instance.player.transform.position = Vector2.zero;
         UIManager.Instance.FadeOut(FADE_DURATION / 2);
@@ -51,7 +54,13 @@ public class EnhanceDungeonFlow : IStageFlow
 
     public void OnStageClear()
     {
-        //TODO:저장
+        //중복 클리어 방지
+        if (_isCleared)
+        {
+            return;
+        }
+
+        _isCleared = true; 
         StageManager.Instance.UpdateClearedLevel(DungeonType.EnhanceDungeon, StageManager.Instance.enhanceDungeonLevel + 1);
 
         GameManager.Instance.statSaver.SaveDungeonClearedData(StageManager.Instance.BuildDungeonSaveData()).Forget();
@@ -75,7 +84,9 @@ public class EnhanceDungeonFlow : IStageFlow
         //다음 단계, 나가기가 있는 팝업 띄우기
         UIStageResultPopup result = UIManager.Instance.PopupOpen<UIStageResultPopup>();
 
-        result.Init(DungeonType.EnhanceDungeon, true, StageManager.Instance.enhanceDungeonLevel,
+        if (GameManager.Instance.player.IsDead == false)
+        {
+            result.Init(DungeonType.EnhanceDungeon, true, StageManager.Instance.enhanceDungeonLevel,
             () =>
             {
                 //다음 단계 버튼 눌렀을 때
@@ -91,9 +102,25 @@ public class EnhanceDungeonFlow : IStageFlow
                 result.Close();
                 LoadingSceneController.LoadScene("1_StageScene");
             },
-            slots) ;
-
-
+            slots);
+        }
+        else
+        {
+            result.Init(DungeonType.EnhanceDungeon, false, StageManager.Instance.enhanceDungeonLevel,
+            () =>
+            {
+                //재시도버튼 눌렀을 때
+                result.Close();
+                ResetStage();
+            },
+            () =>
+            {
+                //나가기 버튼 눌렀을 때
+                result.Close();
+                LoadingSceneController.LoadScene("1_StageScene");
+            },
+            slots);
+        }
     }
 
     public void OnPlayerDead()
@@ -143,7 +170,14 @@ public class EnhanceDungeonFlow : IStageFlow
 
     public void GiveReward()
     {
+        for (int i = 0; i < _levelData.Currencies.Count; i++)
+        {
+            PlayerProgressType currency = _levelData.Currencies[i];
+            int amount = _levelData.Amounts[i];
 
+            GameManager.Instance.stats.AddCurrency(currency, amount);
+            Debug.Log($"지급한 보상 : {currency} {amount}");
+        }
     }
 
     public void OnTimeOut()

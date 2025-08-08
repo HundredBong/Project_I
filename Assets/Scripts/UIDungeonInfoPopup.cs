@@ -91,7 +91,7 @@ public class UIDungeonInfoPopup : UIPopup
     {
         _currentTicket = GameManager.Instance.stats.GetCurrency(_data.TicketType);
 
-        _dungeonNameText.text = DataManager.Instance.GetLocalizedText($"UI_{_data.NameKey}");
+        _dungeonNameText.text = DataManager.Instance.GetLocalizedText($"{_data.NameKey}");
         _dungeonLevelText.text = $"{_currentLevel}{DataManager.Instance.GetLocalizedText("UI_Stage")}";
         _requiredTicketText.text = DataManager.Instance.GetLocalizedText($"UI_RequiredTicket");
         _entryTicketText.text = DataManager.Instance.GetLocalizedText($"UI_{_data.TicketType}");

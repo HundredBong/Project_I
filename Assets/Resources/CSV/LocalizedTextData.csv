@@ -137,3 +137,14 @@ HUD_Dungeon,던전,Dungeon
 UI_Dungeon,던전,Dungeon
 UI_EnhanceDungeonTicket,장비 던전 입장권 ,Enhance Dungeon Ticket
 UI_SkillDungeonTicket,스킬 던전 입장권,Skill Dungeon Ticket
+UI_None,스테이지,Stage
+UI_EnhanceDungeonName,장비 제련소 ,Gear Forge
+UI_RequiredTicket,필요한 입장권,Required Ticket
+UI_ClearReward,클리어 보상,Clear Reward
+UI_Sweep,소탕하기,Sweep
+UI_Enter,입장하기,Enter
+UI_EnhanceDungeon,장비 제련소 ,Gear Forge
+UI_NextStage,다음 단계 도전하기,Challenge Next Stage 
+UI_Exit,나가기,Exit
+UI_AutoExit,초후 자동으로 돌아갑니다,Seconds Until Auto Return 
+UI_Retry,다시 도전,Retry

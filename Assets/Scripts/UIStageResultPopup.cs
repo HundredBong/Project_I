@@ -106,7 +106,7 @@ public class UIStageResultPopup : UIPopup
         {
             if (slot != null)
             {
-                slot.transform.SetParent(null); 
+                slot.transform.SetParent(ObjectPoolManager.Instance.uiPool.transform); 
                 ObjectPoolManager.Instance.uiPool.Return(slot);
             }
         }

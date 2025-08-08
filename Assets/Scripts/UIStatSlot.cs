@@ -70,6 +70,7 @@ public class UIStatSlot : MonoBehaviour
         else
         {
             Debug.LogWarning("스탯 포인트 0임");
+            ObjectPoolManager.Instance.uiPool.GetMessage().Init("UI_NoStatPoint");
         }
     }
 

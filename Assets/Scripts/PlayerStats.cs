@@ -236,7 +236,7 @@ public class PlayerStats : MonoBehaviour
         }
 
         Gold -= totalCost;
-        upgradeLevels[type] -= finalAmount;
+        upgradeLevels[type] += finalAmount;
 
         RecalculateStats();
         GameManager.Instance.statSaver.RequestSave(GetProgressSaveData());

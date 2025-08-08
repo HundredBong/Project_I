@@ -55,6 +55,7 @@ public class UIGoldUpgradeSlot : MonoBehaviour
         int upgradeValue = stats.GetUpgradeLevel(upgradeType);
 
         int amount = StatUpgradeAmount.statSlotAmount;
+        Debug.Log($"amount : {amount}");    
 
         float totalPrice = 0f;
         for (int i = 0; i < amount; i++)

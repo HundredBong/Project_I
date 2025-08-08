@@ -53,6 +53,7 @@ public class UIItemInfoPopup : UIPopup
     [SerializeField] private TextMeshProUGUI ownedValueText;
 
     [Space(20)]
+    [SerializeField] private Image upgradeMaterialImage;
     [SerializeField] private TextMeshProUGUI upgradeMaterialText;
     [SerializeField] private TextMeshProUGUI upgradePriceText;
     [SerializeField] private Button upgradeButton;
@@ -120,7 +121,7 @@ public class UIItemInfoPopup : UIPopup
         this.onUpgraded = onUpgraded;
         this.onSynthesisComplete = onSynthesisComplete;
 
-
+        upgradeMaterialImage.sprite = DataManager.Instance.GetSpriteByKey("UI_EnhanceStone");
         upgradeTypeButtonText.text = DataManager.Instance.GetLocalizedText("UI_UpgradeType");
         upgradeTypeButton.onClick.AddListener(ShowUpgradePanel);
         synthesisTypeButtonText.text = DataManager.Instance.GetLocalizedText("UI_Synthesis");
