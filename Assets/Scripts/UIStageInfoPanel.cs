@@ -17,12 +17,22 @@ public class UIStageInfoPanel : MonoBehaviour
     [SerializeField] private Button stageSelectButton;
     [SerializeField] private Button giveUpButton;
     [SerializeField] private Image stageProgressImage;
+    [SerializeField] private GameObject timerGroup;
+    [SerializeField] private TextMeshProUGUI timerText;
+    [SerializeField] private Image timerImage;
+
+    private Coroutine _timerCoroutine;
+
+    private const float TIMER_DURATION = 30f;
 
     private void OnEnable()
     {
+        if (StageManager.Instance == null) { return; }
+
         StageManager.Instance.OnKillUpdated += RefreshKill;
         StageManager.Instance.OnStageChanged += RefreshStage;
         StageManager.Instance.OnBossStageEntered += RefreshBossStage;
+        StageManager.Instance.stopTimer += StopTimer;
 
         goToMaxStageButton.onClick.RemoveAllListeners();
         goToMaxStageButton.onClick.AddListener(OnMaxStageButtonClicked);
@@ -36,6 +46,7 @@ public class UIStageInfoPanel : MonoBehaviour
         giveUpButton.onClick.RemoveAllListeners();
         giveUpButton.onClick.AddListener(OnGiveUpButtonClicked);
     }
+
     private void OnDisable()
     {
         if (StageManager.Instance == null) { return; }
@@ -43,6 +54,7 @@ public class UIStageInfoPanel : MonoBehaviour
         StageManager.Instance.OnKillUpdated -= RefreshKill;
         StageManager.Instance.OnStageChanged -= RefreshStage;
         StageManager.Instance.OnBossStageEntered -= RefreshBossStage;
+        StageManager.Instance.stopTimer -= StopTimer;
 
         goToMaxStageButton.onClick.RemoveAllListeners();
         bossChallengeButton.onClick.RemoveAllListeners();
@@ -73,6 +85,7 @@ public class UIStageInfoPanel : MonoBehaviour
     {
         stageText.text = $"{DataManager.Instance.GetLocalizedText($"UI_{type}")} {stage}";
         Debug.Log($"타입 : {DataManager.Instance.GetLocalizedText($"UI_{type}")} 스테 : {stage}");
+        StopTimer();
 
         if (type == DungeonType.None)
         {
@@ -107,6 +120,7 @@ public class UIStageInfoPanel : MonoBehaviour
             bossChallengeButton.gameObject.SetActive(false);
             goToMaxStageButton.gameObject.SetActive(false);
             stageSelectButton.gameObject.SetActive(false);
+            StartTimer();
         }
     }
 
@@ -119,6 +133,7 @@ public class UIStageInfoPanel : MonoBehaviour
         killText.text = "";
         stageText.text = $"BOSS {currentStage}";
         stageProgressImage.fillAmount = 1f;
+        StartTimer();
     }
 
 
@@ -140,6 +155,44 @@ public class UIStageInfoPanel : MonoBehaviour
     private void OnGiveUpButtonClicked()
     {
         StageManager.Instance.ResetStage();
+    }
+
+    private void StartTimer()
+    {
+        timerGroup.SetActive(true);
+        timerImage.fillAmount = 0f;
+
+        if (_timerCoroutine != null)
+        {
+            StopCoroutine(_timerCoroutine);
+        }
+
+        _timerCoroutine = StartCoroutine(TimerCoroutine());
+    }
+
+    private void StopTimer()
+    {
+        if (_timerCoroutine != null)
+        {
+            StopCoroutine(_timerCoroutine);
+            _timerCoroutine = null;
+        }
+
+        timerGroup.SetActive(false);
+    }
+
+    private IEnumerator TimerCoroutine()
+    {
+        float elapsed = 0f;
+        while (elapsed < TIMER_DURATION)
+        {
+            elapsed += Time.deltaTime;
+            timerImage.fillAmount = Mathf.Clamp01(elapsed / TIMER_DURATION);
+            timerText.text = Mathf.Max(0, TIMER_DURATION - elapsed).ToString("F1");
+            yield return null;
+        }
+
+        StageManager.Instance.OnTimeOut();
     }
 }
 

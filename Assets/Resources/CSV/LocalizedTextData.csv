@@ -148,3 +148,5 @@ UI_NextStage,다음 단계 도전하기,Challenge Next Stage
 UI_Exit,나가기,Exit
 UI_AutoExit,초후 자동으로 돌아갑니다,Seconds Until Auto Return 
 UI_Retry,다시 도전,Retry
+UI_EarnedReward,획득한 보상,Rewards Earned 
+UI_NoStatPoint,스탯 포인트가 부족합니다.,No Stat Points Available

@@ -40,6 +40,7 @@ public class IdleStageFlow : IStageFlow
     public void OnEnemyDead()
     {
         _killCount++;
+        StageManager.Instance.StopTimer();
 
         if (_killCount < _totalKillsRequired && _killCount % _spawnBatchSize == 0)
         {
@@ -56,6 +57,8 @@ public class IdleStageFlow : IStageFlow
 
     public void OnBossDead()
     {
+        StageManager.Instance.StopTimer();
+
         _manager.bossDefeated[_manager.currentStage - 1] = true;
         GiveReward();
         _manager.maxClearedStage = Mathf.Max(_manager.maxClearedStage, _manager.currentStage);
@@ -68,6 +71,8 @@ public class IdleStageFlow : IStageFlow
 
     public void OnStageClear()
     {
+        StageManager.Instance.StopTimer();
+
         bool canBose = _manager.bossChallengable[_manager.currentStage - 1];
         bool climbing = _manager.currentStage > _manager.maxClearedStage;
 
@@ -94,11 +99,13 @@ public class IdleStageFlow : IStageFlow
 
     public void OnTimeOut()
     {
-
+        OnPlayerDead();
     }
 
     public void OnPlayerDead()
     {
+        StageManager.Instance.StopTimer();
+
         _manager.currentStage = Mathf.Max(_manager.currentStage - 1, 1);
         _manager.GoToStage(_manager.currentStage);
 

@@ -54,6 +54,8 @@ public class EnhanceDungeonFlow : IStageFlow
 
     public void OnStageClear()
     {
+        StageManager.Instance.StopTimer();
+
         //중복 클리어 방지
         if (_isCleared)
         {
@@ -125,6 +127,9 @@ public class EnhanceDungeonFlow : IStageFlow
 
     public void OnPlayerDead()
     {
+        StageManager.Instance.StopTimer();
+        ObjectPoolManager.Instance.enemyPool.ReturnAllEnemies();
+
         UIStageResultPopup result = UIManager.Instance.PopupOpen<UIStageResultPopup>();
 
         Sprite[] rewardSprites = new Sprite[_levelData.SpriteKeys.Count];
@@ -182,6 +187,6 @@ public class EnhanceDungeonFlow : IStageFlow
 
     public void OnTimeOut()
     {
-
+        OnPlayerDead();
     }
 }
