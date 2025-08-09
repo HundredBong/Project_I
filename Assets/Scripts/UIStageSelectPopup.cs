@@ -53,7 +53,7 @@ public class UIStageSelectPopup : UIPopup
     private void OnDisable()
     {
         _confirmButton.onClick.RemoveAllListeners();
-        LanguageManager.OnLanguageChanged += SetLocallizedText;
+        LanguageManager.OnLanguageChanged -= SetLocallizedText;
     }
 
     private void OnClickConfirmButton()
@@ -65,7 +65,7 @@ public class UIStageSelectPopup : UIPopup
                 Debug.LogWarning("[UIStageSelectPopup] 잘못된 스테이지 접근");
                 return;
             }
-            StageManager.Instance.GoToStage(stage);
+            StageManager.Instance.GoToStage(stage, StageMoveType.Manual);
             Close();
         }
         else

@@ -140,7 +140,7 @@ public class StageManager : MonoBehaviour
             DungeonType type = kvp.Key;
             int level = kvp.Value;
 
-            copy[type] = level; 
+            copy[type] = level;
         }
 
         DungeonSaveData saveData = new DungeonSaveData
@@ -180,9 +180,10 @@ public class StageManager : MonoBehaviour
         return currentStage;
     }
 
-    public void GoToStage(int stage)
+    public void GoToStage(int stage, StageMoveType type)
     {
-        if (stage == maxClearedStage && bossDefeated[stage - 1] == true)
+
+        if (type == StageMoveType.Clear && stage == maxClearedStage && bossDefeated[stage - 1])
         {
             stage++;
         }

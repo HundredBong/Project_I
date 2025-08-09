@@ -45,3 +45,5 @@ public enum ShopPriceType { Diamond, SkillGem, Ad, Cash }
 public enum ShopLimitType { None, Daily, Weekly, Monthly, Account }
 
 public enum DungeonType { None = -1, EnhanceDungeon, SkillDungeon }
+
+public enum StageMoveType { Manual, Dead, Clear }

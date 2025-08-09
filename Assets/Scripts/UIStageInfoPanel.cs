@@ -144,7 +144,7 @@ public class UIStageInfoPanel : MonoBehaviour
 
     private void OnMaxStageButtonClicked()
     {
-        StageManager.Instance.GoToStage(StageManager.Instance.maxClearedStage);
+        StageManager.Instance.GoToStage(StageManager.Instance.maxClearedStage, StageMoveType.Clear);
     }
 
     private void OnStageSelectButtonClicked()

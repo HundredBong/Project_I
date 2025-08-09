@@ -62,7 +62,7 @@ public class IdleStageFlow : IStageFlow
         _manager.bossDefeated[_manager.currentStage - 1] = true;
         GiveReward();
         _manager.maxClearedStage = Mathf.Max(_manager.maxClearedStage, _manager.currentStage);
-        _manager.GoToStage(_manager.currentStage + 1);
+        _manager.GoToStage(_manager.currentStage + 1, StageMoveType.Clear);
 
 
         GameManager.Instance.statSaver.SaveStageDataAsync(_manager.BuildStageSaveData()).Forget();
@@ -107,7 +107,7 @@ public class IdleStageFlow : IStageFlow
         StageManager.Instance.StopTimer();
 
         _manager.currentStage = Mathf.Max(_manager.currentStage - 1, 1);
-        _manager.GoToStage(_manager.currentStage);
+        _manager.GoToStage(_manager.currentStage, StageMoveType.Dead);
 
 
         GameManager.Instance.statSaver.SaveStageDataAsync(_manager.BuildStageSaveData()).Forget();
@@ -127,7 +127,7 @@ public class IdleStageFlow : IStageFlow
             GameManager.Instance.player.StateMachine.ChangeState(StateType.Idle);
             SpawnManager.Instance.SpawnEnemiesForCurrentStage(_defaultSpawnCount);
 
-            _manager.InvokeStageChanged(DungeonType.None, _manager.currentStage, _manager.bossChallengable[_manager.currentStage]);
+            _manager.InvokeStageChanged(DungeonType.None, _manager.currentStage, _manager.bossChallengable[_manager.currentStage - 1]);
             _manager.InvokeKillUpdated(_killCount, _totalKillsRequired);
         });
     }
