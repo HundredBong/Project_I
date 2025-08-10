@@ -17,7 +17,7 @@ public class SkillDungeonFlow : IStageFlow
     {
         _manager = manager;
 
-        _levelData = DataManager.Instance.GetDungeonLevelData(DungeonType.EnhanceDungeon, StageManager.Instance.enhanceDungeonLevel);
+        _levelData = DataManager.Instance.GetDungeonLevelData(DungeonType.SkillDungeon, StageManager.Instance.skillDungeonLevel);
     }
 
     public void Start()
@@ -29,7 +29,7 @@ public class SkillDungeonFlow : IStageFlow
         UIManager.Instance.FadeOut(FADE_DURATION / 2);
 
         _manager.InvokeKillUpdated(_killCount, _requiredCount);
-        _manager.InvokeStageChanged(DungeonType.EnhanceDungeon, StageManager.Instance.enhanceDungeonLevel, false);
+        _manager.InvokeStageChanged(DungeonType.SkillDungeon, StageManager.Instance.skillDungeonLevel, false);
         SkillManager.Instance.RequestResetAllCooldowns();
 
         int currentLevel = StageManager.Instance.skillDungeonLevel;

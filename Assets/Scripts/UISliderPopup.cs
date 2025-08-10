@@ -23,8 +23,9 @@ public class UISliderPopup : UIPopup
 
 
     private Action<int> _onConfirm;
+    private Action _onCancel;
 
-    public void Init(string iconKey, string itemNameKey, int maxValue, Action<int> onConfirm,
+    public void Init(string iconKey, string itemNameKey, int maxValue, Action<int> onConfirm, Action onCancel = null,
         string contentText = "UI_PurchaseMessage", string confirmText = "UI_Confirm", string cancelText = "UI_Cancel")
     {
         _icon.sprite = DataManager.Instance.GetSpriteByKey(iconKey);
@@ -38,6 +39,7 @@ public class UISliderPopup : UIPopup
         _slider.value = 1;
 
         _onConfirm = onConfirm;
+        _onCancel = onCancel;
 
         UpdateCountText();
 
@@ -134,6 +136,8 @@ public class UISliderPopup : UIPopup
     public override void Close()
     {
         _onConfirm = null;
+        _onCancel?.Invoke();
+        _onCancel = null;
         _slider.onValueChanged.RemoveAllListeners();
         _positiveButton.onClick.RemoveAllListeners();
         _negativeButton.onClick.RemoveAllListeners();

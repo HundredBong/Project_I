@@ -87,6 +87,7 @@ public class StageManager : MonoBehaviour
         {
             DungeonType.None => new IdleStageFlow(this),
             DungeonType.EnhanceDungeon => new EnhanceDungeonFlow(this),
+            DungeonType.SkillDungeon => new SkillDungeonFlow(this),
             _ => null
         };
     }
@@ -201,7 +202,7 @@ public class StageManager : MonoBehaviour
 
     public int GetMaxClearedLevel(DungeonType type)
     {
-        return _dungeonClearedLevelData[type];
+        return Mathf.Max(1,_dungeonClearedLevelData[type]);
     }
 
     public void InvokeKillUpdated(int killCount, int required)

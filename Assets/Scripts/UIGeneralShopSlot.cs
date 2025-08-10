@@ -32,6 +32,8 @@ public class UIGeneralShopSlot : MonoBehaviour
         { ShopPriceType.SkillGem, PlayerProgressType.SkillGem },
     };
 
+    private bool _isClicking;
+
     private void OnEnable()
     {
         LanguageManager.OnLanguageChanged += Refresh;
@@ -80,27 +82,15 @@ public class UIGeneralShopSlot : MonoBehaviour
         soldOutObject.SetActive(isSoldOut);
         purchaseButton.interactable = !isSoldOut;
 
-        int currentCount = 0;
-        ShopPurchaseEntry entry = GameManager.Instance.ShopManager.GetPurchaseEntry(_data.ShopId);
-
-        currentCount = entry.PurchaseCount;
-
-        bool isReset = false;
-
-        if (string.IsNullOrEmpty(entry.LastPurchased) == false)
+        int used = 0;
+        if(_data.LimitType != ShopLimitType.None)
         {
-            if (DateTime.TryParse(entry.LastPurchased, out DateTime lastPurchasedTime))
-            {
-                isReset = GameManager.Instance.ShopManager.IsLimitReset(lastPurchasedTime, _data.LimitType);
-                if (isReset)
-                {
-                    currentCount = 0;
-                }
-            }
+            int remaining = GameManager.Instance.ShopManager.GetRemainingForLimit(_data.ShopId, _data.LimitType, _data.PurchaseLimit);
+            used = Mathf.Clamp(_data.PurchaseLimit - remaining, 0, _data.PurchaseLimit);
         }
 
         itemNameText.text = $"{DataManager.Instance.GetLocalizedText(_data.NameKey)} {_data.RewardCount}{DataManager.Instance.GetLocalizedText("UI_EA")}";
-        itemLimitText.text = $"{currentCount} / {_data.PurchaseLimit}";
+        itemLimitText.text = $"{used} / {_data.PurchaseLimit}";
         itemPriceText.text = _data.PriceAmount.ToString();
         itemSoldOutText.text = $"{DataManager.Instance.GetLocalizedText($"Shop_SoldOut")}";
 
@@ -128,75 +118,118 @@ public class UIGeneralShopSlot : MonoBehaviour
             }
         }
 
-        itemPurchasedText.text = $"{limitType} {currentCount} / {_data.PurchaseLimit}";
+        itemPurchasedText.text = $"{limitType} {used} / {_data.PurchaseLimit}";
     }
 
     public void OnClickPurchaseButton()
     {
-        //0. 구매 가능한지 검사
-        //1. Data.PriceType에 따라 재화량 감소
-        //2. RewardType에 따라 분기 작성
-        //4. 현재 구매 제한 횟수 증가
-
-        if (_data.PriceType == ShopPriceType.Ad)
+        if (_isClicking)
         {
-            //광고일시 리턴
             return;
         }
 
-        //재화가 충분한지 검사
-        PlayerProgressType progress = _priceToProgress[_data.PriceType];
-        bool hasEnoughCurrency = GameManager.Instance.stats.HasEnoughCurrency(progress, _data.PriceAmount);
+        _isClicking = true;
 
-        //충분하다면 재화 차감 시도
-        if (hasEnoughCurrency)
+
+        if (_data.PriceType == ShopPriceType.Ad || _data.PriceType == ShopPriceType.Cash)
         {
-            int priceAmount = _data.PriceAmount;
-            int max = GetMaxAmount(progress, priceAmount);
-            Debug.Log($"MAX : {max}, amount : {priceAmount}");
+            _isClicking = false;
+            return;
+        }
 
-            UIManager.Instance.PopupOpen<UISliderPopup>().Init(_data.IconKey, _data.NameKey, max, (int selectedCount) =>
+        //제한 초과 검사
+        if (GameManager.Instance.ShopManager.IsLimitExceeded(_data.ShopId, _data.LimitType, _data.PurchaseLimit))
+        {
+            ObjectPoolManager.Instance.uiPool.GetMessage().Init("Warning_SoldOut");
+            _isClicking = false;
+            return;
+        }
+
+        //매핑된 재화가 있는지 검사
+        if (_priceToProgress.TryGetValue(_data.PriceType, out PlayerProgressType progress) == false)
+        {
+            Debug.LogWarning($"[ShopSlot] PriceType 매핑 실패: {_data.PriceType}");
+            _isClicking = false;
+            return;
+        }
+
+        //최대 구매 가능 개수 계산
+        int max = GetMaxAmount(progress, _data.PriceAmount);
+
+        if (max <= 0)
+        {
+            ObjectPoolManager.Instance.uiPool.GetMessage().Init("Warning_NotPurchasable");
+            _isClicking = false;
+            return;
+        }
+
+        UIManager.Instance.PopupOpen<UISliderPopup>().Init(_data.IconKey, _data.NameKey, max, (int selectedCount) =>
+        {
+            //한 번 더 계산
+            int freshMax = GetMaxAmount(progress, _data.PriceAmount);
+
+            //선택한 개수가 최대 구매 가능 개수를 초과하지 않도록 클램핑
+            if (selectedCount > freshMax)
             {
-                int totalPrice = selectedCount * _data.PriceAmount;
+                selectedCount = freshMax;
+            }
 
-                if (TrySpendCurrency(_data.PriceType, totalPrice))
-                {
-                    //차감됐다면 보상 지급 및 UI 새로고침
-                    GiveReward(_data.RewardType, selectedCount);
-                    GameManager.Instance.ShopManager.UpdatePurchase(_data.ShopId, selectedCount);
-                    ObjectPoolManager.Instance.uiPool.GetReward().Init(_data.IconKey, selectedCount);
-                    Refresh();
-                }
-            });
-        }
-        else
-        {
-            ObjectPoolManager.Instance.uiPool.GetMessage().Init("Warning_NotEnoughCurrency");
-            return;
-        }
+            if (selectedCount <= 0)
+            {
+                _isClicking = false;
+                return;
+            }
+
+            if (GameManager.Instance.ShopManager.IsLimitExceeded(_data.ShopId, _data.LimitType, _data.PurchaseLimit))
+            {
+                ObjectPoolManager.Instance.uiPool.GetMessage().Init("Warning_SoldOut");
+                _isClicking = false;
+                Refresh();
+                return;
+            }
+
+            int totalPrice = selectedCount * _data.PriceAmount;
+
+            if (TrySpendCurrency(_data.PriceType, totalPrice))
+            {
+                GiveReward(_data.RewardType, selectedCount);
+                GameManager.Instance.ShopManager.UpdatePurchase(_data.ShopId, _data.LimitType, selectedCount);
+                ObjectPoolManager.Instance.uiPool.GetReward().Init(_data.IconKey, selectedCount);
+            }
+            else
+            {
+                ObjectPoolManager.Instance.uiPool.GetMessage().Init("Warning_NotEnoughCurrency");
+            }
+
+            _isClicking = false;
+            Refresh();
+        },
+        () =>
+        { 
+            //팝업 닫을 때
+            _isClicking = false; 
+        });
     }
 
     private int GetMaxAmount(PlayerProgressType progress, int priceAmount)
     {
+        if (priceAmount <= 0)
+        {
+            return 0;
+        }
+
+        //내 다이아로 몇개를 살 수 있는지 계산함
         int progressAmount = (int)GameManager.Instance.stats.GetProgress(progress);
         int maxCurrency = progressAmount / priceAmount;
 
-        int currentCount = 0;
+        //슬롯의 리미트타입이 None이면 무제한으로 구매,
+        //그 외에는 ShopManager를 통해 남은 구매 가능 횟수 검사
+        int remainingLimit = (_data.LimitType == ShopLimitType.None) ? int.MaxValue : GameManager.Instance.ShopManager.GetRemainingForLimit(_data.ShopId, _data.LimitType, _data.PurchaseLimit);
 
-        ShopPurchaseEntry entry = GameManager.Instance.ShopManager.GetPurchaseEntry(_data.ShopId);
+        //남은 횟수와 최대 구매 가능 횟수 중 작은 값을 선택후 음수 방지 처리
+        int result = Mathf.Max(0, Mathf.Min(maxCurrency, remainingLimit));
 
-        currentCount = entry.PurchaseCount;
-
-        if (GameManager.Instance.ShopManager.IsLimitExceeded(_data.ShopId, _data.LimitType, _data.PurchaseLimit))
-        {
-            currentCount = 0;
-        }
-
-        int maxLimit = _data.PurchaseLimit - currentCount;
-
-        Debug.Log($"MaxCurrency: {maxCurrency}, MaxLimit: {maxLimit}, ProgressAMount : {progressAmount} ,currentCount : {currentCount}, bool : {GameManager.Instance.ShopManager.IsLimitExceeded(_data.ShopId, _data.LimitType, _data.PurchaseLimit)} ");
-
-        return Mathf.Max(0, Mathf.Min(maxCurrency, maxLimit));
+        return result;
     }
 
     private bool TrySpendCurrency(ShopPriceType priceType, int amount)

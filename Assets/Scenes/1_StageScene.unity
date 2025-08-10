@@ -7430,7 +7430,7 @@ GameObject:
   - component: {fileID: 266123445}
   - component: {fileID: 266123446}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: Slider Popup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7524,7 +7524,7 @@ MonoBehaviour:
   _slider: {fileID: 1645642566}
   _contentText: {fileID: 1020303953}
   _countText: {fileID: 1064961540}
-  _negativeButton: {fileID: 1914713113}
+  _negativeButton: {fileID: 1317872599}
   _positiveButton: {fileID: 1715531367}
   _confirmButton: {fileID: 331067316}
   _cancelButton: {fileID: 1914713113}
@@ -35801,7 +35801,7 @@ GameObject:
   - component: {fileID: 1464309753}
   - component: {fileID: 1464309752}
   m_Layer: 5
-  m_Name: Slider Popup
+  m_Name: Slider Popu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

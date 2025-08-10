@@ -665,8 +665,12 @@ public class SummonProgressData
 [System.Serializable]
 public class ShopPurchaseEntry
 {
-    public int PurchaseCount;
-    public string LastPurchased;
+    public int PurchaseCount; //누적 총합
+
+    public int PeriodCount; //현재 기간 구매 수
+    public string WindowKey; //기간 키
+
+    public string LastPurchased; //마지막 구매 시간, ISO 8601 형식으로 저장
 }
 
 [System.Serializable]
