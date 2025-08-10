@@ -42,4 +42,5 @@ public class UIPool : GenericPoolManager<PooledUI>
     {
         return base.Get(rewardSlotPrebfab) as UIRewardSlot; 
     }
+
 }

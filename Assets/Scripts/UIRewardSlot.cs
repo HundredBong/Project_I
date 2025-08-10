@@ -12,6 +12,8 @@ public class UIRewardSlot : PooledUI
 
     public void Init(string spriteKey, int amount)
     {
+        DontDestroyOnLoad(gameObject);
+
         _amountText.text = amount.ToString("N0");
         rewardIcon.sprite = DataManager.Instance.GetSpriteByKey(spriteKey);
     }

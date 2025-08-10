@@ -33,9 +33,11 @@ public class EnhanceDungeonFlow : IStageFlow
         _manager.InvokeStageChanged(DungeonType.EnhanceDungeon, StageManager.Instance.enhanceDungeonLevel, false);
         SkillManager.Instance.RequestResetAllCooldowns();
 
+        int currentLevel = StageManager.Instance.enhanceDungeonLevel;
+
         DelayCallManager.Instance.CallLater(FADE_DURATION / 2, () =>
         {
-            SpawnManager.Instance.SpawnEnemiesForEnhanceDungeon(_requiredCount);
+            SpawnManager.Instance.SpawnEnemiesForDungeon(_requiredCount, DungeonType.EnhanceDungeon, currentLevel);
         });
     }
 
@@ -57,12 +59,12 @@ public class EnhanceDungeonFlow : IStageFlow
         StageManager.Instance.StopTimer();
 
         //중복 클리어 방지
-        if (_isCleared)
+        if (_isCleared || GameManager.Instance.player.IsDead)
         {
             return;
         }
 
-        _isCleared = true; 
+        _isCleared = true;
         StageManager.Instance.UpdateClearedLevel(DungeonType.EnhanceDungeon, StageManager.Instance.enhanceDungeonLevel + 1);
 
         GameManager.Instance.statSaver.SaveDungeonClearedData(StageManager.Instance.BuildDungeonSaveData()).Forget();
@@ -82,47 +84,34 @@ public class EnhanceDungeonFlow : IStageFlow
         //보상 토스트 팝업 띄우기
         ObjectPoolManager.Instance.uiPool.GetReward().Init(rewardSprites, amounts);
         GiveReward(); //플레이어한테 보상 지급
-
+        //티켓 하나 차감
+        GameManager.Instance.stats.TrySpendItem(PlayerProgressType.EnhanceDungeonTicket, 1);
         //다음 단계, 나가기가 있는 팝업 띄우기
         UIStageResultPopup result = UIManager.Instance.PopupOpen<UIStageResultPopup>();
 
-        if (GameManager.Instance.player.IsDead == false)
+        result.Init(DungeonType.EnhanceDungeon, true, StageManager.Instance.enhanceDungeonLevel,
+        () =>
         {
-            result.Init(DungeonType.EnhanceDungeon, true, StageManager.Instance.enhanceDungeonLevel,
-            () =>
+            //다음 단계 버튼 눌렀을 때
+            if (GameManager.Instance.stats.GetCurrency(PlayerProgressType.EnhanceDungeonTicket) > 0)
             {
-                //다음 단계 버튼 눌렀을 때
-
                 result.Close();
                 StageManager.Instance.enhanceDungeonLevel++;
                 ResetStage();
-            },
-            () =>
+            }
+            else
             {
-                //나가기 버튼 눌렀을 때
-
-                result.Close();
-                LoadingSceneController.LoadScene("1_StageScene");
-            },
-            slots);
-        }
-        else
+                ObjectPoolManager.Instance.uiPool.GetMessage().Init("UI_NotEnoughTicket");
+            }
+        },
+        () =>
         {
-            result.Init(DungeonType.EnhanceDungeon, false, StageManager.Instance.enhanceDungeonLevel,
-            () =>
-            {
-                //재시도버튼 눌렀을 때
-                result.Close();
-                ResetStage();
-            },
-            () =>
-            {
-                //나가기 버튼 눌렀을 때
-                result.Close();
-                LoadingSceneController.LoadScene("1_StageScene");
-            },
-            slots);
-        }
+            //나가기 버튼 눌렀을 때
+
+            result.Close();
+            LoadingSceneController.LoadScene("1_StageScene");
+        },
+        slots);
     }
 
     public void OnPlayerDead()
@@ -188,5 +177,16 @@ public class EnhanceDungeonFlow : IStageFlow
     public void OnTimeOut()
     {
         OnPlayerDead();
+    }
+
+    public void GiveUp()
+    {
+        UIConfirmPopup confirmPopup = UIManager.Instance.PopupOpen<UIConfirmPopup>();
+        confirmPopup.Init(() =>
+        {
+            confirmPopup.Close();
+            LoadingSceneController.LoadScene("1_StageScene");
+        },
+        "UI_CheckGiveUp");
     }
 }

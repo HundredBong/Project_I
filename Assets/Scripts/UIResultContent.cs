@@ -11,6 +11,8 @@ public class UIResultContent : PooledUI
 
     public void Initialize(ItemData data)
     {
+        DontDestroyOnLoad(gameObject);
+
         gradeText.text = $"{data.Stage}{DataManager.Instance.GetLocalizedText("UI_Grade")}";
         icon.sprite = DataManager.Instance.GetSpriteByKey(data.IconKey);
     }

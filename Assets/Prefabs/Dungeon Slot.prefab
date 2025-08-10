@@ -267,7 +267,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 367fef7c7a0cf8b4e8fc2020259965e9, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 864a9a2ff220c1c44ab615c7c91e28ef, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -292,6 +292,8 @@ MonoBehaviour:
   _dungeonNameText: {fileID: 2903046255765564939}
   _dungeonDescText: {fileID: 3503139468014420049}
   _dungeonTicketText: {fileID: 8151481073922194242}
+  _dungeonImage: {fileID: 6102444560116971910}
+  _dungeonRewardImage: {fileID: 6290555228751945995}
   _openPopupButton: {fileID: 8789467314782848614}
 --- !u!1 &3724376748932636801
 GameObject:

@@ -49,10 +49,9 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-    public void SpawnEnemiesForEnhanceDungeon(int count)
+    public void SpawnEnemiesForDungeon(int count, DungeonType type, int level)
     {
-        int currentLevel = StageManager.Instance.enhanceDungeonLevel;
-        DungeonLevelData data = DataManager.Instance.GetDungeonLevelData(DungeonType.EnhanceDungeon, currentLevel);
+        DungeonLevelData data = DataManager.Instance.GetDungeonLevelData(type, level);
 
         if (data == null)
         {

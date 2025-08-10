@@ -139,8 +139,8 @@ UI_EnhanceDungeonTicket,장비 던전 입장권 ,Enhance Dungeon Ticket
 UI_SkillDungeonTicket,스킬 던전 입장권,Skill Dungeon Ticket
 UI_None,스테이지,Stage
 UI_EnhanceDungeonName,장비 제련소 ,Gear Forge
-UI_RequiredTicket,필요한 입장권,Required Ticket
-UI_ClearReward,클리어 보상,Clear Reward
+UI_RequiredTicket,◆ 필요한 입장권,◆ Required Ticket
+UI_ClearReward,◆ 클리어 보상,◆ Clear Reward
 UI_Sweep,소탕하기,Sweep
 UI_Enter,입장하기,Enter
 UI_EnhanceDungeon,장비 제련소 ,Gear Forge
@@ -150,3 +150,9 @@ UI_AutoExit,초후 자동으로 돌아갑니다,Seconds Until Auto Return
 UI_Retry,다시 도전,Retry
 UI_EarnedReward,획득한 보상,Rewards Earned 
 UI_NoStatPoint,스탯 포인트가 부족합니다.,No Stat Points Available
+UI_StageSelectPlaceholder,원하는 스테이지를 입력해주세요.,원하는 스테이지를 입력해주세요.(영어)
+UI_Awaken_MAX,최대 각성,MAX Awaken
+UI_EnhanceStone,장비 강화석,Enhance Stone
+UI_CheckSweep,소탕하시겠습니까?,소탕하시겠습니까?(영어)
+UI_GiveUp,포기하기,Give Up
+UI_NotEnoughTicket,입장권이 부족합니다.,입장권이 부족하다는 영어

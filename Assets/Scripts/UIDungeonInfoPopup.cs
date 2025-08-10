@@ -215,7 +215,8 @@ public class UIDungeonInfoPopup : UIPopup
                 LoadingSceneController.LoadScene("2_EnhanceDungeonScene");
                 break;
             case DungeonType.SkillDungeon:
-                StageManager.Instance.skillGemDungeonLevel = _currentLevel;
+                StageManager.Instance.skillDungeonLevel = _currentLevel;
+                LoadingSceneController.LoadScene("3_SkillDungeonScene");
                 break;
             case DungeonType.None:
             default:

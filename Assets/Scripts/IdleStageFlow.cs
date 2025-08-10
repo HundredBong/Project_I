@@ -174,4 +174,9 @@ public class IdleStageFlow : IStageFlow
         GameManager.Instance.stats.AddCurrency(_rewardTypeToProgressType[stage.RewardType], stage.BossRewardAmount);
         GameManager.Instance.statSaver.SavePlayerProgressDataAsync(GameManager.Instance.stats.GetProgressSaveData()).Forget();
     }
+
+    public void GiveUp()
+    {
+        ResetStage();
+    }
 }

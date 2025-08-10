@@ -12,6 +12,7 @@ public class UIStageInfoPanel : MonoBehaviour
     [SerializeField] private TextMeshProUGUI killText;
     [SerializeField] private TextMeshProUGUI stageText;
     [SerializeField] private TextMeshProUGUI goToMaxStageText;
+    [SerializeField] private TextMeshProUGUI giveUpText;
     [SerializeField] private Button bossChallengeButton;
     [SerializeField] private Button goToMaxStageButton;
     [SerializeField] private Button stageSelectButton;
@@ -72,6 +73,7 @@ public class UIStageInfoPanel : MonoBehaviour
     private void SetLocalizedText()
     {
         goToMaxStageText.text = DataManager.Instance.GetLocalizedText("UI_GoMaxStage");
+        giveUpText.text = DataManager.Instance.GetLocalizedText("UI_GiveUp");
     }
 
     private void RefreshKill(int current, int required)
@@ -86,6 +88,7 @@ public class UIStageInfoPanel : MonoBehaviour
         stageText.text = $"{DataManager.Instance.GetLocalizedText($"UI_{type}")} {stage}";
         Debug.Log($"타입 : {DataManager.Instance.GetLocalizedText($"UI_{type}")} 스테 : {stage}");
         StopTimer();
+
 
         if (type == DungeonType.None)
         {
@@ -120,6 +123,7 @@ public class UIStageInfoPanel : MonoBehaviour
             bossChallengeButton.gameObject.SetActive(false);
             goToMaxStageButton.gameObject.SetActive(false);
             stageSelectButton.gameObject.SetActive(false);
+            giveUpButton.gameObject.SetActive(true);
             StartTimer();
         }
     }
@@ -154,7 +158,7 @@ public class UIStageInfoPanel : MonoBehaviour
 
     private void OnGiveUpButtonClicked()
     {
-        StageManager.Instance.ResetStage();
+        StageManager.Instance.GiveUp();
     }
 
     private void StartTimer()

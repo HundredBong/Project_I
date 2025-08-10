@@ -18,6 +18,8 @@ public class UIToastMessage : PooledUI
 
     public void Init(string message)
     {
+        DontDestroyOnLoad(gameObject);
+
         _messageText.text = DataManager.Instance.GetLocalizedText(message);
 
         Transform root = UIManager.Instance.ToastRoot;
@@ -31,7 +33,10 @@ public class UIToastMessage : PooledUI
             transform.SetParent(root);
         }
         _cg.alpha = 0;
-        UITweening.PlayToast(_cg, MOVE_TIME, () => ObjectPoolManager.Instance.uiPool.Return(this));
+        UITweening.PlayToast(_cg, MOVE_TIME, () => {
+            transform.SetParent(ObjectPoolManager.Instance.uiPool.transform);
+            ObjectPoolManager.Instance.uiPool.Return(this); 
+        });
 
         //DelayCallManager.Instance.CallLater(DURATION, () => ObjectPoolManager.Instance.uiPool.Return(this));
     }

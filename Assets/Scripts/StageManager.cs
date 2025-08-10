@@ -28,7 +28,7 @@ public class StageManager : MonoBehaviour
     private IStageFlow _stageFlow;
 
     public int enhanceDungeonLevel;  //DungeonInfoPopup에서 초기화
-    public int skillGemDungeonLevel; //DungeonInfoPopup에서 초기화
+    public int skillDungeonLevel; //DungeonInfoPopup에서 초기화
 
     public IdleStageFlow CurrentIdleStageFlow
     {
@@ -227,5 +227,10 @@ public class StageManager : MonoBehaviour
     public void StopTimer()
     {
         stopTimer?.Invoke();
+    }
+
+    public void GiveUp()
+    {
+        _stageFlow.GiveUp();
     }
 }

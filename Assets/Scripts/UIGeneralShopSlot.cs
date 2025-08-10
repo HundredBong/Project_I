@@ -153,6 +153,7 @@ public class UIGeneralShopSlot : MonoBehaviour
         {
             int priceAmount = _data.PriceAmount;
             int max = GetMaxAmount(progress, priceAmount);
+            Debug.Log($"MAX : {max}, amount : {priceAmount}");
 
             UIManager.Instance.PopupOpen<UISliderPopup>().Init(_data.IconKey, _data.NameKey, max, (int selectedCount) =>
             {
@@ -177,7 +178,6 @@ public class UIGeneralShopSlot : MonoBehaviour
 
     private int GetMaxAmount(PlayerProgressType progress, int priceAmount)
     {
-        //TODO : LIMIT
         int progressAmount = (int)GameManager.Instance.stats.GetProgress(progress);
         int maxCurrency = progressAmount / priceAmount;
 
@@ -193,6 +193,8 @@ public class UIGeneralShopSlot : MonoBehaviour
         }
 
         int maxLimit = _data.PurchaseLimit - currentCount;
+
+        Debug.Log($"MaxCurrency: {maxCurrency}, MaxLimit: {maxLimit}, ProgressAMount : {progressAmount} ,currentCount : {currentCount}, bool : {GameManager.Instance.ShopManager.IsLimitExceeded(_data.ShopId, _data.LimitType, _data.PurchaseLimit)} ");
 
         return Mathf.Max(0, Mathf.Min(maxCurrency, maxLimit));
     }

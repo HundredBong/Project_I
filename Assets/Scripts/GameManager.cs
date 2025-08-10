@@ -45,15 +45,6 @@ public class GameManager : MonoBehaviour
 
     private void FindComponent()
     {
-        if (player == null)
-        {
-            player = FindObjectOfType<Player>();
-            if (player == null)
-            {
-                Debug.LogWarning("[GameManager] Player 참조 설정 확인");
-            }
-        }
-
         if (statSaver == null)
         {
             statSaver = FindObjectOfType<FirebaseStatSaver>();

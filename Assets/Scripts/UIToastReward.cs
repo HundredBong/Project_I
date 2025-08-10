@@ -22,6 +22,8 @@ public class UIToastReward : PooledUI
 
     public void Init(Sprite[] rewardImages, int[] rewardCounts)
     {
+        DontDestroyOnLoad(gameObject);
+
         if (rewardImages.Length != rewardCounts.Length)
         {
             Debug.LogWarning("[UIToastReward] 인자 갯수가 일치하지 않음");
@@ -70,6 +72,8 @@ public class UIToastReward : PooledUI
     }
     public void Init(string rewardIconKey, int rewardCount)
     {
+        DontDestroyOnLoad(gameObject);
+
         _rewardTitle.text = DataManager.Instance.GetLocalizedText("UI_ToastReward");
 
         foreach (var image in _rewardIcons)
@@ -105,6 +109,10 @@ public class UIToastReward : PooledUI
         _rewardCounts[0].text = rewardCount.ToString();
 
         _cg.alpha = 0;
-        UITweening.PlayToast(_cg, MOVE_TIME, () => ObjectPoolManager.Instance.uiPool.Return(this));
+        UITweening.PlayToast(_cg, MOVE_TIME, () =>
+        {
+            transform.SetParent(ObjectPoolManager.Instance.uiPool.transform);
+            ObjectPoolManager.Instance.uiPool.Return(this);
+        });
     }
 }
