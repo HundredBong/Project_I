@@ -157,6 +157,20 @@ public class SkillManager : MonoBehaviour
         return data.AwakenRequiredCount[state.AwakenLevel];
     }
 
+    public bool TryLevelUp(SkillData data)
+    {
+        SkillId skillId = data.SkillId;
+        if (skillStates.TryGetValue(skillId, out var state))
+        {
+            if (state.Level < data.MaxLevels[state.AwakenLevel])
+            {
+                state.Level++;
+                return true;
+            }
+        }
+        return false;
+    }
+
     public bool TryAwaken(SkillData data)
     {
         SkillId skillId = data.SkillId;
@@ -206,7 +220,7 @@ public class SkillManager : MonoBehaviour
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R))
         {
             //디버그용, 모든 스킬 쿨타임 초기화
             RequestResetAllCooldowns();

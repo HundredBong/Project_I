@@ -301,6 +301,8 @@ public class PlayerStats : MonoBehaviour
         currentExp = GetProgress(PlayerProgressType.CurrentExp);
         maxExp = maxExp = DataManager.Instance.GetExpData(level);
         StatPoint = (int)GetProgress(PlayerProgressType.StatPoint);
+        EnhanceStone = (int)GetProgress(PlayerProgressType.EnhanceStone);
+        SkillGem = (int)GetProgress(PlayerProgressType.SkillGem);
         Gold = (int)GetProgress(PlayerProgressType.Gold);
         Diamond = (int)GetProgress(PlayerProgressType.Diamond);
 

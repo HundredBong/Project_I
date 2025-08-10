@@ -192,14 +192,22 @@ public class UISkillInfoPopup : UIPopup
 
         if (GameManager.Instance.stats.TrySpendItem(PlayerProgressType.SkillGem, amount))
         {
-            Debug.Log("강화에 성공함");
-            SetLocalizedText();
-            GameManager.Instance.statSaver.SavePlayerSkillDataAsync(SkillManager.Instance.BuildSaveData()).Forget();
-
+            if (SkillManager.Instance.TryLevelUp(_skillData))
+            {
+                Debug.Log("강화에 성공함");       
+                SetLocalizedText();
+                GameManager.Instance.stats.RecalculateStats();
+                GameManager.Instance.statSaver.SavePlayerSkillDataAsync(SkillManager.Instance.BuildSaveData()).Forget();
+            }
+            else
+            {
+                Debug.Log("강화에 실패함 1");
+                GameManager.Instance.stats.AddCurrency(PlayerProgressType.SkillGem, amount);
+            }
         }
         else
         {
-            Debug.Log("강화에 실패함");
+            Debug.Log("강화에 실패함 2");
         }
     }
 
