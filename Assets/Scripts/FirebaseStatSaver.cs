@@ -14,7 +14,7 @@ public class FirebaseStatSaver : MonoBehaviour
 
     //취소 신호를 만들어주는 컨트롤러 객체, async작업을 중간에 취소할 수 있게 해줌. 
     private CancellationTokenSource progressSaveCts;
-    private CancellationTokenSource inventorySaveCts;
+    private CancellationTokenSource inventorySaveCts; 
 
     private const int MAX_RETRY_COUNT = 5;
     private const int RETRY_DELAY_MS = 300;

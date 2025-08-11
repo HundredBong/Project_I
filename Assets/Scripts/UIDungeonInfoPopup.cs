@@ -208,6 +208,12 @@ public class UIDungeonInfoPopup : UIPopup
         //씬 만들고 이름 넣어야 함
         //선택한 레벨정보를 다음 씬에 넘겨줘야 함
 
+        if(GameManager.Instance.stats.GetCurrency(_data.TicketType) <= 0)
+        {
+            ObjectPoolManager.Instance.uiPool.GetMessage().Init("UI_NotEnoughTickets");
+            return;
+        }
+
         switch (_levelData.DungeonType)
         {
             case DungeonType.EnhanceDungeon:
