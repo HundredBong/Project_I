@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEditor;
+#if UNITY_EDITOR
 using UnityEditor.SceneManagement;
+#endif
 using UnityEngine;
 
 
@@ -42,6 +44,9 @@ public class GameManager : MonoBehaviour
         ShopManager = new ShopManager();
 
         FindComponent();
+
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 60;
     }
 
     private void FindComponent()
@@ -161,7 +166,9 @@ public class GameManager : MonoBehaviour
 
         StageManager.Instance.SetDungeonData(dungeonClearedData);
 
-        loadSceneReady = true;
+        //loadSceneReady = true; <- AdManager에서 처리
+
+        AdManager.Instance.ShowLaunchInterstitialOnce();
     }
 
     private bool CheckReadyForLoad()

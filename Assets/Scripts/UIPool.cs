@@ -9,8 +9,6 @@ public class UIPool : GenericPoolManager<PooledUI>
     public GameObject toastRewardPrefab;
     public GameObject rewardSlotPrebfab;
 
-    int index = 0;
-
     public void Start()
     {
         Preload(resultPrefab, 30);
