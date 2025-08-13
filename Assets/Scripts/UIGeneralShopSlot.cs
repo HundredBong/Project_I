@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using Cysharp.Threading.Tasks;
+using System.Threading;
 
 
 public class UIGeneralShopSlot : MonoBehaviour
@@ -83,7 +85,7 @@ public class UIGeneralShopSlot : MonoBehaviour
         purchaseButton.interactable = !isSoldOut;
 
         int used = 0;
-        if(_data.LimitType != ShopLimitType.None)
+        if (_data.LimitType != ShopLimitType.None)
         {
             int remaining = GameManager.Instance.ShopManager.GetRemainingForLimit(_data.ShopId, _data.LimitType, _data.PurchaseLimit);
             used = Mathf.Clamp(_data.PurchaseLimit - remaining, 0, _data.PurchaseLimit);
@@ -131,7 +133,13 @@ public class UIGeneralShopSlot : MonoBehaviour
         _isClicking = true;
 
 
-        if (_data.PriceType == ShopPriceType.Ad || _data.PriceType == ShopPriceType.Cash)
+        if (_data.PriceType == ShopPriceType.Ad)
+        {
+            HandleAdPurchaseAsync().Forget();
+            return;
+        }
+
+        if (_data.PriceType == ShopPriceType.Cash)
         {
             _isClicking = false;
             return;
@@ -192,7 +200,7 @@ public class UIGeneralShopSlot : MonoBehaviour
 
             if (TrySpendCurrency(_data.PriceType, totalPrice))
             {
-                GiveReward(_data.RewardType, selectedCount);
+                GiveReward(_data.RewardType, selectedCount * _data.RewardCount);
                 GameManager.Instance.ShopManager.UpdatePurchase(_data.ShopId, _data.LimitType, selectedCount);
                 ObjectPoolManager.Instance.uiPool.GetReward().Init(_data.IconKey, selectedCount);
             }
@@ -205,9 +213,9 @@ public class UIGeneralShopSlot : MonoBehaviour
             Refresh();
         },
         () =>
-        { 
+        {
             //팝업 닫을 때
-            _isClicking = false; 
+            _isClicking = false;
         });
     }
 
@@ -264,4 +272,41 @@ public class UIGeneralShopSlot : MonoBehaviour
                 break;
         }
     }
+
+    private async UniTask HandleAdPurchaseAsync()
+    {
+        //제한을 초과하는지 검사
+        if (GameManager.Instance.ShopManager.IsLimitExceeded(_data.ShopId, _data.LimitType, _data.PurchaseLimit))
+        {
+            ObjectPoolManager.Instance.uiPool.GetMessage().Init("Warning_SoldOut");
+            _isClicking = false;
+            Refresh();
+            return;
+        }
+
+        //광고 시첨
+        using (CancellationTokenSource cts = new CancellationTokenSource())
+        {
+            bool ok = await AdManager.Instance.ShowRewardedAsync(cts.Token);
+
+            if (ok)
+            {
+                GiveReward(_data.RewardType, _data.RewardCount);
+
+                GameManager.Instance.ShopManager.UpdatePurchase(_data.ShopId, _data.LimitType, 1);
+
+                ObjectPoolManager.Instance.uiPool.GetReward().Init(_data.IconKey, _data.RewardCount);
+            }
+            else
+            {
+                //광고 미시청, 표시 실패
+                ObjectPoolManager.Instance.uiPool.GetMessage().Init("Warning_AdNotCompleted");
+            }
+
+            _isClicking = false;
+            Refresh();
+        }
+
+    }
 }
+

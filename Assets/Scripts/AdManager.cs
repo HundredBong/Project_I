@@ -14,7 +14,9 @@ public class AdManager : MonoBehaviour
 
     //전면 광고 객체
     private InterstitialAd _interstitial;
+    private RewardedAd _rewarded;
     private bool _hasShownThisLaunch = false; //앱 시작 시 광고를 보여줬는지 여부
+    private bool _rewardEarned = false; //광고에서 보상을 받았는지 여부
     private CancellationTokenSource _cts;
 
     private void Awake()
@@ -64,6 +66,7 @@ public class AdManager : MonoBehaviour
         ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] 에디터에서 전면 광고 스킵");
         Debug.Log("[AdManager] 에디터에서 전면 광고 스킵");
         _hasShownThisLaunch = true;
+        GameManager.Instance.loadSceneReady = true;
         return;
 #elif UNITY_ANDROID || UNITY_IOS
         await WaitUntilConsentReadyAsync(10000, ct);
@@ -129,7 +132,7 @@ public class AdManager : MonoBehaviour
             }
         });
 
-
+        //IDisposable
         using (ct.Register(() => tcsUpdate.TrySetCanceled()))
         {
             //업데이트 요청이 완료될 때까지 대기
@@ -260,13 +263,13 @@ public class AdManager : MonoBehaviour
             _interstitial.OnAdFullScreenContentClosed += () =>
             {
                 ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] 전면 광고 닫힘");
-                GameManager.Instance.loadSceneReady = true; 
+                GameManager.Instance.loadSceneReady = true;
                 _interstitial = null;
             };
 
             _interstitial.OnAdFullScreenContentFailed += (AdError adError) =>
             {
-                ObjectPoolManager.Instance.uiPool.GetMessage().LogError($"[AdManager] 전면 광고 실패: {adError.GetMessage()}");   
+                ObjectPoolManager.Instance.uiPool.GetMessage().LogError($"[AdManager] 전면 광고 실패: {adError.GetMessage()}");
                 GameManager.Instance.loadSceneReady = true;
                 _interstitial = null;
             };
@@ -279,6 +282,101 @@ public class AdManager : MonoBehaviour
         {
             return await tcs.Task;
         }
+    }
+
+    private async UniTask<bool> LoadRewardedAsync(CancellationToken ct)
+    {
+        if (_rewarded != null)
+        {
+            return true;
+        }
+
+        UniTaskCompletionSource<bool> tcs = new UniTaskCompletionSource<bool>();
+
+        string adUnitId = GetRewardedUnitId(); //테스트용 광고 유닛 Id 사용중
+
+        AdRequest request = new AdRequest();
+
+        RewardedAd.Load(adUnitId, request, (RewardedAd ad, LoadAdError error) =>
+        {
+            //에러가 있거나 광고가 null이면 false 반환
+            if (error != null || ad == null)
+            {
+                ObjectPoolManager.Instance.uiPool.GetMessage().LogError($"[AdManager] 보상형 광고 로드 실패: {error.GetMessage()}");
+                tcs.TrySetResult(false);
+            }
+
+            _rewarded = ad;
+
+            //광고는 소모품이므로 한 번 보여주면 폐기하고 다시 로드해야 함
+            _rewarded.OnAdFullScreenContentClosed += () =>
+            {
+                ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] 보상형 광고 닫힘");
+                _rewarded = null;
+            };
+
+            //
+            _rewarded.OnAdFullScreenContentFailed += (AdError adError) =>
+            {
+                ObjectPoolManager.Instance.uiPool.GetMessage().LogError($"[AdManager] 보상형 광고 실패: {adError.GetMessage()}");
+                _rewarded = null;
+            };
+
+            ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] 보상형 광고 로드 성공");
+            tcs.TrySetResult(true);
+        });
+
+        using (ct.Register(() => tcs.TrySetCanceled()))
+        {
+            return await tcs.Task;
+        }
+    }
+
+    public async UniTask<bool> ShowRewardedAsync(CancellationToken ct)
+    {
+#if UNITY_EDITOR
+        ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] 에디터에서 보상형 광고 스킵");
+        Debug.Log("[AdManager] 에디터에서 보상형 광고 스킵");
+        await UniTask.Yield();
+        return true;
+
+        //광고 불러오기
+        bool loaded = await LoadRewardedAsync(ct);
+
+        if (loaded == false || _rewarded == null)
+        {
+            ObjectPoolManager.Instance.uiPool.GetMessage().LogError("[AdManager] 보상형 광고를 표시할 수 없음");
+            Debug.LogWarning("[AdManager] 보상형 광고를 표시할 수 없음");
+            return false;
+        }
+
+        _rewardEarned = false;
+
+        UniTaskCompletionSource<bool> tcsShow = new UniTaskCompletionSource<bool>();
+
+        //보상 콜백, 광고가 성공적으로 보여지고 사용자가 광고를 끝까지 시청했을 때 호출됨
+        _rewarded.Show((Reward reward) =>
+        {
+            _rewardEarned = true;
+        });
+
+        _rewarded.OnAdFullScreenContentClosed += () =>
+        {
+            tcsShow.TrySetResult(_rewardEarned);
+        };
+
+        _rewarded.OnAdFullScreenContentFailed += (AdError adError) =>
+        {
+            ObjectPoolManager.Instance.uiPool.GetMessage().LogError($"[AdManager] 보상형 광고 실패: {adError.GetMessage()}");
+            tcsShow.TrySetResult(false);
+        };
+
+        using (ct.Register(() => tcsShow.TrySetCanceled()))
+        {
+            //광고가 끝날 때까지 대기
+            return await tcsShow.Task;
+        }
+#endif
     }
 
     private void ShowInterstitialOnce()
@@ -307,6 +405,17 @@ public class AdManager : MonoBehaviour
     return "ca-app-pub-3940256099942544/4411468910"; //테스트 전면 광고
 #else
     return "unexpected_platform";
+#endif
+    }
+
+    private string GetRewardedUnitId()
+    {
+#if UNITY_ANDROID
+        return "ca-app-pub-3940256099942544/5224354917"; //테스트 보상형 광고
+#elif UNITY_IOS
+        return "ca-app-pub-3940256099942544/1712485313";
+#else
+        return "unexpected_platform";
 #endif
     }
 
