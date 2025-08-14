@@ -1,7 +1,7 @@
 using Cysharp.Threading.Tasks;
 using Firebase.Database;
+using Firebase.Auth;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -14,7 +14,7 @@ public class FirebaseStatSaver : MonoBehaviour
 
     //취소 신호를 만들어주는 컨트롤러 객체, async작업을 중간에 취소할 수 있게 해줌. 
     private CancellationTokenSource progressSaveCts;
-    private CancellationTokenSource inventorySaveCts; 
+    private CancellationTokenSource inventorySaveCts;
 
     private const int MAX_RETRY_COUNT = 5;
     private const int RETRY_DELAY_MS = 300;
@@ -61,7 +61,7 @@ public class FirebaseStatSaver : MonoBehaviour
     public async UniTask SavePlayerProgressDataAsync(PlayerProgressSaveData data)
     {
         string json = JsonUtility.ToJson(data);
-        string userId = "test_user";
+        string userId = GetUserId();
         string path = $"users/{userId}/progress";
 
         try
@@ -76,7 +76,7 @@ public class FirebaseStatSaver : MonoBehaviour
 
     public async UniTask<PlayerProgressSaveData> LoadPlayerProgressDataAsync()
     {
-        string userId = "test_user";
+        string userId = GetUserId();
         string path = $"users/{userId}/progress";
 
         string firstResult = null;
@@ -123,7 +123,7 @@ public class FirebaseStatSaver : MonoBehaviour
     {
         string json = JsonUtility.ToJson(data);
 
-        string userId = "test_user";
+        string userId = GetUserId();
         string path = $"users/{userId}/stage";
 
         try
@@ -139,7 +139,7 @@ public class FirebaseStatSaver : MonoBehaviour
 
     public async UniTask<StageSaveData> LoadStageDataAsync()
     {
-        string userId = "test_user";
+        string userId = GetUserId();
         string path = $"users/{userId}/stage";
         string firstResult = null;
 
@@ -188,7 +188,7 @@ public class FirebaseStatSaver : MonoBehaviour
     public async UniTask SaveSkillEquipData(SkillEquipSaveData data)
     {
         string json = JsonUtility.ToJson(data);
-        string userId = "test_user";
+        string userId = GetUserId();
         string path = $"users/{userId}/skillEquip";
 
         try
@@ -203,7 +203,7 @@ public class FirebaseStatSaver : MonoBehaviour
 
     public async UniTask<SkillEquipSaveData> LoadSkillEquipDataAsync()
     {
-        string userId = "test_user";
+        string userId = GetUserId();
         string path = $"users/{userId}/skillEquip";
         string firstResult = null;
 
@@ -246,7 +246,7 @@ public class FirebaseStatSaver : MonoBehaviour
     public async UniTask SavePlayerSkillDataAsync(PlayerSkillSaveData data)
     {
         string json = JsonUtility.ToJson(data);
-        string userId = "test_user";
+        string userId = GetUserId();
         string path = $"users/{userId}/skillState";
 
         try
@@ -261,7 +261,7 @@ public class FirebaseStatSaver : MonoBehaviour
 
     public async UniTask<PlayerSkillSaveData> LoadPlayerSkillDataAsync()
     {
-        string userId = "test_user";
+        string userId = GetUserId();
         string path = $"users/{userId}/skillState";
         string firstResult = null;
 
@@ -328,7 +328,7 @@ public class FirebaseStatSaver : MonoBehaviour
     public async UniTask SaveInventoryDataAsync(InventorySaveData data)
     {
         string json = JsonUtility.ToJson(data);
-        string userId = "test_user";
+        string userId = GetUserId();
         string path = $"users/{userId}/InventoryData";
 
         try
@@ -343,7 +343,7 @@ public class FirebaseStatSaver : MonoBehaviour
 
     public async UniTask<InventorySaveData> LoadInventoryDataAsync()
     {
-        string userId = "test_user";
+        string userId = GetUserId();
         string path = $"users/{userId}/InventoryData";
         string firstResult = null;
 
@@ -384,7 +384,7 @@ public class FirebaseStatSaver : MonoBehaviour
     public async UniTask SaveSummonProgressAsync(SummonProgressData data)
     {
         string json = JsonUtility.ToJson(data);
-        string userId = "test_user";
+        string userId = GetUserId();
         string path = $"users/{userId}/SummonProgress";
 
         try
@@ -399,7 +399,7 @@ public class FirebaseStatSaver : MonoBehaviour
 
     public async UniTask<SummonProgressData> LoadSummonProgressDataAsync()
     {
-        string userId = "test_user";
+        string userId = GetUserId();
         string path = $"users/{userId}/SummonProgress";
         string firstResult = null;
 
@@ -442,7 +442,7 @@ public class FirebaseStatSaver : MonoBehaviour
     public async UniTask SavePurchaseData(ShopPurchaseData data)
     {
         string json = JsonConvert.SerializeObject(data);
-        string userId = "test_user";
+        string userId = GetUserId();
         string path = $"users/{userId}/ShopPurchaseData";
 
         try
@@ -457,7 +457,7 @@ public class FirebaseStatSaver : MonoBehaviour
 
     public async UniTask<ShopPurchaseData> LoadPurchaseData()
     {
-        string userId = "test_user";
+        string userId = GetUserId();
         string path = $"users/{userId}/ShopPurchaseData";
         string firstResult = null;
 
@@ -501,7 +501,7 @@ public class FirebaseStatSaver : MonoBehaviour
     public async UniTask SaveDungeonClearedData(DungeonSaveData data)
     {
         string json = JsonConvert.SerializeObject(data);
-        string userId = "test_user";
+        string userId = GetUserId();
         string path = $"users/{userId}/DungeonClearedData";
 
         try
@@ -516,7 +516,7 @@ public class FirebaseStatSaver : MonoBehaviour
 
     public async UniTask<DungeonSaveData> LoadDungeonClearedData()
     {
-        string userId = "test_user";
+        string userId = GetUserId();
         string path = $"users/{userId}/DungeonClearedData";
         string firstResult = null;
 
@@ -553,6 +553,17 @@ public class FirebaseStatSaver : MonoBehaviour
 
         await UniTask.SwitchToMainThread();
         throw new Exception($"[DungeonClearedData] 던전 정보 불러오기 {MAX_RETRY_COUNT}회 연속 실패함");
+    }
+
+    private string GetUserId()
+    {
+        FirebaseUser user = FirebaseAuth.DefaultInstance.CurrentUser;
+
+        if (user == null)
+        {
+            throw new Exception("[FirebaseStatSaver] 현재 로그인된 유저가 없음");
+        }
+        return user?.UserId;
     }
 }
 

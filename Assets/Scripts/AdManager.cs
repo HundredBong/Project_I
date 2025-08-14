@@ -1,11 +1,8 @@
 using Cysharp.Threading.Tasks;
-using Cysharp.Threading.Tasks.CompilerServices;
 using GoogleMobileAds.Api;
 using GoogleMobileAds.Ump.Api;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
-using TMPro;
 using UnityEngine;
 
 public class AdManager : MonoBehaviour
@@ -339,7 +336,7 @@ public class AdManager : MonoBehaviour
         Debug.Log("[AdManager] 에디터에서 보상형 광고 스킵");
         await UniTask.Yield();
         return true;
-
+#elif UNITY_ANDROID || UNITY_IOS
         //광고 불러오기
         bool loaded = await LoadRewardedAsync(ct);
 

@@ -13,7 +13,20 @@
           "package_name": "com.HundredBong.Project_I"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "982715551252-5ag94j3bg2kogsk1gbndl4ggnfrdm8s3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.HundredBong.Project_I",
+            "certificate_hash": "0bf557af2e078acf231d27bad3f6c58c17f80c13"
+          }
+        },
+        {
+          "client_id": "982715551252-nndsdi9f9a2qrr05k7ance020o5gh26m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAXLkXVruhXYCl2G-1kJtEv9ag_itI8To8"
@@ -21,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "982715551252-h6jlh8rv1temm6skbbq27aue7io5d8cs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
