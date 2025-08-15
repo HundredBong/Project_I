@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using Firebase;
 using Firebase.Auth;
 using Google;
 using UnityEngine;
@@ -20,7 +21,7 @@ public class FirebaseGoogleSignInAuth : MonoBehaviour
         {
             WebClientId = _webClientId,
             UseGameSignIn = false, //Google Play Games 서비스 사용 여부
-            RequestIdToken = true, 
+            RequestIdToken = true,
             RequestEmail = true
         };
 
@@ -37,6 +38,33 @@ public class FirebaseGoogleSignInAuth : MonoBehaviour
 
     public void SignIn()
     {
+#if UNITY_EDITOR
+        AdManager.Instance.ShowLaunchInterstitialOnce();
+
+        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
+        {
+            if (task.Result == DependencyStatus.Available)
+            {
+                FirebaseAuth.DefaultInstance.SignInAnonymouslyAsync().ContinueWith(authTask =>
+                {
+                    if (authTask.IsCompleted && authTask.IsFaulted == false && authTask.IsCanceled == false)
+                    {
+                        GameManager.Instance.firebaseReady = true;
+                    }
+                    else
+                    {
+                        Debug.LogError($"익명 로그인 실패, {authTask.Exception}");
+                    }
+                });
+            }
+            else
+            {
+                Debug.LogError($"파이어베이스 에러, {task.Result}");
+            }
+        });
+
+        return;
+#endif
         SignInAsync().Forget();
     }
 

@@ -20,6 +20,8 @@ public class FirebaseStatSaver : MonoBehaviour
     private const int RETRY_DELAY_MS = 300;
     private const float DURATION_THRESHOLD = 0.1f;
 
+    public string Nickname { get; private set; }
+
     private async void Start()
     {
         await UniTask.WaitUntil(() => GameManager.Instance.firebaseReady);
@@ -555,8 +557,126 @@ public class FirebaseStatSaver : MonoBehaviour
         throw new Exception($"[DungeonClearedData] 던전 정보 불러오기 {MAX_RETRY_COUNT}회 연속 실패함");
     }
 
+
+    public async UniTask SaveStageClearIndexAsync(int maxClearedStageId)
+    {
+        string userId = GetUserId();
+        string path = $"leaderboardIndex/{userId}";
+
+        try
+        {
+            await dbRef.Child(path).SetValueAsync(maxClearedStageId);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[FirebaseStatSaver] 스테이지 클리어 인덱스 저장 실패, {e}");
+        }
+    }
+
+
+    public async UniTask<int> LoadStageClearIndex()
+    {
+        string userId = GetUserId();
+        string path = $"leaderboardIndex/{userId}";
+        string firstResult = null;
+
+        for (int i = 0; i < MAX_RETRY_COUNT; i++)
+        {
+            float start = Time.realtimeSinceStartup;
+            try
+            {
+                DataSnapshot snapshot = await dbRef.Child(path).GetValueAsync();
+                string json = snapshot.GetRawJsonValue();
+
+                float duration = Time.realtimeSinceStartup - start;
+
+                if (firstResult == null)
+                {
+                    firstResult = json;
+                }
+                else if (duration < DURATION_THRESHOLD && firstResult == json)
+                {
+                    Debug.LogWarning($"[StageClearIndex] 캐시 데이터 감지, 재요청 {i + 1}/ {MAX_RETRY_COUNT}");
+                    await UniTask.Delay(RETRY_DELAY_MS);
+                    continue;
+                }
+                int clearIndex = string.IsNullOrEmpty(json) ? 0 : int.Parse(json);
+                await UniTask.SwitchToMainThread();
+                return clearIndex;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[재시도 {i + 1}/{MAX_RETRY_COUNT}] 던전 정보 불러오기 실패, {e}");
+                await UniTask.Delay(RETRY_DELAY_MS);
+            }
+        }
+
+        await UniTask.SwitchToMainThread();
+        throw new Exception($"[StageClearIndex] 던전 정보 불러오기 {MAX_RETRY_COUNT}회 연속 실패함");
+    }
+
+    public async UniTask SaveNickname(string nickname)
+    {
+        string userId = GetUserId();
+        string path = $"users/{userId}/nickname";
+
+        try
+        {
+            await dbRef.Child(path).SetValueAsync(nickname);
+            Nickname = nickname;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[FirebaseStatSaver] 닉네임 정보 저장 실패, {e}");
+        }
+    }
+
+    public async UniTask<string> LoadNickname()
+    {
+        string userId = GetUserId();
+        string path = $"users/{userId}/nickname";
+        string firstResult = null;
+
+        for (int i = 0; i < MAX_RETRY_COUNT; i++)
+        {
+            float start = Time.realtimeSinceStartup;
+            try
+            {
+                DataSnapshot snapshot = await dbRef.Child(path).GetValueAsync();
+                string loadedName = snapshot.GetRawJsonValue();
+                float duration = Time.realtimeSinceStartup - start;
+
+                if (firstResult == null)
+                {
+                    firstResult = loadedName;
+                }
+                else if (duration < DURATION_THRESHOLD && firstResult == loadedName)
+                {
+                    Debug.LogWarning($"[LoadNickname] 캐시 데이터 감지, 재요청 {i + 1}/ {MAX_RETRY_COUNT}");
+                    await UniTask.Delay(RETRY_DELAY_MS);
+                    continue;
+                }
+                string nickname = string.IsNullOrEmpty(loadedName) ? "Default" : loadedName;
+                await UniTask.SwitchToMainThread();
+                Nickname = nickname;
+                return nickname;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[재시도 {i + 1}/{MAX_RETRY_COUNT}] 던전 정보 불러오기 실패, {e}");
+                await UniTask.Delay(RETRY_DELAY_MS);
+            }
+        }
+
+        await UniTask.SwitchToMainThread();
+        throw new Exception($"[LoadNickname] 닉네임 정보 불러오기 {MAX_RETRY_COUNT}회 연속 실패함");
+    }
+
     private string GetUserId()
     {
+#if UNITY_EDITOR
+        return "test_user"; //에디터에서는 테스트 유저 ID 사용
+#endif
         FirebaseUser user = FirebaseAuth.DefaultInstance.CurrentUser;
 
         if (user == null)
@@ -565,6 +685,7 @@ public class FirebaseStatSaver : MonoBehaviour
         }
         return user?.UserId;
     }
+
 }
 
 [System.Serializable]

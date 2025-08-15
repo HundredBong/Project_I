@@ -152,6 +152,16 @@ public class GameManager : MonoBehaviour
             dungeonClearedData = new DungeonSaveData();
         }
 
+        string nickName = await statSaver.LoadNickname();
+
+        if (nickName == null)
+        {
+            UniTaskCompletionSource<string> tcs = new UniTaskCompletionSource<string>();
+            UIManager.Instance.PopupOpen<UINicknamePopup>().Init(tcs);
+            string newNickName = await tcs.Task;
+            await statSaver.SaveNickname(newNickName);
+        }
+
         //게임을 처음 시작한 경우
         if (dungeonClearedData.DungeonClearedData.Count == 0)
         {
@@ -169,6 +179,8 @@ public class GameManager : MonoBehaviour
         //loadSceneReady = true; <- AdManager에서 처리
 
         //AdManager.Instance.ShowLaunchInterstitialOnce(); <- 파이어베이스 로그인에서 처리
+
+
     }
 
     private bool CheckReadyForLoad()
@@ -180,7 +192,6 @@ public class GameManager : MonoBehaviour
     {
         this.player = player;
     }
-
 
 #if UNITY_EDITOR
     [MenuItem("Tools/Set Language KR")]
