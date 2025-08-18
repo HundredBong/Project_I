@@ -790,7 +790,7 @@ GameObject:
   - component: {fileID: 301805174}
   - component: {fileID: 301805173}
   m_Layer: 5
-  m_Name: NickName Popup
+  m_Name: Nickname Popup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
