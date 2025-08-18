@@ -3,13 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UINicknamePopup : UIPopup
 {
     [SerializeField] private Button _confirmButton;
-    [SerializeField] private InputField _inputField;
+    [SerializeField] private Button _checkButton;
+    [SerializeField] private TMP_InputField _inputField;
 
     UniTaskCompletionSource<string> _tcs;
+    private string _nickname;
 
     protected override void Awake()
     {
@@ -25,6 +28,13 @@ public class UINicknamePopup : UIPopup
 
         _inputField.ActivateInputField();
         _inputField.text = "";
+
+        _checkButton.onClick.RemoveAllListeners();
+        _checkButton.onClick.AddListener(OnClickCheckButton);
+
+        _confirmButton.interactable = false;
+        _confirmButton.onClick.RemoveAllListeners();
+        _confirmButton.onClick.AddListener(OnClickConfirmButton);
     }
 
     public void Init(UniTaskCompletionSource<string> tcs)
@@ -32,25 +42,44 @@ public class UINicknamePopup : UIPopup
         _tcs = tcs;
     }
 
-    private void OnClickConfirmButton()
+    private void OnClickCheckButton()
     {
-        //1. 닉네임 불러오기, 
-        //2. 불러온 닉네임이 null이나 default값이라면
-        //3. 닉네임 인풋필드 UI 표시, 이때 await 해야 함.
-        //4. 닉네임 입력후 비속어 검사
-        //5. 이상없다면 파이어베이스에 await 저장후 함수 종료
+        _nickname = _inputField.text;
+        _confirmButton.interactable = false;
 
-        //그럼 게임매니저에서 null이면 UniTaskCompletionSource<string>하나 만들고, 
-        //이 결과가 올 때까지 대기하면 될 거 같은데.
-        //결과가 오면 await statSaver.SaveNickname(전달받은 닉네임)
-        //마지막으로 게임 로드할 수 있게 하고,
-        if (_inputField.text == "")
+        if (FwordFilter.TryFindFword(_nickname))
         {
-            
+            ObjectPoolManager.Instance.uiPool.GetMessage().Init("UI_닉네임에 비속어 있음");
+            return;
+        }
+        else if (string.IsNullOrWhiteSpace(_nickname))
+        {
+            ObjectPoolManager.Instance.uiPool.GetMessage().Init("UI_닉네임에 공백 있음");          
+            return;
+        }
+        else if(_nickname.Length > 8)
+        {
+            ObjectPoolManager.Instance.uiPool.GetMessage().Init("UI_닉네임 길이는 최대 8글자");
+            return;
+        }
+        else if (_nickname.Length < 2)
+        {
+            ObjectPoolManager.Instance.uiPool.GetMessage().Init("UI_닉네임 길이는 최소 2글자");
+            return;
         }
 
-        _tcs.TrySetResult(_inputField.text);
+        ObjectPoolManager.Instance.uiPool.GetMessage().Init("UI_사용 가능한 닉네임임");
+        _confirmButton.interactable = true;
+    }
 
-        _inputField.DeactivateInputField();
+    private void OnClickConfirmButton()
+    {
+        UIManager.Instance.PopupOpen<UIConfirmPopup>().Init(() =>
+        {
+            _tcs.TrySetResult(_nickname);
+            _inputField.DeactivateInputField();
+            Close();
+        },
+        "UI_EnsureNickname");
     }
 }

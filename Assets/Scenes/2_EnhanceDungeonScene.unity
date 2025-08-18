@@ -13881,7 +13881,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &565180663
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13896,10 +13896,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1811011874}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 332.51498, y: -32.5}
+  m_SizeDelta: {x: 225.01, y: 45}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &565180664
 MonoBehaviour:
@@ -38891,8 +38891,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 40
-  m_fontSizeBase: 40
+  m_fontSize: 45
+  m_fontSizeBase: 45
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -55348,6 +55348,7 @@ MonoBehaviour:
   currentLevelText: {fileID: 1475635022}
   healthFillImage: {fileID: 1175879158}
   expFillImage: {fileID: 1663536031}
+  _nicknameText: {fileID: 1420019948}
 --- !u!114 &1934511338
 MonoBehaviour:
   m_ObjectHideFlags: 0

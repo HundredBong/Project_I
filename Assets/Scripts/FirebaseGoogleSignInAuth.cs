@@ -39,7 +39,7 @@ public class FirebaseGoogleSignInAuth : MonoBehaviour
     public void SignIn()
     {
 #if UNITY_EDITOR
-        AdManager.Instance.ShowLaunchInterstitialOnce();
+        //AdManager.Instance.ShowLaunchInterstitialOnce();
 
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
         {
@@ -95,8 +95,6 @@ public class FirebaseGoogleSignInAuth : MonoBehaviour
             {
                 _loginModal.SetActive(false);
             }
-
-            AdManager.Instance.ShowLaunchInterstitialOnce();
         }
         catch (System.Exception e)
         {

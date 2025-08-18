@@ -11,6 +11,7 @@ public class UIStatusBar : MonoBehaviour
     [SerializeField] private TextMeshProUGUI currentLevelText;
     [SerializeField] private Image healthFillImage;
     [SerializeField] private Image expFillImage;
+    [SerializeField] private TextMeshProUGUI _nicknameText;
 
     private PlayerStats _stats;
 
@@ -37,6 +38,7 @@ public class UIStatusBar : MonoBehaviour
     private void Start()
     {
         Refresh();
+        _nicknameText.text = GameManager.Instance.statSaver.Nickname;
     }
 
     private void Refresh()

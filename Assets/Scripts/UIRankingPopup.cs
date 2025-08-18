@@ -5,12 +5,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using TMPro;
 using UnityEngine;
 
 public class UIRankingPopup : UIPopup
 {
     [SerializeField] private Transform _contentRoot;
+    [SerializeField] private Transform _myRankRoot;
     [SerializeField] private GameObject _loadingArea;
+
+    [SerializeField] private TextMeshProUGUI _leaderboardText;
+    [SerializeField] private TextMeshProUGUI _loadingText;
+
 
     private CancellationTokenSource _cts;
     private DatabaseReference _dbRoot;
@@ -39,6 +45,9 @@ public class UIRankingPopup : UIPopup
 
         _loadingArea.SetActive(true);
 
+        _leaderboardText.text = DataManager.Instance.GetLocalizedText("UI_Leaderboard");
+        _loadingText.text = DataManager.Instance.GetLocalizedText("Loading");
+
         LoadAndShowRankingAsync(_cts.Token).Forget();
     }
 
@@ -55,70 +64,71 @@ public class UIRankingPopup : UIPopup
 
     private async UniTaskVoid LoadAndShowRankingAsync(CancellationToken ct)
     {
-        try
-        {
-            int myScore = await GameManager.Instance.statSaver.LoadStageClearIndex();
-            List<(string uid, int score)> top = await FetchTop100Async(ct);
+        RankingSaveData myData = await GameManager.Instance.statSaver.LoadRankingData();
+        int myStage = myData.MaxClearedStage;
 
-            if (top.Count == 0)
+        List<RankingSaveData> rankingSaveDatas = await LoadRankingSaveDatas(ct);
+
+        if (rankingSaveDatas.Count > 0)
+        {
+            int rank = 1;
+
+            foreach (RankingSaveData item in rankingSaveDatas)
             {
-                _loadingArea.SetActive(false);
-                ObjectPoolManager.Instance.uiPool.GetMessage().Init("UI_NoRanking");
-                Debug.LogWarning("No ranking data found.");
-                return;
+                UIRankingSlot slot = ObjectPoolManager.Instance.uiPool.GetRankingSlot();
+                slot.transform.SetParent(_contentRoot.transform);
+                slot.Init(item, rank);
+                Debug.Log($"랭크 : {rank}, 데이터 : {item.NickName}, {item.MaxClearedStage}, {item.Level} ");
+                rank++;
             }
+        }
 
-        }
-        catch (System.Exception ex)
-        {
-            Debug.LogError($"Error loading ranking: {ex.Message}");
-        }
+        int myRank = await GetMyRankAsync(myStage, ct);
+
+        UIRankingSlot mySlot = ObjectPoolManager.Instance.uiPool.GetRankingSlot();
+        mySlot.transform.SetParent(_myRankRoot.transform);
+        mySlot.Init(myData, myRank);
+
+        _loadingArea.SetActive(false);
     }
 
-    private async UniTask<List<(string uid, int score)>> FetchTop100Async(CancellationToken ct)
+    private async UniTask<List<RankingSaveData>> LoadRankingSaveDatas(CancellationToken ct)
     {
-        string path = "leaderboardIndex";
+        string path = "leaderboardData";
 
-        //userId의 점수를 기준으로 정렬
-        //오름차순 정렬후 마지막 100개 (점수가 높은 100개)만 가져옴
-        //이 경로의 데이터를 읽어서 DataSnapshot 객체로 가져옴
-        //AsUniTask()로 Task -> UniTask로 변환
-        DataSnapshot snapshot = await _dbRoot.Child(path).OrderByValue().LimitToLast(100).
-            GetValueAsync().AsUniTask().AttachExternalCancellation(ct);
+        DataSnapshot snapshot = await _dbRoot.Child(path).OrderByChild("MaxClearedStage").LimitToLast(100).GetValueAsync().AsUniTask().AttachExternalCancellation(ct);
 
-        //튜플
-        List<(string uid, int score)> list = new List<(string uid, int score)>();
+        List<RankingSaveData> rankingSaveDatas = new List<RankingSaveData>();
 
-        //DataSnapshot이 비어있지 않은지 확인
-        if (snapshot.Exists == false)
+        foreach (DataSnapshot child in snapshot.Children)
         {
-            return list;
+            RankingSaveData data = new RankingSaveData()
+            {
+                NickName = child.Child("NickName").Value.ToString(),
+                Level = Convert.ToInt32(child.Child("Level").Value),
+                MaxClearedStage = Convert.ToInt32(child.Child("MaxClearedStage").Value)
+            };
+
+            rankingSaveDatas.Add(data);
         }
 
+        rankingSaveDatas.Reverse();
 
-        foreach (DataSnapshot data in snapshot.Children)
-        {
-            //uid, score 추가
-            list.Add((data.Key, Convert.ToInt32(data.Value)));
-        }
-
-        return list;
+        return rankingSaveDatas;
     }
 
-    private async UniTask<int> ComputeMyRankAsync(int myStage, CancellationToken ct)
+    private async UniTask<int> GetMyRankAsync(int myStage, CancellationToken ct)
     {
-        string path = "leaderboardIndex";
+        string path = "leaderboardData";
 
         //나보다 점수 높은 사람만 가져오기
-        DataSnapshot snapshot = await _dbRoot.Child(path).OrderByValue().StartAt(myStage + 1).GetValueAsync().AsUniTask().AttachExternalCancellation(ct);
+        DataSnapshot snapshot = await _dbRoot.Child(path).OrderByChild("MaxClearedStage").StartAt(myStage + 1).GetValueAsync().AsUniTask().AttachExternalCancellation(ct);
 
-        if (snapshot.Exists == false)
+        if (snapshot.Exists == false || snapshot.ChildrenCount == 0)
         {
-            return 0;
+            return 1;
         }
 
-        //내 순위 만들기
-        int higher = snapshot.Children.Count();
-        return higher + 1;
+        return (int)snapshot.ChildrenCount + 1;
     }
 }

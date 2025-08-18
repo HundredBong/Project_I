@@ -67,6 +67,8 @@ public class IdleStageFlow : IStageFlow
 
         GameManager.Instance.statSaver.SaveStageDataAsync(_manager.BuildStageSaveData()).Forget();
         GameManager.Instance.statSaver.SavePlayerProgressDataAsync(GameManager.Instance.stats.GetProgressSaveData()).Forget();
+
+        GameManager.Instance.statSaver.SaveRanking(_manager.BuildRankingSaveData()).Forget();
     }
 
     public void OnStageClear()
@@ -95,7 +97,6 @@ public class IdleStageFlow : IStageFlow
 
         GameManager.Instance.statSaver.SaveStageDataAsync(_manager.BuildStageSaveData()).Forget();
         GameManager.Instance.statSaver.SavePlayerProgressDataAsync(GameManager.Instance.stats.GetProgressSaveData()).Forget();
-        GameManager.Instance.statSaver.SaveStageClearIndexAsync(_manager.maxClearedStage).Forget();
     }
 
     public void OnTimeOut()

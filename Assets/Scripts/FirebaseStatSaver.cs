@@ -471,8 +471,6 @@ public class FirebaseStatSaver : MonoBehaviour
                 DataSnapshot snapshot = await dbRef.Child(path).GetValueAsync();
                 string json = snapshot.GetRawJsonValue();
 
-                Debug.Log(json);
-
                 float duration = Time.realtimeSinceStartup - start;
 
                 if (firstResult == null)
@@ -558,67 +556,67 @@ public class FirebaseStatSaver : MonoBehaviour
     }
 
 
-    public async UniTask SaveStageClearIndexAsync(int maxClearedStageId)
-    {
-        string userId = GetUserId();
-        string path = $"leaderboardIndex/{userId}";
+    //public async UniTask SaveStageClearIndexAsync(int maxClearedStageId)
+    //{
+    //    string userId = GetUserId();
+    //    string path = $"leaderboardIndex/{userId}";
 
-        try
-        {
-            await dbRef.Child(path).SetValueAsync(maxClearedStageId);
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"[FirebaseStatSaver] 스테이지 클리어 인덱스 저장 실패, {e}");
-        }
-    }
+    //    try
+    //    {
+    //        await dbRef.Child(path).SetValueAsync(maxClearedStageId);
+    //    }
+    //    catch (Exception e)
+    //    {
+    //        Debug.LogError($"[FirebaseStatSaver] 스테이지 클리어 인덱스 저장 실패, {e}");
+    //    }
+    //}
 
 
-    public async UniTask<int> LoadStageClearIndex()
-    {
-        string userId = GetUserId();
-        string path = $"leaderboardIndex/{userId}";
-        string firstResult = null;
+    //public async UniTask<int> LoadStageClearIndex()
+    //{
+    //    string userId = GetUserId();
+    //    string path = $"leaderboardIndex/{userId}";
+    //    string firstResult = null;
 
-        for (int i = 0; i < MAX_RETRY_COUNT; i++)
-        {
-            float start = Time.realtimeSinceStartup;
-            try
-            {
-                DataSnapshot snapshot = await dbRef.Child(path).GetValueAsync();
-                string json = snapshot.GetRawJsonValue();
+    //    for (int i = 0; i < MAX_RETRY_COUNT; i++)
+    //    {
+    //        float start = Time.realtimeSinceStartup;
+    //        try
+    //        {
+    //            DataSnapshot snapshot = await dbRef.Child(path).GetValueAsync();
+    //            string json = snapshot.GetRawJsonValue();
 
-                float duration = Time.realtimeSinceStartup - start;
+    //            float duration = Time.realtimeSinceStartup - start;
 
-                if (firstResult == null)
-                {
-                    firstResult = json;
-                }
-                else if (duration < DURATION_THRESHOLD && firstResult == json)
-                {
-                    Debug.LogWarning($"[StageClearIndex] 캐시 데이터 감지, 재요청 {i + 1}/ {MAX_RETRY_COUNT}");
-                    await UniTask.Delay(RETRY_DELAY_MS);
-                    continue;
-                }
-                int clearIndex = string.IsNullOrEmpty(json) ? 0 : int.Parse(json);
-                await UniTask.SwitchToMainThread();
-                return clearIndex;
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning($"[재시도 {i + 1}/{MAX_RETRY_COUNT}] 던전 정보 불러오기 실패, {e}");
-                await UniTask.Delay(RETRY_DELAY_MS);
-            }
-        }
+    //            if (firstResult == null)
+    //            {
+    //                firstResult = json;
+    //            }
+    //            else if (duration < DURATION_THRESHOLD && firstResult == json)
+    //            {
+    //                Debug.LogWarning($"[StageClearIndex] 캐시 데이터 감지, 재요청 {i + 1}/ {MAX_RETRY_COUNT}");
+    //                await UniTask.Delay(RETRY_DELAY_MS);
+    //                continue;
+    //            }
+    //            int clearIndex = string.IsNullOrEmpty(json) ? 0 : int.Parse(json);
+    //            await UniTask.SwitchToMainThread();
+    //            return clearIndex;
+    //        }
+    //        catch (Exception e)
+    //        {
+    //            Debug.LogWarning($"[재시도 {i + 1}/{MAX_RETRY_COUNT}] 던전 정보 불러오기 실패, {e}");
+    //            await UniTask.Delay(RETRY_DELAY_MS);
+    //        }
+    //    }
 
-        await UniTask.SwitchToMainThread();
-        throw new Exception($"[StageClearIndex] 던전 정보 불러오기 {MAX_RETRY_COUNT}회 연속 실패함");
-    }
+    //    await UniTask.SwitchToMainThread();
+    //    throw new Exception($"[StageClearIndex] 던전 정보 불러오기 {MAX_RETRY_COUNT}회 연속 실패함");
+    //}
 
     public async UniTask SaveNickname(string nickname)
     {
         string userId = GetUserId();
-        string path = $"users/{userId}/nickname";
+        string path = $"users/{userId}/Nickname";
 
         try
         {
@@ -634,7 +632,7 @@ public class FirebaseStatSaver : MonoBehaviour
     public async UniTask<string> LoadNickname()
     {
         string userId = GetUserId();
-        string path = $"users/{userId}/nickname";
+        string path = $"users/{userId}/Nickname";
         string firstResult = null;
 
         for (int i = 0; i < MAX_RETRY_COUNT; i++)
@@ -643,7 +641,7 @@ public class FirebaseStatSaver : MonoBehaviour
             try
             {
                 DataSnapshot snapshot = await dbRef.Child(path).GetValueAsync();
-                string loadedName = snapshot.GetRawJsonValue();
+                string loadedName = snapshot.Value.ToString();
                 float duration = Time.realtimeSinceStartup - start;
 
                 if (firstResult == null)
@@ -670,6 +668,63 @@ public class FirebaseStatSaver : MonoBehaviour
 
         await UniTask.SwitchToMainThread();
         throw new Exception($"[LoadNickname] 닉네임 정보 불러오기 {MAX_RETRY_COUNT}회 연속 실패함");
+    }
+
+    public async UniTask SaveRanking(RankingSaveData saveData)
+    {
+        string uid = GetUserId();
+        string path = $"leaderboardData/{uid}";
+        string json = JsonUtility.ToJson(saveData);
+
+        try
+        {
+            await dbRef.Child(path).SetRawJsonValueAsync(json);
+        }
+        catch(Exception e) 
+        {
+            Debug.LogError($"[FirebaseStatSaver] 랭킹 데이터 저장 실패, {e}");
+        }
+    }
+
+    public async UniTask<RankingSaveData> LoadRankingData()
+    {
+        string userId = GetUserId();
+        string path = $"leaderboardData/{userId}";
+        string firstResult = null;
+
+        for (int i = 0; i < MAX_RETRY_COUNT; i++)
+        {
+            float start = Time.realtimeSinceStartup;
+            try
+            {
+                DataSnapshot snapshot = await dbRef.Child(path).GetValueAsync();
+                string json = snapshot.GetRawJsonValue();
+
+                float duration = Time.realtimeSinceStartup - start;
+
+                if (firstResult == null)
+                {
+                    firstResult = json;
+                }
+                else if (duration < DURATION_THRESHOLD && firstResult == json)
+                {
+                    Debug.LogWarning($"[RankingSaveData] 캐시 데이터 감지, 재요청 {i + 1}/ {MAX_RETRY_COUNT}");
+                    await UniTask.Delay(RETRY_DELAY_MS);
+                    continue;
+                }
+                RankingSaveData data = string.IsNullOrEmpty(json) ? new RankingSaveData() : JsonConvert.DeserializeObject<RankingSaveData>(json);
+                await UniTask.SwitchToMainThread();
+                return data;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[재시도 {i + 1}/{MAX_RETRY_COUNT}] 랭킹 정보 불러오기 실패, {e}");
+                await UniTask.Delay(RETRY_DELAY_MS);
+            }
+        }
+
+        await UniTask.SwitchToMainThread();
+        throw new Exception($"[RankingSaveData] 랭킹 정보 불러오기 {MAX_RETRY_COUNT}회 연속 실패함");
     }
 
     private string GetUserId()
@@ -815,4 +870,12 @@ public class ShopPurchaseData
 public class DungeonSaveData
 {
     public Dictionary<DungeonType, int> DungeonClearedData = new Dictionary<DungeonType, int>();
+}
+
+[System.Serializable]
+public class RankingSaveData
+{
+    public string NickName;
+    public int Level;
+    public int MaxClearedStage;
 }

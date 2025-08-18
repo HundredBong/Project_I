@@ -154,7 +154,7 @@ public class GameManager : MonoBehaviour
 
         string nickName = await statSaver.LoadNickname();
 
-        if (nickName == null)
+        if (string.IsNullOrEmpty(nickName) || nickName == "Default")
         {
             UniTaskCompletionSource<string> tcs = new UniTaskCompletionSource<string>();
             UIManager.Instance.PopupOpen<UINicknamePopup>().Init(tcs);
@@ -178,7 +178,7 @@ public class GameManager : MonoBehaviour
 
         //loadSceneReady = true; <- AdManager에서 처리
 
-        //AdManager.Instance.ShowLaunchInterstitialOnce(); <- 파이어베이스 로그인에서 처리
+        AdManager.Instance.ShowLaunchInterstitialOnce();// <- 파이어베이스 로그인에서 처리
 
 
     }

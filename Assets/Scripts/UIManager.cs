@@ -243,4 +243,10 @@ public class UIManager : MonoBehaviour
     {
         PopupOpen<UISliderPopup>().Init("no", "UI_Gold", 10, (x) => { Debug.Log("테스트 완료"); });
     }
+
+    [ContextMenu("랭킹 테스트")]
+    private void Test2()
+    {
+        PopupOpen<UIRankingPopup>();
+    }
 }

@@ -151,6 +151,18 @@ public class StageManager : MonoBehaviour
 
         return saveData;
     }
+    
+    public RankingSaveData BuildRankingSaveData()
+    {
+        RankingSaveData data = new RankingSaveData()
+        {
+            NickName = GameManager.Instance.statSaver.Nickname,
+            Level = GameManager.Instance.stats.level,
+            MaxClearedStage = this.maxClearedStage,
+        };
+
+        return data;
+    }
 
     public void UpdateClearedLevel(DungeonType type, int level)
     {
