@@ -66,6 +66,7 @@ public class AudioController : MonoBehaviour
     private void ChangeBGM(Scene arg0, Scene arg1)
     {
         bgmSource.Stop();
+        bgmSource.volume = bgmVolume;
 
         if (arg1.name.Contains("Loading"))
         {

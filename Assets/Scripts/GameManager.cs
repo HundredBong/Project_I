@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     public PlayerStats stats;
     public FirebaseInit firebaseInit;
     public FirebaseStatSaver statSaver;
+    public FirebaseGoogleSignInAuth firebaseGoogleSignInAuth;
 
     [Space(20)]
     public List<Enemy> enemyList = new List<Enemy>();

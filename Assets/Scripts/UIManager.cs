@@ -237,16 +237,14 @@ public class UIManager : MonoBehaviour
             Debug.LogWarning("[UIManager] fadeImage가 존재하지 않음");
         }
     }
-
-    [ContextMenu("슬라이더 테스트")]
-    private void Test()
+    private void Update()
     {
-        PopupOpen<UISliderPopup>().Init("no", "UI_Gold", 10, (x) => { Debug.Log("테스트 완료"); });
-    }
-
-    [ContextMenu("랭킹 테스트")]
-    private void Test2()
-    {
-        PopupOpen<UIRankingPopup>();
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (currentPage == null && openPopups.Count <= 0)
+            {
+                PopupOpen<UIConfirmPopup>().Init(() => { Application.Quit(); }, "UI_EnsureQuit");
+            }
+        }
     }
 }

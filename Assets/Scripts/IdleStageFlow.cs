@@ -157,23 +157,8 @@ public class IdleStageFlow : IStageFlow
     public void GiveReward()
     {
         StageData stage = DataManager.Instance.stageDataTable[_manager.currentStage];
-
-        //switch (stage.RewardType)
-        //{
-        //    case RewardType.Diamond:
-        //        GameManager.Instance.stats.Diamond += stage.BossRewardAmount;
-        //        break;
-        //    case RewardType.SkillGem:
-        //        GameManager.Instance.stats.skillGem += stage.BossRewardAmount;
-        //        break;
-        //    case RewardType.EnhanceStone:
-        //        GameManager.Instance.stats.enhanceStone += stage.BossRewardAmount;
-        //        break;
-        //    default:
-        //        break;
-        //}
-
         GameManager.Instance.stats.AddCurrency(_rewardTypeToProgressType[stage.RewardType], stage.BossRewardAmount);
+        ObjectPoolManager.Instance.uiPool.GetReward().Init($"UI_{stage.RewardType}", stage.BossRewardAmount);
         GameManager.Instance.statSaver.SavePlayerProgressDataAsync(GameManager.Instance.stats.GetProgressSaveData()).Forget();
     }
 

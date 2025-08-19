@@ -62,6 +62,7 @@ public class AdManager : MonoBehaviour
 #if UNITY_EDITOR
         ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] 에디터에서 전면 광고 스킵");
         Debug.Log("[AdManager] 에디터에서 전면 광고 스킵");
+        ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("GameStart");
         _hasShownThisLaunch = true;
         GameManager.Instance.loadSceneReady = true;
         return;

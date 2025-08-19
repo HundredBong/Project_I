@@ -105,16 +105,23 @@ public class FirebaseGoogleSignInAuth : MonoBehaviour
 
     public void SignOut()
     {
-        try
+        UIManager.Instance.PopupOpen<UIConfirmPopup>().Init(() =>
         {
-            GoogleSignIn.DefaultInstance.SignOut();
-            _auth.SignOut();
-            GameManager.Instance.firebaseReady = false;
+            try
+            {
+                GoogleSignIn.DefaultInstance.SignOut();
+                _auth.SignOut();
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[Auth] 로그아웃 예외 : {e}");
+                ObjectPoolManager.Instance.uiPool.GetMessage().LogError($"[Auth] 로그아웃 예외 : {e.Message}");
+            }
+            finally
+            {
+                Application.Quit();
+            }
         }
-        catch (System.Exception e)
-        {
-            Debug.LogError($"[Auth] 로그아웃 예외 : {e}");
-            ObjectPoolManager.Instance.uiPool.GetMessage().LogError($"[Auth] 로그아웃 예외 : {e.Message}");
-        }
+        , "UI_EnsureSignOut");
     }
 }

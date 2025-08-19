@@ -480,6 +480,7 @@ GameObject:
   - component: {fileID: 48156417}
   - component: {fileID: 48156416}
   - component: {fileID: 48156415}
+  - component: {fileID: 48156418}
   m_Layer: 0
   m_Name: ====== Firebase ======
   m_TagString: Untagged
@@ -526,6 +527,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 710936090}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &48156418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 48156414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d2957122574d8140b06e5a57cd53aef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _loginModal: {fileID: 957239923}
 --- !u!1 &144926844
 GameObject:
   m_ObjectHideFlags: 0
@@ -1557,6 +1571,7 @@ MonoBehaviour:
   stats: {fileID: 1450130433}
   firebaseInit: {fileID: 48156415}
   statSaver: {fileID: 48156416}
+  firebaseGoogleSignInAuth: {fileID: 48156418}
   enemyList: []
   firebaseReady: 0
   inventoryReady: 0
@@ -2766,7 +2781,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1194821172}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: FirebaseGoogleSignInAuth, Assembly-CSharp
         m_MethodName: SignIn
         m_Mode: 1
@@ -3303,51 +3318,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1138822756}
   m_CullTransparentMesh: 1
---- !u!1 &1194821171
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1194821173}
-  - component: {fileID: 1194821172}
-  m_Layer: 0
-  m_Name: GoogleAuth
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1194821172
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1194821171}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d2957122574d8140b06e5a57cd53aef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _loginModal: {fileID: 957239923}
---- !u!4 &1194821173
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1194821171}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1203159233
 GameObject:
   m_ObjectHideFlags: 0
@@ -4969,6 +4939,5 @@ SceneRoots:
   - {fileID: 802702879}
   - {fileID: 19934254}
   - {fileID: 786942249}
-  - {fileID: 1194821173}
   - {fileID: 1756031383}
   - {fileID: 699476575}

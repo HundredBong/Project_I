@@ -21,6 +21,7 @@ public class PooledAudio : MonoBehaviour, IPooledObject
         transform.position = Vector3.zero;
 
         _source.clip = DataManager.Instance.GetAudioClipByKey(clip);
+        _source.volume = AudioController.Instance.sfxVolume;
         _source.Play();
 
         float length = _source.clip.length;
@@ -38,6 +39,7 @@ public class PooledAudio : MonoBehaviour, IPooledObject
         _source.spatialBlend = 1f;
 
         _source.clip = DataManager.Instance.GetAudioClipByKey(clip);
+        _source.volume = AudioController.Instance.sfxVolume;
         _source.Play();
 
         float length = _source.clip.length;

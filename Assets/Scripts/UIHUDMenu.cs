@@ -31,40 +31,40 @@ public class UIHUDMenu : MonoBehaviour
 
     private void OnEnable()
     {
-        LanguageManager.OnLanguageChanged += RefreshLanguage;
-        GameManager.Instance.stats.OnCurrencyChanged += RefreshCurrency;
-    }
-
-    private void OnDisable()
-    {
-        LanguageManager.OnLanguageChanged -= RefreshLanguage;
-        GameManager.Instance.stats.OnCurrencyChanged -= RefreshCurrency;
-    }
-
-    private void Start()
-    {
         shopButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UIShopPage>());
         statButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UIGoldUpgradePage>());
         skillButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UISkillPage>());
         inventoryButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UIInventoryPage>());
         dungeonButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UIDungeonPage>());
         _rankButton.onClick.AddListener(() => UIManager.Instance.PopupOpen<UIRankingPopup>());
+        _optionsButton.onClick.AddListener(() => UIManager.Instance.PopupOpen<UIOptionPopup>());
 
+        LanguageManager.OnLanguageChanged += RefreshLanguage;
+        GameManager.Instance.stats.OnCurrencyChanged += RefreshCurrency;
+    }
 
+    private void OnDisable()
+    {
+        shopButton.onClick.RemoveAllListeners();
+        statButton.onClick.RemoveAllListeners();
+        skillButton.onClick.RemoveAllListeners();
+        inventoryButton.onClick.RemoveAllListeners();
+        dungeonButton.onClick.RemoveAllListeners();
+        _rankButton.onClick.RemoveAllListeners();
+        _optionsButton.onClick.RemoveAllListeners();
 
-        //-----------------------------------------------------------------------------------------
+        LanguageManager.OnLanguageChanged -= RefreshLanguage;
+        GameManager.Instance.stats.OnCurrencyChanged -= RefreshCurrency;
+    }
 
+    private void Start()
+    {
         RefreshCurrency();
         RefreshLanguage();
     }
 
     public void RefreshLanguage()
     {
-        //shopText.text = DataManager.Instance.HudNames[HUDType.Shop].GetLocalizedText();
-        //statText.text = DataManager.Instance.HudNames[HUDType.Stat].GetLocalizedText();
-        //skillText.text = DataManager.Instance.HudNames[HUDType.Skill].GetLocalizedText();
-        //inventoryText.text = DataManager.Instance.HudNames[HUDType.Inventory].GetLocalizedText(); 
-        //menuText.text = DataManager.Instance.HudNames[HUDType.Menu].GetLocalizedText();
         shopText.text = DataManager.Instance.GetLocalizedText("HUD_Shop");
         statText.text = DataManager.Instance.GetLocalizedText("HUD_Stat");
         skillText.text = DataManager.Instance.GetLocalizedText("HUD_Skill");

@@ -79,7 +79,6 @@ public class UIDungeonInfoPopup : UIPopup
         _maxDungeonLevel = DataManager.Instance.GetMaxDungeonLevel(_data.DungeonType);
         _maxClearedLevel = StageManager.Instance.GetMaxClearedLevel(_data.DungeonType);
         _currentLevel = _maxClearedLevel;
-        _levelData = DataManager.Instance.GetDungeonLevelData(_data.DungeonType, _currentLevel);
 
         _dungeonImage.sprite = DataManager.Instance.GetSpriteByKey(_data.DungeonSpriteKey);
         _ticketImage.sprite = DataManager.Instance.GetSpriteByKey($"UI_{_data.TicketType}");
@@ -90,7 +89,7 @@ public class UIDungeonInfoPopup : UIPopup
     private void Refresh()
     {
         _currentTicket = GameManager.Instance.stats.GetCurrency(_data.TicketType);
-
+        _levelData = DataManager.Instance.GetDungeonLevelData(_data.DungeonType, _currentLevel);
         _dungeonNameText.text = DataManager.Instance.GetLocalizedText($"{_data.NameKey}");
         _dungeonLevelText.text = $"{_currentLevel}{DataManager.Instance.GetLocalizedText("UI_Stage")}";
         _requiredTicketText.text = DataManager.Instance.GetLocalizedText($"UI_RequiredTicket");
