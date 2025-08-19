@@ -61,6 +61,8 @@ public class SummonRewardPannel : MonoBehaviour
             case RewardType.SkillGem:
                 //스프라이트 딕셔너리에서 ID로 아이콘 가져오고
                 //ID 파싱해서 재화로 만들고 지급
+                rewardIcon.sprite = DataManager.Instance.GetSpriteByKey("UI_SkillGem");
+                this.rewardType = RewardType.SkillGem;
                 break;
             default:
                 break;
@@ -97,8 +99,13 @@ public class SummonRewardPannel : MonoBehaviour
                 {
                     inventoryPage.RefreshAll();
                 }
+                int key = int.Parse(rewardData.Id);
+                Dictionary<int, ItemData> item = DataManager.Instance.GetItemData();
+                ObjectPoolManager.Instance.uiPool.GetReward().Init(item[key].IconKey, rewardData.Amount);
                 break;
             case RewardType.SkillGem:
+                GameManager.Instance.stats.AddCurrency(PlayerProgressType.SkillGem, rewardData.Amount);
+                ObjectPoolManager.Instance.uiPool.GetReward().Init("UI_SkillGem", rewardData.Amount);
                 break;
             default:
                 break;

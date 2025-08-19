@@ -20,7 +20,7 @@ public class UIRankingPopup : UIPopup
 
     private CancellationTokenSource _cts;
     private DatabaseReference _dbRoot;
-    private List<UIRankingSlot> _rankingItems = new List<UIRankingSlot>();
+    private List<UIRankingSlot> _rankingSlots = new List<UIRankingSlot>();
 
     protected override void Awake()
     {
@@ -36,12 +36,12 @@ public class UIRankingPopup : UIPopup
         _cts?.Dispose();
         _cts = new CancellationTokenSource();
 
-        foreach (var item in _rankingItems)
+        foreach (var item in _rankingSlots)
         {
             item.gameObject.transform.SetParent(ObjectPoolManager.Instance.uiPool.transform);
             ObjectPoolManager.Instance.uiPool.Return(item);
         }
-        _rankingItems.Clear();
+        _rankingSlots.Clear();
 
         _loadingArea.SetActive(true);
 
@@ -80,6 +80,7 @@ public class UIRankingPopup : UIPopup
                 slot.Init(item, rank);
                 Debug.Log($"∑©≈© : {rank}, µ•¿Ã≈Õ : {item.NickName}, {item.MaxClearedStage}, {item.Level} ");
                 rank++;
+                _rankingSlots.Add(slot);
             }
         }
 
@@ -88,7 +89,7 @@ public class UIRankingPopup : UIPopup
         UIRankingSlot mySlot = ObjectPoolManager.Instance.uiPool.GetRankingSlot();
         mySlot.transform.SetParent(_myRankRoot.transform);
         mySlot.Init(myData, myRank);
-
+        _rankingSlots.Add(mySlot);
         _loadingArea.SetActive(false);
     }
 

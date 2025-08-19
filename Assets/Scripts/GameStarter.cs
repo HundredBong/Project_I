@@ -10,4 +10,9 @@ public class GameStarter : MonoBehaviour
     {
         StageManager.Instance.StartStage(_dungeonType);
     }
+
+    public DungeonType GetDungeonType()
+    {
+        return _dungeonType;
+    }
 }

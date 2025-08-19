@@ -8,7 +8,8 @@ public static class LocalSetting
     private const string LanguageKey = "Language";
     private const string AutoSkillKey = "AutoSkillActivate";
     private const string StageLoopKey = "StageLoopActivate";
-
+    private const string BGM = "BGM_Volume";
+    private const string SFX = "SFX_Volume";
 
     public static void SaveLanguage(string language)
     {
@@ -54,6 +55,28 @@ public static class LocalSetting
     public static bool LoadStageLoop()
     {
         return PlayerPrefs.GetInt(StageLoopKey, 0) == 1;
+    }
+
+    public static void SaveBgmVolume(float volume)
+    {
+        PlayerPrefs.SetFloat(BGM, volume);
+        PlayerPrefs.Save();
+    }
+
+    public static void SaveSfxVolume(float volume)
+    {
+        PlayerPrefs.SetFloat(SFX, volume);
+        PlayerPrefs.Save();
+    }
+
+    public static float LoadBgmVolume()
+    {
+        return PlayerPrefs.GetFloat(BGM, 1f);
+    }
+
+    public static float LoadSfxVolume()
+    {
+        return PlayerPrefs.GetFloat(SFX, 1f);
     }
 
 }

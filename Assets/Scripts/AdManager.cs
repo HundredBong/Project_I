@@ -261,6 +261,7 @@ public class AdManager : MonoBehaviour
             {
                 ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] Àü¸é ±¤°í ´ÝÈû");
                 GameManager.Instance.loadSceneReady = true;
+                ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("GameStart");
                 _interstitial = null;
             };
 
@@ -268,6 +269,7 @@ public class AdManager : MonoBehaviour
             {
                 ObjectPoolManager.Instance.uiPool.GetMessage().LogError($"[AdManager] Àü¸é ±¤°í ½ÇÆÐ: {adError.GetMessage()}");
                 GameManager.Instance.loadSceneReady = true;
+                ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("GameStart");
                 _interstitial = null;
             };
 

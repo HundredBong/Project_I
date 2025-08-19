@@ -11,8 +11,8 @@ public class ObjectPoolManager : MonoBehaviour
     public EnemyPool enemyPool;
     public ProjectilePool projectilePool;
     public ParticlePool particlePool;
-    public ContentPool contentPool;
     public UIPool uiPool;
+    public AudioPool audioPool;
 
     private void Awake()
     {

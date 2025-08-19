@@ -9,6 +9,7 @@ public class DataManager : MonoBehaviour
     public static DataManager Instance { get; private set; }
 
     private Dictionary<string, Sprite> spriteDic = new Dictionary<string, Sprite>();
+    private Dictionary<string, AudioClip> audioDic = new Dictionary<string, AudioClip>();
     public Dictionary<StatUpgradeType, StatNameData> statNames = new Dictionary<StatUpgradeType, StatNameData>();
     public Dictionary<HUDType, HudNameData> HudNames = new Dictionary<HUDType, HudNameData>();
     public Dictionary<int, float> expTable = new Dictionary<int, float>();
@@ -38,6 +39,7 @@ public class DataManager : MonoBehaviour
         //-------------------------------------------
 
         LoadSpritesData();
+        LoadAudioData();
         LoadLocalizedTexts();
         //LoadStatName();
         //LoadHUDName();
@@ -65,9 +67,18 @@ public class DataManager : MonoBehaviour
             //Debug.Log($"{sprite.name}");
             spriteDic.Add(sprite.name, sprite);
         }
-
-
     }
+
+    private void LoadAudioData()
+    {
+        AudioClip[] clips = Resources.LoadAll<AudioClip>("Audio");
+
+        foreach (AudioClip clip in clips)
+        {
+            audioDic.Add(clip.name, clip);
+        }
+    }
+
 
     private void LoadLocalizedTexts()
     {
@@ -459,6 +470,20 @@ public class DataManager : MonoBehaviour
             return null;
         }
 
+    }
+
+
+    public AudioClip GetAudioClipByKey(string key)
+    {
+        if (audioDic.TryGetValue(key, out AudioClip audioClip))
+        {
+            return audioClip;
+        }
+        else
+        {
+            Debug.LogWarning($"[DataManager] 해당하는 키의 오디오를 찾을 수 없음 {key}");
+            return null;
+        }
     }
 
     private void LoadSummonExpData()

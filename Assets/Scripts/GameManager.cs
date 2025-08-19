@@ -179,8 +179,6 @@ public class GameManager : MonoBehaviour
         //loadSceneReady = true; <- AdManager에서 처리
 
         AdManager.Instance.ShowLaunchInterstitialOnce();// <- 파이어베이스 로그인에서 처리
-
-
     }
 
     private bool CheckReadyForLoad()

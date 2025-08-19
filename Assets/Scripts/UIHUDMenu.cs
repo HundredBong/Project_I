@@ -12,6 +12,9 @@ public class UIHUDMenu : MonoBehaviour
     [SerializeField] private Button skillButton;
     [SerializeField] private Button inventoryButton;
     [SerializeField] private Button dungeonButton;
+    [SerializeField] private Button _rankButton;
+    [SerializeField] private Button _optionsButton;
+    [SerializeField] private Button _sleepButton;
 
     [Header("Texts")]
     [SerializeField] private TextMeshProUGUI shopText;
@@ -45,6 +48,9 @@ public class UIHUDMenu : MonoBehaviour
         skillButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UISkillPage>());
         inventoryButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UIInventoryPage>());
         dungeonButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UIDungeonPage>());
+        _rankButton.onClick.AddListener(() => UIManager.Instance.PopupOpen<UIRankingPopup>());
+
+
 
         //-----------------------------------------------------------------------------------------
 

@@ -84,9 +84,6 @@ public class UISummonPanel : MonoBehaviour
 
     private async void Start()
     {
-        //또또 인생 혹시 모르니 유니태스크로 감싸긴하는데
-        //이런건 첫 로딩씬에서 불러오고 그 이후에 초기화하면 안전할텐데
-        //제일 중요한 로딩씬이 없네 
         await UniTask.WaitUntil(() => GameManager.Instance.summonReady);
 
         SetLocalizedText();
