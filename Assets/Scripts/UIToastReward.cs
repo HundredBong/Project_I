@@ -8,7 +8,6 @@ using UnityEngine.UI;
 public class UIToastReward : PooledUI
 {
     private CanvasGroup _cg;
-    private TextMeshProUGUI _messageText;
     private const float MOVE_TIME = 1.5f;
 
     [SerializeField] private TextMeshProUGUI _rewardTitle;
@@ -22,7 +21,6 @@ public class UIToastReward : PooledUI
 
     public void Init(Sprite[] rewardImages, int[] rewardCounts)
     {
-        DontDestroyOnLoad(gameObject);
 
         if (rewardImages.Length != rewardCounts.Length)
         {
@@ -68,7 +66,11 @@ public class UIToastReward : PooledUI
         }
 
         _cg.alpha = 0;
-        UITweening.PlayToast(_cg, MOVE_TIME, () => ObjectPoolManager.Instance.uiPool.Return(this));
+        UITweening.PlayToast(_cg, MOVE_TIME, () =>
+        {
+            transform.SetParent(ObjectPoolManager.Instance.uiPool.transform);
+            ObjectPoolManager.Instance.uiPool.Return(this);
+        });
     }
     public void Init(string rewardIconKey, int rewardCount)
     {

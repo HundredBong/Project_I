@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 
 public class AudioController : MonoBehaviour
@@ -18,12 +19,6 @@ public class AudioController : MonoBehaviour
     {
         { DungeonType.EnhanceDungeon, "EnhanceDungeon" },
         { DungeonType.SkillDungeon, "SkillDungeon" }
-    };
-
-    private Dictionary<StageType, string> stageBgmDic = new Dictionary<StageType, string>()
-    {
-        { StageType.Forest, "Forest" },
-        { StageType.Cave, "Cave" },
     };
 
     private void Awake()
@@ -63,6 +58,14 @@ public class AudioController : MonoBehaviour
         LocalSetting.SaveSfxVolume(volume);
     }
 
+    public void MuteAllVolume()
+    {
+        bgmVolume = 0;
+        bgmSource.volume = 0;
+
+        sfxVolume = 0;
+    }
+
     private void ChangeBGM(Scene arg0, Scene arg1)
     {
         bgmSource.Stop();
@@ -84,14 +87,23 @@ public class AudioController : MonoBehaviour
 
         if (dungeonType == DungeonType.None)
         {
-            StageType stageType = StageManager.Instance.GetStageType(StageManager.Instance.currentStage);
-            bgmSource.clip = DataManager.Instance.GetAudioClipByKey(stageBgmDic[stageType]);
+            int stage = StageManager.Instance.currentStage;
+            bgmSource.clip = DataManager.Instance.GetAudioClipByKey(DataManager.Instance.stageDataTable[stage].BGM);
         }
         else
         {
-            bgmSource.clip = DataManager.Instance.GetAudioClipByKey(dungeonBgmDic[dungeonType]);
+            string bgm = DataManager.Instance.GetDungeonData(dungeonType).BGM;
+            bgmSource.clip = DataManager.Instance.GetAudioClipByKey(bgm);
         }
 
+        bgmSource.Play();
+    }
+
+    public void ChangeBGM(int stage)
+    {
+        bgmSource.Stop();
+        bgmSource.volume = bgmVolume;
+        bgmSource.clip = DataManager.Instance.GetAudioClipByKey(DataManager.Instance.stageDataTable[stage].BGM);
         bgmSource.Play();
     }
 }

@@ -29,7 +29,7 @@ public class StageManager : MonoBehaviour
 
     public int enhanceDungeonLevel;  //DungeonInfoPopup에서 초기화
     public int skillDungeonLevel; //DungeonInfoPopup에서 초기화
-
+    private StageType _stageType;
     public IdleStageFlow CurrentIdleStageFlow
     {
         get
@@ -73,6 +73,8 @@ public class StageManager : MonoBehaviour
         maxClearedStage = data.MaxClearedStageId;
         bossChallengable = data.BossChallengable ?? new bool[DataManager.Instance.stageDataTable.Count];
         bossDefeated = data.BossDefeated ?? new bool[DataManager.Instance.stageDataTable.Count];
+
+        _stageType = GetStageType(currentStage);
     }
 
     public void SetDungeonData(DungeonSaveData data)
@@ -151,7 +153,7 @@ public class StageManager : MonoBehaviour
 
         return saveData;
     }
-    
+
     public RankingSaveData BuildRankingSaveData()
     {
         RankingSaveData data = new RankingSaveData()
@@ -195,13 +197,18 @@ public class StageManager : MonoBehaviour
 
     public void GoToStage(int stage, StageMoveType type)
     {
-
         if (type == StageMoveType.Clear && stage == maxClearedStage && bossDefeated[stage - 1])
         {
             stage++;
         }
 
         UIManager.Instance.FadeInOut(FADE_DURATION);
+
+        StageType newStage = GetStageType(stage);
+        if (newStage != _stageType)
+        {
+            AudioController.Instance.ChangeBGM(stage);
+        }
 
         DelayCallManager.Instance.CallLater(FADE_DURATION / 2f, () =>
         {
@@ -214,7 +221,7 @@ public class StageManager : MonoBehaviour
 
     public int GetMaxClearedLevel(DungeonType type)
     {
-        return Mathf.Max(1,_dungeonClearedLevelData[type]);
+        return Mathf.Max(1, _dungeonClearedLevelData[type]);
     }
 
     public void InvokeKillUpdated(int killCount, int required)

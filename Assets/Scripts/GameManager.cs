@@ -195,8 +195,7 @@ public class GameManager : MonoBehaviour
 
     public void EnterSleepMode()
     {
-        AudioController.Instance.ChangeSfxVolume(0);
-        AudioController.Instance.ChangeBgmVolume(0);
+        AudioController.Instance.MuteAllVolume();
 
         Application.targetFrameRate = 15;
         OnDemandRendering.renderFrameInterval = 5;
@@ -204,8 +203,8 @@ public class GameManager : MonoBehaviour
 
     public void ReleaseSleepMode()
     {
-        AudioController.Instance.sfxVolume = LocalSetting.LoadBgmVolume();
-        AudioController.Instance.bgmVolume = LocalSetting.LoadSfxVolume();
+        AudioController.Instance.ChangeSfxVolume(LocalSetting.LoadBgmVolume());
+        AudioController.Instance.ChangeBgmVolume(LocalSetting.LoadSfxVolume());
 
         Application.targetFrameRate = 60;
         OnDemandRendering.renderFrameInterval = 1;

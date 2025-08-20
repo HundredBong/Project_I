@@ -150,9 +150,26 @@ UI_AutoExit,초후 자동으로 돌아갑니다,Seconds Until Auto Return
 UI_Retry,다시 도전,Retry
 UI_EarnedReward,획득한 보상,Rewards Earned 
 UI_NoStatPoint,스탯 포인트가 부족합니다.,No Stat Points Available
-UI_StageSelectPlaceholder,원하는 스테이지를 입력해주세요.,원하는 스테이지를 입력해주세요.(영어)
+UI_StageSelectPlaceholder,원하는 스테이지를 입력해주세요.,Please enter the stage you want.
 UI_Awaken_MAX,최대 각성,MAX Awaken
 UI_EnhanceStone,장비 강화석,Enhance Stone
-UI_CheckSweep,소탕하시겠습니까?,소탕하시겠습니까?(영어)
+UI_CheckSweep,소탕하시겠습니까?,Sweep this dungeon?
 UI_GiveUp,포기하기,Give Up
-UI_NotEnoughTicket,입장권이 부족합니다.,입장권이 부족하다는 영어
+UI_NotEnoughTicket,입장권이 부족합니다.,Not enough tickets.
+Option_Title,옵션,Options
+Option_Sound,사운드 설정,Audio Setting
+Option_BGM,배경음,BGM
+Option_SFX,효과음,SFX
+Option_Language,언어 설정,Language Setting
+Option_KR,한국어,Korean
+Option_EN,영어,Engilish
+Option_Account,계정 설정,Account Setting
+Option_SignOut,로그아웃,Sign-Out
+UI_Leaderboard,리더보드,Leaderboard
+Loading,로딩중...,Now Loading…
+UI_EnsureSignOut,정말로 로그아웃 하시겠습니까? 다시 로그인 하려면 게임을 재시작 해야 합니다.,Are you sure you want to log out? You will need to restart the game to log in again.
+UI_EnsureQuit,게임을 종료하시겠습니까?,Do you want to quit the game?
+UI_EnsureNickname,이 닉네임으로 하시겠습니까?,Do you want to use this nickname? 
+UI_CheckGiveUp,포기하시겠습니까?,Do you want to give up? 
+UI_SkillDungeon,스킬던전 (임시),SkillDungeon (Temp)
+UI_Challenge,도전하기,Challenge

@@ -13,6 +13,7 @@ public class UIStageInfoPanel : MonoBehaviour
     [SerializeField] private TextMeshProUGUI stageText;
     [SerializeField] private TextMeshProUGUI goToMaxStageText;
     [SerializeField] private TextMeshProUGUI giveUpText;
+    [SerializeField] private TextMeshProUGUI challengeButtonText;
     [SerializeField] private Button bossChallengeButton;
     [SerializeField] private Button goToMaxStageButton;
     [SerializeField] private Button stageSelectButton;
@@ -74,6 +75,7 @@ public class UIStageInfoPanel : MonoBehaviour
     {
         goToMaxStageText.text = DataManager.Instance.GetLocalizedText("UI_GoMaxStage");
         giveUpText.text = DataManager.Instance.GetLocalizedText("UI_GiveUp");
+        challengeButtonText.text = DataManager.Instance.GetLocalizedText("UI_Challenge");
     }
 
     private void RefreshKill(int current, int required)

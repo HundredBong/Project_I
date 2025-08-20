@@ -894,6 +894,7 @@ public class DataManager : MonoBehaviour
                 DescKey = tokens[3].Trim(),
                 TicketType = Enum.Parse<PlayerProgressType>(tokens[4].Trim()),
                 MainRewardKey = tokens[5].Trim(),
+                BGM = tokens[6].Trim(),
             };
 
             dungeonDataTable.Add(dungeonType, dungeonData);
@@ -1223,6 +1224,7 @@ public class DungeonData
     public string DescKey;
     public PlayerProgressType TicketType;
     public string MainRewardKey;
+    public string BGM;
 }
 
 public class DungeonLevelData
