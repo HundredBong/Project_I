@@ -51,6 +51,8 @@ public class UIOptionPopup : UIPopup
 
         _bgmSlider.onValueChanged.AddListener(ChangeVolumeBGM);
         _sfxSlider.onValueChanged.AddListener(ChangeVolumeSFX);
+
+        SetLocalizedText();
     }
 
     private void OnDisable()

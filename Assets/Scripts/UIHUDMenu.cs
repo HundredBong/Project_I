@@ -38,6 +38,7 @@ public class UIHUDMenu : MonoBehaviour
         dungeonButton.onClick.AddListener(() => UIManager.Instance.PageOpen<UIDungeonPage>());
         _rankButton.onClick.AddListener(() => UIManager.Instance.PopupOpen<UIRankingPopup>());
         _optionsButton.onClick.AddListener(() => UIManager.Instance.PopupOpen<UIOptionPopup>());
+        _sleepButton.onClick.AddListener(()=> UIManager.Instance.PopupOpen<UISleepPopup>());
 
         LanguageManager.OnLanguageChanged += RefreshLanguage;
         GameManager.Instance.stats.OnCurrencyChanged += RefreshCurrency;

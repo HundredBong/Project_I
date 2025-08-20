@@ -7,6 +7,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 #endif
 using UnityEngine;
+using UnityEngine.Rendering;
 
 
 public class GameManager : MonoBehaviour
@@ -190,6 +191,24 @@ public class GameManager : MonoBehaviour
     public void RegistPlayer(Player player)
     {
         this.player = player;
+    }
+
+    public void EnterSleepMode()
+    {
+        AudioController.Instance.ChangeSfxVolume(0);
+        AudioController.Instance.ChangeBgmVolume(0);
+
+        Application.targetFrameRate = 15;
+        OnDemandRendering.renderFrameInterval = 5;
+    }
+
+    public void ReleaseSleepMode()
+    {
+        AudioController.Instance.sfxVolume = LocalSetting.LoadBgmVolume();
+        AudioController.Instance.bgmVolume = LocalSetting.LoadSfxVolume();
+
+        Application.targetFrameRate = 60;
+        OnDemandRendering.renderFrameInterval = 1;
     }
 
 #if UNITY_EDITOR
