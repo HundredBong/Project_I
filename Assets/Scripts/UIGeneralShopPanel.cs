@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,7 +20,7 @@ public class UIGeneralShopPanel : MonoBehaviour
         //LanguageManager.OnLanguageChanged -=
     }
 
-    private void Start()
+    private async void Start()
     {
         List<GeneralShopData> datas = DataManager.Instance.GetAllGeneralShopDatas();
 
@@ -29,6 +30,15 @@ public class UIGeneralShopPanel : MonoBehaviour
             UIGeneralShopSlot slot = obj.GetComponent<UIGeneralShopSlot>();
             slot.Init(datas[i]);
             _slots.Add(slot);
+        }
+
+        long nowMs = await GameManager.Instance.statSaver.GetServerNowMsAsync();
+        DateTime uiUtcDate = DateTimeOffset.FromUnixTimeMilliseconds(nowMs).UtcDateTime.Date;
+
+        //서버 시간 기준으로 새로고침
+        foreach (UIGeneralShopSlot slot in _slots)
+        {
+            slot.RefreshWithUtc(uiUtcDate);
         }
     }
 }

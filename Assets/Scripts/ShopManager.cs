@@ -164,6 +164,21 @@ public class ShopManager
         return entry.PeriodCount >= purchaseLimit;
     }
 
+    public bool IsLimitExceeded(string shopId, ShopLimitType limitType, int purchaseLimit, DateTime utcDate)
+    {
+        ShopPurchaseEntry entry = GetOrCreateEntry(shopId);
+        NormalizeForLimit(entry, limitType, utcDate);
+
+        if (limitType == ShopLimitType.None)
+        {
+            return false;
+        }
+        if (limitType == ShopLimitType.Account)
+        {
+            return entry.PurchaseCount >= purchaseLimit;
+        }
+        return entry.PeriodCount >= purchaseLimit;
+    }
 
     //public bool IsLimitReset(DateTime lastPurchased, ShopLimitType limitType)
     //{
@@ -379,5 +394,24 @@ public class ShopManager
         int remaining = Mathf.Max(0, (purchaseLimit - used));
 
         return remaining;
+    }
+
+
+    public int GetRemainingForLimit(string shopId, ShopLimitType limitType, int purchaseLimit, DateTime utcDate)
+    {
+        if (limitType == ShopLimitType.None)
+        {
+            return int.MaxValue;
+        }
+        if (purchaseLimit <= 0)
+        {
+            return 0;
+        }
+
+        ShopPurchaseEntry entry = GetOrCreateEntry(shopId);
+        NormalizeForLimit(entry, limitType, utcDate);
+
+        int used = (limitType == ShopLimitType.Account) ? entry.PurchaseCount : entry.PeriodCount;
+        return Mathf.Max(0, purchaseLimit - used);
     }
 }

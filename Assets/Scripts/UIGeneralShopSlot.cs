@@ -308,5 +308,47 @@ public class UIGeneralShopSlot : MonoBehaviour
         }
 
     }
+
+    public void RefreshWithUtc(DateTime uiUtcDate)
+    {
+        bool soldOut = GameManager.Instance.ShopManager.IsLimitExceeded(_data.ShopId, _data.LimitType, _data.PurchaseLimit, uiUtcDate);
+
+        soldOutObject.SetActive(soldOut);
+        purchaseButton.interactable = !soldOut;
+
+        int used = 0;
+        if (_data.LimitType != ShopLimitType.None)
+        {
+            int remaining = GameManager.Instance.ShopManager.GetRemainingForLimit(_data.ShopId, _data.LimitType, _data.PurchaseLimit, uiUtcDate);
+            used = Mathf.Clamp(_data.PurchaseLimit - remaining, 0, _data.PurchaseLimit);
+        }
+
+        itemNameText.text = $"{DataManager.Instance.GetLocalizedText(_data.NameKey)} {_data.RewardCount}{DataManager.Instance.GetLocalizedText("UI_EA")}";
+        itemLimitText.text = $"{used} / {_data.PurchaseLimit}";
+        itemPriceText.text = _data.PriceAmount.ToString();
+        itemSoldOutText.text = $"{DataManager.Instance.GetLocalizedText("Shop_SoldOut")}";
+
+        string limitType = "";
+        switch (_data.LimitType)
+        {
+            case ShopLimitType.Account:
+                limitType = DataManager.Instance.GetLocalizedText("UI_Account");
+                break;
+            case
+            ShopLimitType.Daily:
+                limitType = DataManager.Instance.GetLocalizedText("UI_Daily");
+                break;
+            case
+            ShopLimitType.Weekly:
+                limitType = DataManager.Instance.GetLocalizedText("UI_Weekly");
+                break;
+            case
+            ShopLimitType.Monthly:
+                limitType = DataManager.Instance.GetLocalizedText("UI_Monthly");
+                break;
+        }
+        itemPurchasedText.text = (_data.LimitType == ShopLimitType.None) ? "" : $"{limitType} {used} / {_data.PurchaseLimit}";
+    }
+
 }
 
