@@ -680,7 +680,7 @@ public class FirebaseStatSaver : MonoBehaviour
         {
             await dbRef.Child(path).SetRawJsonValueAsync(json);
         }
-        catch(Exception e) 
+        catch (Exception e)
         {
             Debug.LogError($"[FirebaseStatSaver] 랭킹 데이터 저장 실패, {e}");
         }
@@ -727,6 +727,23 @@ public class FirebaseStatSaver : MonoBehaviour
         throw new Exception($"[RankingSaveData] 랭킹 정보 불러오기 {MAX_RETRY_COUNT}회 연속 실패함");
     }
 
+    public async UniTask<long> GetServerNowMsAsync()
+    {
+        string uid = GetUserId();
+        string path = $"users/{uid}/timestamp";
+
+        await dbRef.Child(path).SetValueAsync(ServerValue.Timestamp);
+
+        DataSnapshot snap = await dbRef.Child(path).GetValueAsync();
+
+        if (snap.Exists == true && long.TryParse(snap.Value.ToString(), out long ms))
+        {
+            return ms;
+        }
+
+        throw new Exception("서버 시간 가져오기 실패함");
+    }
+
     private string GetUserId()
     {
 #if UNITY_EDITOR
@@ -740,6 +757,8 @@ public class FirebaseStatSaver : MonoBehaviour
         }
         return user?.UserId;
     }
+
+
 
 }
 
@@ -857,7 +876,7 @@ public class ShopPurchaseEntry
     public int PeriodCount; //현재 기간 구매 수
     public string WindowKey; //기간 키
 
-    public string LastPurchased; //마지막 구매 시간, ISO 8601 형식으로 저장
+    public long LastPurchased; //마지막 구매 시간, ISO 8601 형식으로 저장 이였다가 ms로 바뀜
 }
 
 [System.Serializable]

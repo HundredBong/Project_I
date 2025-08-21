@@ -165,35 +165,35 @@ public class ShopManager
     }
 
 
-    public bool IsLimitReset(DateTime lastPurchased, ShopLimitType limitType)
-    {
-        DateTime now = DateTime.UtcNow;
+    //public bool IsLimitReset(DateTime lastPurchased, ShopLimitType limitType)
+    //{
+    //    DateTime now = DateTime.UtcNow;
 
-        switch (limitType)
-        {
-            //어제보다 오늘이 더 크면
-            case ShopLimitType.Daily:
-                return now.Day > lastPurchased.Day;
-            case ShopLimitType.Weekly:
-                //현재 문화권의 달력 계산 도구 가져오기
-                CultureInfo culture = CultureInfo.InvariantCulture;
-                Calendar calendar = culture.Calendar;
+    //    switch (limitType)
+    //    {
+    //        //어제보다 오늘이 더 크면
+    //        case ShopLimitType.Daily:
+    //            return now.Day > lastPurchased.Day;
+    //        case ShopLimitType.Weekly:
+    //            //현재 문화권의 달력 계산 도구 가져오기
+    //            CultureInfo culture = CultureInfo.InvariantCulture;
+    //            Calendar calendar = culture.Calendar;
 
-                //검사할 날짜, 첫 주를 언제로 볼지, 한 주의 시작 요일 설정
-                int nowWeek = calendar.GetWeekOfYear(now, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
-                int lastWeek = calendar.GetWeekOfYear(lastPurchased, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+    //            //검사할 날짜, 첫 주를 언제로 볼지, 한 주의 시작 요일 설정
+    //            int nowWeek = calendar.GetWeekOfYear(now, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+    //            int lastWeek = calendar.GetWeekOfYear(lastPurchased, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
 
-                //이번 주 != 저번에 구매한 주 || 올해 !=  저번에 구매한 해
-                return nowWeek != lastWeek || now.Year != lastPurchased.Year;
-            case ShopLimitType.Monthly:
-                return now.Year != lastPurchased.Year || now.Month != lastPurchased.Month;
+    //            //이번 주 != 저번에 구매한 주 || 올해 !=  저번에 구매한 해
+    //            return nowWeek != lastWeek || now.Year != lastPurchased.Year;
+    //        case ShopLimitType.Monthly:
+    //            return now.Year != lastPurchased.Year || now.Month != lastPurchased.Month;
 
-            case ShopLimitType.Account:
-            case ShopLimitType.None:
-            default:
-                return false;
-        }
-    }
+    //        case ShopLimitType.Account:
+    //        case ShopLimitType.None:
+    //        default:
+    //            return false;
+    //    }
+    //}
 
     private void SaveData()
     {
@@ -225,7 +225,7 @@ public class ShopManager
             PurchaseCount = 0,
             PeriodCount = 0,
             WindowKey = null,
-            LastPurchased = null
+            LastPurchased = 0L
         };
 
         _purchaseEntries[shopId] = entry;
@@ -233,40 +233,7 @@ public class ShopManager
         return entry;
     }
 
-    private string GetWindowKey(ShopLimitType limitType, DateTime utcNow)
-    {
-        switch (limitType)
-        {
-            case ShopLimitType.Daily:
-                return utcNow.ToString("yyyy-MM-dd");
-            case ShopLimitType.Weekly:
-                CultureInfo culture = CultureInfo.InvariantCulture;
-                Calendar calendar = culture.Calendar;
-                int week = calendar.GetWeekOfYear(utcNow, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
-                return $"{utcNow:yyyy}-W{week:D2}";
-            case ShopLimitType.Monthly:
-                return utcNow.ToString("yyyy-MM");
-            case ShopLimitType.Account:
-            case ShopLimitType.None:
-            default:
-                return "ALL";
-        }
-    }
-
-    private void NormalizeForLimit(ShopPurchaseEntry entry, ShopLimitType limitType, DateTime utcNow)
-    {
-        //현재 시간 키
-        string currentKey = GetWindowKey(limitType, utcNow);
-
-        if (entry.WindowKey != currentKey)
-        {
-            //저장된 키와 다르면 시간이 바뀐 것으로 취급
-            entry.WindowKey = currentKey;
-            entry.PeriodCount = 0;
-        }
-    }
-
-    public void UpdatePurchase(string shopId, ShopLimitType limitType, int count)
+    public async UniTask UpdatePurchaseAsync(string shopId, ShopLimitType limitType, int count)
     {
         if (count <= 0)
         {
@@ -276,7 +243,9 @@ public class ShopManager
 
         ShopPurchaseEntry entry = GetOrCreateEntry(shopId);
 
-        DateTime utcNow = DateTime.UtcNow;
+        //서버에서 받은 long을 DateTime으로 변환, ms를 날짜와 시간으로
+        long nowMs = await GameManager.Instance.statSaver.GetServerNowMsAsync();
+        DateTime utcNow = DateTimeOffset.FromUnixTimeMilliseconds(nowMs).UtcDateTime;
 
         NormalizeForLimit(entry, limitType, utcNow);
 
@@ -289,9 +258,89 @@ public class ShopManager
             entry.PeriodCount += count;
         }
 
-        entry.LastPurchased = utcNow.ToString("o");
+        entry.LastPurchased = nowMs;
 
         SaveData();
+    }
+
+    private void NormalizeForLimit(ShopPurchaseEntry entry, ShopLimitType limitType, DateTime utcNow)
+    {
+        //새로운 기간으로 넘어갔는지 확인하고, 넘어갔으면 구매 횟수 초기화
+
+        //UpdatePurchase에서도 periodCount를 증가시키지 않기는 함
+        if (limitType == ShopLimitType.None || limitType == ShopLimitType.Account)
+        {
+            return;
+        }
+
+        DateTime date = utcNow.Date;
+
+        string currentKey = GetWindowKey(limitType, utcNow);
+
+        if (string.Equals(entry.WindowKey, currentKey, StringComparison.Ordinal) == false)
+        {
+            //저장된 키와 다르면 시간이 바뀐 것으로 취급
+            entry.WindowKey = currentKey;
+            entry.PeriodCount = 0;
+        }
+    }
+
+    private string GetWindowKey(ShopLimitType limitType, DateTime utcNow)
+    {
+        //현재 시간을 문자열로 만들어주고 WindowKey로 저장
+
+        switch (limitType)
+        {
+            case ShopLimitType.Daily:
+                return utcNow.ToString("yyyy-MM-dd");
+            case ShopLimitType.Weekly:
+                int week = GetIsoWeekOfYear(utcNow);
+                int year = GetIsoWeekYear(utcNow);
+                return $"{year}-W{week:D2}";
+            case ShopLimitType.Monthly:
+                return utcNow.ToString("yyyy-MM");
+            case ShopLimitType.Account:
+            case ShopLimitType.None:
+            default:
+                return "ALL";
+        }
+    }
+
+    private int GetIsoWeekOfYear(DateTime date)
+    {
+        CultureInfo culture = CultureInfo.InvariantCulture;
+        Calendar calendar = culture.Calendar;
+        int week = calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+        return week;
+    }
+
+    private int GetIsoWeekYear(DateTime date)
+    {
+        //단순히 date.Year쓰면 연말, 연초 경계에서 뭔가 꼬임, 그 주의 목요일이 포함된 해를 그 주의 연도로 설정
+
+        //요일 가져오기
+        DayOfWeek dayOfWeek = date.DayOfWeek;
+
+        //이번 주의 월요일로 이동할 오프셋 계산
+        int offsetToMonday = (dayOfWeek == DayOfWeek.Sunday) ? -6 : (DayOfWeek.Monday - dayOfWeek);
+
+        //월요일 날짜 계산후 3을 더해 목요일로 설정
+        DateTime monday = date.AddDays(offsetToMonday);
+        DateTime thursday = monday.AddDays(3);
+
+        //목요일이 속한 해를 반환
+        return thursday.Year;
+
+        //2024-12-31 화요일 기준
+        //dayOfWeek = Tuesday
+        //offsetToMonday = monday - tuesday -> 1 - 2 = -1
+        //월요일 : 화요일 + (-1)
+        //목요일 = 월요일 + 3
+
+        //2024-01-01 수요일 기준
+        //dayOfWeek = wednesday
+        //offsetToMonday = monday - wedensday -> 1 - 3 = -2
+        //월요일 : 수요일 + (-2)
     }
 
     public int GetRemainingForLimit(string shopId, ShopLimitType limitType, int purchaseLimit)

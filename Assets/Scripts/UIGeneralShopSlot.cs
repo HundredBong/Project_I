@@ -171,7 +171,7 @@ public class UIGeneralShopSlot : MonoBehaviour
             return;
         }
 
-        UIManager.Instance.PopupOpen<UISliderPopup>().Init(_data.IconKey, _data.NameKey, max, (int selectedCount) =>
+        UIManager.Instance.PopupOpen<UISliderPopup>().Init(_data.IconKey, _data.NameKey, max, async (int selectedCount) =>
         {
             //한 번 더 계산
             int freshMax = GetMaxAmount(progress, _data.PriceAmount);
@@ -201,7 +201,7 @@ public class UIGeneralShopSlot : MonoBehaviour
             if (TrySpendCurrency(_data.PriceType, totalPrice))
             {
                 GiveReward(_data.RewardType, selectedCount * _data.RewardCount);
-                GameManager.Instance.ShopManager.UpdatePurchase(_data.ShopId, _data.LimitType, selectedCount);
+                await GameManager.Instance.ShopManager.UpdatePurchaseAsync(_data.ShopId, _data.LimitType, selectedCount);
                 ObjectPoolManager.Instance.uiPool.GetReward().Init(_data.IconKey, selectedCount);
             }
             else
@@ -293,7 +293,7 @@ public class UIGeneralShopSlot : MonoBehaviour
             {
                 GiveReward(_data.RewardType, _data.RewardCount);
 
-                GameManager.Instance.ShopManager.UpdatePurchase(_data.ShopId, _data.LimitType, 1);
+                await GameManager.Instance.ShopManager.UpdatePurchaseAsync(_data.ShopId, _data.LimitType, 1);
 
                 ObjectPoolManager.Instance.uiPool.GetReward().Init(_data.IconKey, _data.RewardCount);
             }

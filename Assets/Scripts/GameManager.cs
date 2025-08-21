@@ -139,8 +139,9 @@ public class GameManager : MonoBehaviour
         {
             purchaseProgressData.PurchaseEntries["Dummy"] = new ShopPurchaseEntry
             {
+                //더미 하나 만들어서 저장 
                 PurchaseCount = 1,
-                LastPurchased = DateTime.UtcNow.ToString("o")
+                LastPurchased = 0L,
             };
             await statSaver.SavePurchaseData(purchaseProgressData);
         }
