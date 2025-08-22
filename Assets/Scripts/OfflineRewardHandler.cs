@@ -12,8 +12,8 @@ public class OfflineRewardHandler : MonoBehaviour
     private const long MIN_OFFLINE_MS = 5L * 60L * 1000L;
     private const long MAX_OFFLINE_MS = 60L * 60L * 24L * 1000L;
 
-    private string[] _spriteKeyBffer = new string[8];
-    private int[] _amountBuffer = new int[8];
+    private string[] _spriteKey = new string[2];
+    private int[] _amount = new int[2];
 
     private bool _busy = false;
 
@@ -34,7 +34,7 @@ public class OfflineRewardHandler : MonoBehaviour
     {
         if (pause)
         {
-             GameManager.Instance.statSaver.SetLastActiveNowAsync().Forget();
+            GameManager.Instance.statSaver.SetLastActiveNowAsync().Forget();
         }
     }
 
@@ -75,15 +75,31 @@ public class OfflineRewardHandler : MonoBehaviour
             offlineMs = offlineMs > MAX_OFFLINE_MS ? MAX_OFFLINE_MS : offlineMs;
 
             //분 구하기
-            double minutes = offlineMs / 60000.0L;
+            double minutes = offlineMs / 60000.0;
             int offlineMinutes = Convert.ToInt32(minutes);
             int currentStage = StageManager.Instance.currentStage;
             float rewardRate = DataManager.Instance.stageDataTable[currentStage].RewardRate;
 
             float reward = offlineMinutes * rewardRate;
 
-            GameManager.Instance.stats.GetExp(reward);
-            GameManager.Instance.stats.GetGold(reward);
+            //이거 제대로 하려면 오프라인 보상 CSV도 파야할 거 같은데, 일단 하드코딩 \^o^/
+
+            _spriteKey[0] = "UI_Gold";
+            _spriteKey[1] = "UI_EXP";
+
+            _amount[0] = (int)reward;
+            _amount[1] = (int)reward;
+
+            UIManager.Instance.PopupOpen<UIOfflineRewardPopup>().Init(offlineMinutes, () =>
+            {
+                GameManager.Instance.stats.GetExp(reward);
+                GameManager.Instance.stats.GetGold(reward);
+
+                ObjectPoolManager.Instance.uiPool.GetReward().Init(_spriteKey, _amount);
+            }, _spriteKey, _amount);
+
+
+
 
             ObjectPoolManager.Instance.uiPool.GetMessage().Log($"방치 시간 : {minutes}, 획득한 보상 : {(int)reward}");
             Debug.Log($"방치 시간 : {minutes}, 획득한 보상 : {(int)reward}");

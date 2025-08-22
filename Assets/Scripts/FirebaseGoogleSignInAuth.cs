@@ -3,6 +3,7 @@ using Firebase;
 using Firebase.Auth;
 using Google;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FirebaseGoogleSignInAuth : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class FirebaseGoogleSignInAuth : MonoBehaviour
     private FirebaseAuth _auth;
     private GoogleSignInConfiguration _config;
 
-    [SerializeField] private GameObject _loginModal;
+    [SerializeField] private Button _signInButton;
 
     private void Awake()
     {
@@ -28,12 +29,19 @@ public class FirebaseGoogleSignInAuth : MonoBehaviour
         GoogleSignIn.Configuration = _config;
     }
 
+    private void OnEnable()
+    {
+        _signInButton.onClick.AddListener(SignIn);
+    }
+
+    private void OnDisable()
+    {
+        _signInButton.onClick.RemoveListener(SignIn);
+    }
+
     private void Start()
     {
-        if (_loginModal != null)
-        {
-            _loginModal.SetActive(true);
-        }
+        _signInButton.gameObject.SetActive(true);
     }
 
     public void SignIn()
@@ -63,6 +71,8 @@ public class FirebaseGoogleSignInAuth : MonoBehaviour
             }
         });
 
+        _signInButton.gameObject.SetActive(false);
+
         return;
 #endif
         SignInAsync().Forget();
@@ -91,10 +101,7 @@ public class FirebaseGoogleSignInAuth : MonoBehaviour
 
             GameManager.Instance.firebaseReady = true;
 
-            if (_loginModal != null)
-            {
-                _loginModal.SetActive(false);
-            }
+            _signInButton.gameObject.SetActive(false);
         }
         catch (System.Exception e)
         {

@@ -72,10 +72,9 @@ public class UIToastReward : PooledUI
             ObjectPoolManager.Instance.uiPool.Return(this);
         });
     }
+
     public void Init(string rewardIconKey, int rewardCount)
     {
-        DontDestroyOnLoad(gameObject);
-
         _rewardTitle.text = DataManager.Instance.GetLocalizedText("UI_ToastReward");
 
         foreach (var image in _rewardIcons)
@@ -109,6 +108,60 @@ public class UIToastReward : PooledUI
 
         _rewardCounts[0].gameObject.SetActive(isZero == false);
         _rewardCounts[0].text = rewardCount.ToString();
+
+        _cg.alpha = 0;
+        UITweening.PlayToast(_cg, MOVE_TIME, () =>
+        {
+            transform.SetParent(ObjectPoolManager.Instance.uiPool.transform);
+            ObjectPoolManager.Instance.uiPool.Return(this);
+        });
+    }
+
+    public void Init(string[] rewardIconKeys, int[] rewardAmounts)
+    {
+        //왜 처음부터 string[]을 받지않고 sprite를 받아서 이렇게 또 오버로드를 파는가
+
+        if (rewardIconKeys.Length != rewardAmounts.Length)
+        {
+            Debug.LogWarning("[UIToastReward] 인자 갯수가 일치하지 않음");
+            return;
+        }
+
+        _rewardTitle.text = DataManager.Instance.GetLocalizedText("UI_ToastReward");
+
+        Transform root = UIManager.Instance.ToastRoot;
+
+        if (root == null)
+        {
+            Debug.LogWarning("[UIToastReward] ToastRoot가 없음");
+        }
+        else
+        {
+            transform.SetParent(root);
+        }
+
+        foreach (var image in _rewardIcons)
+        {
+            image.gameObject.SetActive(false);
+        }
+
+        foreach (var text in _rewardCounts)
+        {
+            text.gameObject.SetActive(false);
+        }
+
+        int count = Mathf.Min(rewardIconKeys.Length, _rewardIcons.Length, _rewardCounts.Length);
+
+        for (int i = 0; i < count; i++)
+        {
+            _rewardIcons[i].gameObject.SetActive(true);
+            _rewardIcons[i].sprite = DataManager.Instance.GetSpriteByKey(rewardIconKeys[i]);
+
+            bool isZero = rewardAmounts[i] == 0;
+
+            _rewardCounts[i].gameObject.SetActive(isZero == false);
+            _rewardCounts[i].text = rewardAmounts[i].ToString();
+        }
 
         _cg.alpha = 0;
         UITweening.PlayToast(_cg, MOVE_TIME, () =>
