@@ -729,6 +729,8 @@ public class FirebaseStatSaver : MonoBehaviour
 
     public async UniTask<long> GetServerNowMsAsync()
     {
+        //서버 시간 저장 및 불러오기
+
         string uid = GetUserId();
         string path = $"users/{uid}/timestamp";
 
@@ -742,6 +744,42 @@ public class FirebaseStatSaver : MonoBehaviour
         }
 
         throw new Exception("서버 시간 가져오기 실패함");
+    }
+
+    public async UniTask<long> GetLastActiveMsAsync()
+    {
+        //마지막 활동 시간 불러오기
+
+        string uid = GetUserId();
+        string path = $"users/{uid}/lastActiveMs";
+        DataSnapshot snap = await dbRef.Child(path).GetValueAsync();
+
+        if (snap.Exists == true && long.TryParse(snap.Value.ToString(), out long ms))
+        {
+            return ms;
+        }
+
+        return 0L;
+    }
+
+    public async UniTask SetLastActiveNowAsync()
+    {
+        //현재 시간을 서버에 저장
+
+        string uid = GetUserId();
+        string path = $"users/{uid}/lastActiveMs";
+
+        await dbRef.Child(path).SetValueAsync(ServerValue.Timestamp);
+    }
+
+    public async UniTask SaveLastActiveMsAsync(long nowMs)
+    {
+        //외부에서 ms를 받아서 시간을 서버에 저장 
+
+        string uid = GetUserId();
+        string path = $"users/{uid}/lastActiveMs";
+
+        await dbRef.Child(path).SetValueAsync(nowMs);
     }
 
     private string GetUserId()

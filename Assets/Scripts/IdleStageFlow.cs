@@ -97,6 +97,7 @@ public class IdleStageFlow : IStageFlow
 
         GameManager.Instance.statSaver.SaveStageDataAsync(_manager.BuildStageSaveData()).Forget();
         GameManager.Instance.statSaver.SavePlayerProgressDataAsync(GameManager.Instance.stats.GetProgressSaveData()).Forget();
+        GameManager.Instance.statSaver.SetLastActiveNowAsync().Forget();
     }
 
     public void OnTimeOut()

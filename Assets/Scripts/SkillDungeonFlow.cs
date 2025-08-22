@@ -110,6 +110,8 @@ public class SkillDungeonFlow : IStageFlow
             LoadingSceneController.LoadScene("1_StageScene");
         },
         slots);
+
+        GameManager.Instance.statSaver.SetLastActiveNowAsync().Forget();
     }
 
     public void OnTimeOut()

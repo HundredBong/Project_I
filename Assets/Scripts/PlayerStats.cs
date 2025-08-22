@@ -148,7 +148,7 @@ public class PlayerStats : MonoBehaviour
 
     public void GetGold(float gold)
     {
-        Gold += (gold * goldBonus);
+        Gold = Gold + gold + (gold * (goldBonus / 100f));
     }
 
     public int GetGold() { return (int)Gold; }
