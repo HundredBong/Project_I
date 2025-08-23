@@ -19,11 +19,20 @@ public class PlayerAttackState : IState
         if (anim != null)
         {
             anim.SetBool("2_Attack", true);
+
+            float attackSpeed = Mathf.Max(1f, owner.player.Stat.attackSpeed);
+            anim.SetFloat("AttackSpeed", attackSpeed);
         }
     }
 
     public void Update()
     {
+        if (anim != null)
+        {
+            float attackSpeed = Mathf.Max(1f, owner.player.Stat.attackSpeed);
+            anim.SetFloat("AttackSpeed", attackSpeed);
+        }
+
         if (owner.player.TargetEnemy == null && IsAttacking == false)
         {
             owner.ChangeState(StateType.Idle);
@@ -75,7 +84,15 @@ public class PlayerAttackState : IState
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll
             (center, owner.player.Stat.attackRange, owner.player.targetLayerMask);
 
-        //Debug.Log("Player Attack Hit Count : " + hitEnemies.Length);
+        float baseDamage = owner.player.Stat.damage; //베이스 대미지
+        float chance = Mathf.Clamp01(owner.player.Stat.criticalChance); //크리 확률 가져오기
+        float criBonus = owner.player.Stat.criticalDamage; //크리 대미지 가져오기
+
+        //Random.value는 1 안나옴
+        bool isCritical = Random.value < chance;
+
+        //최종 대미지 계산, 크리일시 baseDamage로, 아니면 baseDamage에다가 크리티컬 보너스 추가
+        float finalDamage = isCritical ? baseDamage * (2f + (criBonus * 0.01f)) : baseDamage;
 
         foreach (Collider2D col in hitEnemies)
         {
@@ -83,7 +100,7 @@ public class PlayerAttackState : IState
 
             if (enemy != null && enemy.isDead == false)
             {
-                enemy.TakeDamage(owner.player.Stat.damage);
+                enemy.TakeDamage(finalDamage);
             }
         }
     }

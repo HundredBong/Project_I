@@ -67,6 +67,7 @@ public class UIShopPage : UIPage
     {
         LanguageManager.OnLanguageChanged += RefreshTexts;
         RefreshTexts();
+        RefreshCurrency();
     }
 
     private void OnDisable()
@@ -79,7 +80,6 @@ public class UIShopPage : UIPage
     {
         //처음 상점 들어오면 소환 먼저 보이게
         ShowCategory(ShopCategory.Summon);
-        RefreshTexts();
     }
 
     private void ShowCategory(ShopCategory targetCategory)

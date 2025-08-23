@@ -308,8 +308,15 @@ public class PlayerStats : MonoBehaviour
 
         damage = 5 + (GetStat(StatUpgradeType.Attack) * 3) + (GetUpgradeValue(GoldUpgradeType.Attack));
         maxHealth = 50 + (GetStat(StatUpgradeType.Health) * 10) + (GetUpgradeValue(GoldUpgradeType.Health));
-        criticalChance = GetUpgradeLevel(GoldUpgradeType.CriticalChance);
-        //TODO : 크리 공식 손봐야 하는데
+
+        int criLevel = GetUpgradeLevel(GoldUpgradeType.CriticalChance);
+        int criMax = GetMaxUpgradeLevel(GoldUpgradeType.CriticalChance);
+
+        criticalChance = criMax > 0 ? (float)criLevel / (float)criMax : 0f;
+
+        criticalDamage = GetUpgradeValue(GoldUpgradeType.CriticalDamage);
+        criticalChance = Mathf.Clamp01(criticalChance);
+
         attackSpeed = 1 + (GetStat(StatUpgradeType.AttackSpeed) * 0.01f);
         moveSpeed = 5 + (GetStat(StatUpgradeType.MoveSpeed) * 0.01f);
 

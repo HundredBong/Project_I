@@ -34,7 +34,7 @@ public class UIGoldUpgradeSlot : MonoBehaviour
     {
         LanguageManager.OnLanguageChanged -= Refresh;
 
-        StatUpgradeAmount.Unregister(this); 
+        StatUpgradeAmount.Unregister(this);
     }
 
     public void Init(PlayerStats stats, GoldUpgradeType type)
@@ -53,20 +53,30 @@ public class UIGoldUpgradeSlot : MonoBehaviour
     {
         GoldUpgradeData data = DataManager.Instance.GetGoldUpgradeData(upgradeType);
         int upgradeValue = stats.GetUpgradeLevel(upgradeType);
+        int maxUpgradeLevel = stats.GetMaxUpgradeLevel(upgradeType);
 
-        int amount = StatUpgradeAmount.statSlotAmount;
-        Debug.Log($"amount : {amount}");    
-
-        float totalPrice = 0f;
-        for (int i = 0; i < amount; i++)
-        {
-            totalPrice += data.Price + data.PriceIncrease * (upgradeValue + i);
-        }
 
         upgradeNameText.text = DataManager.Instance.GetLocalizedText(DataManager.Instance.GetGoldUpgradeData(upgradeType).NameKey);
         upgradeValueText.text = $"Lv. {upgradeValue}";
-        upgradeMaxText.text = $"Max Lv. {stats.GetMaxUpgradeLevel(upgradeType)}";
-        priceText.text = $"{totalPrice:F1}";
+        upgradeMaxText.text = $"Max Lv. {maxUpgradeLevel}";
+
+        if (upgradeValue < maxUpgradeLevel)
+        {
+            int amount = StatUpgradeAmount.statSlotAmount;
+
+            float totalPrice = 0f;
+            for (int i = 0; i < amount; i++)
+            {
+                totalPrice += data.Price + data.PriceIncrease * (upgradeValue + i);
+            }
+
+            priceText.text = $"{totalPrice:F1}";
+        }
+        else
+        {
+            priceText.text = $"";
+            addButton.interactable = false;
+        }
     }
 
     private void OnClickAdd()
@@ -81,6 +91,8 @@ public class UIGoldUpgradeSlot : MonoBehaviour
         {
             Debug.LogWarning("°ñµå ºÎÁ·ÇÔ");
         }
+
+        Refresh();
     }
 
 }
