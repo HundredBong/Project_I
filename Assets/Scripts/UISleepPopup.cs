@@ -12,7 +12,7 @@ public class UISleepPopup : UIPopup
     [SerializeField] private TextMeshProUGUI _stageText;
     [SerializeField] private TextMeshProUGUI _batteryText;
 
-    [SerializeField] private Image _batteryFillImage;
+    [SerializeField] private Image _batteryIcon;
 
     [SerializeField] private Slider _releaseSleepSlider;
 
@@ -34,6 +34,8 @@ public class UISleepPopup : UIPopup
 
         //게임매니저에서 슬립모드 활성화 후 열기
         GameManager.Instance.EnterSleepMode();
+
+        ResetValue();
 
         if (_refreshCoroutine != null)
         {
@@ -77,16 +79,32 @@ public class UISleepPopup : UIPopup
             _stageText.text = $"{StageManager.Instance.currentStage.ToString()} {DataManager.Instance.GetLocalizedText("UI_Stage")}";
 
             float battery = SystemInfo.batteryLevel;
-
             if (battery < 0)
             {
-                _batteryFillImage.fillAmount = 1f;
+                _batteryIcon.sprite = DataManager.Instance.GetSpriteByKey("Batteries_3");
                 _batteryText.text = $"100%";
             }
             else
             {
-                _batteryFillImage.fillAmount = battery;
-                _batteryText.text = $"{(battery * 100f).ToString("F0")}%";
+                float percent = battery * 100f;
+                _batteryText.text = $"{percent:F0}%";
+
+                if (percent <= 20f)
+                {
+                    _batteryIcon.sprite = DataManager.Instance.GetSpriteByKey("Batteries_0");
+                }
+                else if (percent <= 50f)
+                {
+                    _batteryIcon.sprite = DataManager.Instance.GetSpriteByKey("Batteries_1");
+                }
+                else if (percent <= 80f)
+                {
+                    _batteryIcon.sprite = DataManager.Instance.GetSpriteByKey("Batteries_2");
+                }
+                else
+                {
+                    _batteryIcon.sprite = DataManager.Instance.GetSpriteByKey("Batteries_3");
+                }
             }
 
             yield return _sleepInterval;
@@ -95,6 +113,7 @@ public class UISleepPopup : UIPopup
 
     public void ResetValue()
     {
+        //Slider의 Event Trigger로도 실행됨
         _releaseSleepSlider.value = 0;
     }
 }

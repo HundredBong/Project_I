@@ -151,10 +151,6 @@ public class PlayerStats : MonoBehaviour
         Gold = Gold + gold + (gold * (goldBonus / 100f));
     }
 
-    public int GetGold() { return (int)Gold; }
-
-    public int GetDiamond() { return (int)Diamond; }
-
     private void LevelUp()
     {
         level++;

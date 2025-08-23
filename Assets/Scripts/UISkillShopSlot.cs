@@ -90,7 +90,7 @@ public class UISkillShopSlot : MonoBehaviour
 
         itemNameText.text = $"{DataManager.Instance.GetLocalizedText(_data.NameKey)} {_data.RewardCount}{DataManager.Instance.GetLocalizedText("UI_EA")}";
         itemLimitText.text = $"{used} / {_data.PurchaseLimit}";
-        itemPriceText.text = _data.PriceAmount.ToString();
+        itemPriceText.text = _data.PriceAmount.ToString("N0");
         itemSoldOutText.text = $"{DataManager.Instance.GetLocalizedText($"Shop_SoldOut")}";
 
         string limitType = "";
@@ -136,7 +136,7 @@ public class UISkillShopSlot : MonoBehaviour
 
         itemNameText.text = $"{DataManager.Instance.GetLocalizedText(_data.NameKey)} {_data.RewardCount}{DataManager.Instance.GetLocalizedText("UI_EA")}";
         itemLimitText.text = $"{used} / {_data.PurchaseLimit}";
-        itemPriceText.text = _data.PriceAmount.ToString();
+        itemPriceText.text = _data.PriceAmount.ToString("N0");
         itemSoldOutText.text = $"{DataManager.Instance.GetLocalizedText("Shop_SoldOut")}";
 
         string limitType = "";

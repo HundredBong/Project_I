@@ -75,8 +75,8 @@ public class UIHUDMenu : MonoBehaviour
 
     private void RefreshCurrency()
     {
-        string gold = GameManager.Instance.stats.GetGold().ToString();
-        string diamond = GameManager.Instance.stats.GetDiamond().ToString();
+        string gold = NumberFormatter.FormatNumber(GameManager.Instance.stats.GetCurrency(PlayerProgressType.Gold)).ToString();
+        string diamond = GameManager.Instance.stats.GetCurrency(PlayerProgressType.Diamond).ToString("N0");
 
         stageGoldText.text = gold;
         stageDiamondText.text = diamond;
