@@ -23,6 +23,7 @@ public class DataManager : MonoBehaviour
     private Dictionary<SummonSubCategory, Dictionary<int, SummonRateData>> summonRateTable = new Dictionary<SummonSubCategory, Dictionary<int, SummonRateData>>();
     private Dictionary<SummonSubCategory, Dictionary<int, SummonRewardData>> summonRewardTable = new Dictionary<SummonSubCategory, Dictionary<int, SummonRewardData>>();
     private List<GeneralShopData> generalShopDataList = new List<GeneralShopData>();
+    private List<SkillShopData> skillShopDataList = new List<SkillShopData>();
     private Dictionary<DungeonType, DungeonData> dungeonDataTable = new Dictionary<DungeonType, DungeonData>();
     private Dictionary<DungeonType, Dictionary<int, DungeonLevelData>> dungeonLevelDataTable = new Dictionary<DungeonType, Dictionary<int, DungeonLevelData>>();
 
@@ -54,6 +55,7 @@ public class DataManager : MonoBehaviour
         LoadSummonStageProbabilities();
         LoadSummonRewardData();
         LoadGeneralShopData();
+        LoadSkillShopData();
         LoadDungeonData();
         LoadDungeonLevelData();
     }
@@ -869,9 +871,40 @@ public class DataManager : MonoBehaviour
 
             generalShopDataList.Add(generalShopData);
         }
-
-        //Debug.Log($"{generalShopDataList.Count}개의 데이터를 로드함");
     }
+
+    private void LoadSkillShopData()
+    {
+        TextAsset asset = Resources.Load<TextAsset>("CSV/SkillShopData");
+        string[] lines = asset.text.Split('\n');
+
+        for (int i = 1; i < lines.Length; i++)
+        {
+            if (string.IsNullOrEmpty(lines[i])) { continue; }
+
+            string[] tokens = lines[i].Split(',');
+
+            SkillId skillId = Enum.Parse<SkillId>(tokens[3].Trim());
+            ShopPriceType priceType = Enum.Parse<ShopPriceType>(tokens[5].Trim());
+            ShopLimitType limitType = Enum.Parse<ShopLimitType>(tokens[8].Trim());
+
+            SkillShopData skillShopData = new SkillShopData()
+            {
+                ShopId = tokens[0].Trim(),
+                NameKey = tokens[1].Trim(),
+                IconKey = tokens[2].Trim(),
+                skillId = skillId,
+                RewardCount = int.Parse(tokens[4].Trim()),
+                PriceType = priceType,
+                PriceAmount = int.Parse(tokens[6].Trim()),
+                PurchaseLimit = int.Parse(tokens[7].Trim()),
+                LimitType = limitType,
+            };
+
+            skillShopDataList.Add(skillShopData);
+        }
+    }
+
 
     private void LoadDungeonData()
     {
@@ -902,19 +935,17 @@ public class DataManager : MonoBehaviour
 
     }
 
-    public GeneralShopData GetShopDataById(string shopId)
-    {
-        return generalShopDataList.Find(data => data.ShopId == shopId);
-    }
-
     public List<GeneralShopData> GetAllGeneralShopDatas()
     {
         return generalShopDataList;
     }
 
+    public List<SkillShopData> GetAllSkillShppDatas()
+    {
+        return skillShopDataList;
+    }
 
-    //private Dictionary<int, Dictionary<DungeonType, DungeonRewardData>> dungeonRewardTable = new Dictionary<int, Dictionary<DungeonType, DungeonRewardData>>();
-    //private Dictionary<DungeonType, DungeonData> dungeonDataTable = new Dictionary<DungeonType, DungeonData>();
+
 
     public int GetDungeonDataCount()
     {
@@ -1207,6 +1238,22 @@ public class GeneralShopData
     public string IconKey;
 
     public ShopRewardType RewardType;
+    public int RewardCount;
+
+    public ShopPriceType PriceType;
+    public int PriceAmount;
+
+    public int PurchaseLimit;
+    public ShopLimitType LimitType;
+}
+
+public class SkillShopData
+{
+    public string ShopId;
+    public string NameKey;
+    public string IconKey;
+
+    public SkillId skillId;
     public int RewardCount;
 
     public ShopPriceType PriceType;

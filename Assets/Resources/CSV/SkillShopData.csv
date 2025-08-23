@@ -1,0 +1,9 @@
+ShopId,NameKey,IconKey,SkillId,RewardCount,PriceType,PriceAmount,PurchaseLimit,LimitType
+Shop_Lightning,Skill_Lightning_Name,Skill_Lightning_Icon,Lightning,1,SkillGem,1000,5,Daily
+Shop_DarkBoom,Skill_DarkBoom_Name,Skill_DarkBoom_Icon,DarkBoom,1,SkillGem,10000,5,Daily
+Shop_HolyBurst,Skill_HolyBurst_Name,Skill_HolyBurst_Icon,HolyBurst,1,SkillGem,2500,5,Daily
+Shop_DragonBreath,Skill_DragonBreath_Name,Skill_DragonBreath_Icon,DragonBreath,1,SkillGem,20000,5,Daily
+Shop_IceArrow,Skill_IceArrow_Name,Skill_IceArrow_Icon,IceArrow,1,SkillGem,1000,5,Daily
+Shop_Explosion,Skill_Explosion_Name,Skill_Explosion_Icon,Explosion,1,SkillGem,50000,5,Daily
+Shop_Fireball,Skill_Fireball_Name,Skill_Fireball_Icon,Fireball,1,SkillGem,2500,5,Daily
+Shop_Charge,Skill_Charge_Name,Skill_Charge_Icon,Charge,1,SkillGem,10000,5,Daily

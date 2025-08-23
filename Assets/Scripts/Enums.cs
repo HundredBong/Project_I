@@ -30,7 +30,7 @@ public enum ProjectileId { Lightning, DarkBoom, DragonBreath, IceArrow, Explosio
 
 public enum ParticleId { ClickEffect, Lightning, DarkBoom, HolyBurst, DragonBreath, IceArrow, Explosion, Fireball, ChargeLoop, ChargeHit, }
 
-public enum ShopCategory { Summon, Normal, Skill, Score, Package, Cash }
+public enum ShopCategory { Summon, Normal, Skill, Package, Cash }
 
 public enum SummonSubCategory { Weapon, Armor, Necklace, Skill }
 

@@ -10,7 +10,6 @@ public class UIShopPage : UIPage
     [SerializeField] private GameObject summonCategory;
     [SerializeField] private GameObject generalCategory;
     [SerializeField] private GameObject skillCategory;
-    [SerializeField] private GameObject scoreCategory;
     [SerializeField] private GameObject packageCategory;
     //[SerializeField] private GameObject cashCategory;
 
@@ -18,7 +17,6 @@ public class UIShopPage : UIPage
     [SerializeField] private Button summonButton;
     [SerializeField] private Button generalButton;
     [SerializeField] private Button skillButton;
-    [SerializeField] private Button scoreButton;
     [SerializeField] private Button packageButton;
     //[SerializeField] private Button cashButton;
 
@@ -27,7 +25,6 @@ public class UIShopPage : UIPage
     [SerializeField] private TextMeshProUGUI summonButtonText;
     [SerializeField] private TextMeshProUGUI generalButtonText;
     [SerializeField] private TextMeshProUGUI skillButtonText;
-    [SerializeField] private TextMeshProUGUI scoreButtonText;
     [SerializeField] private TextMeshProUGUI packageButtonText;
     //[SerializeField] private TextMeshProUGUI cashButtonText;
 
@@ -45,7 +42,6 @@ public class UIShopPage : UIPage
             { ShopCategory.Summon, summonCategory },
             { ShopCategory.Normal, generalCategory },
             { ShopCategory.Skill, skillCategory },
-            { ShopCategory.Score, scoreCategory },
             { ShopCategory.Package, packageCategory },
             //{ ShopCategory.Cash, cashCategory },
         };
@@ -55,7 +51,6 @@ public class UIShopPage : UIPage
             { ShopCategory.Summon, summonButton },
             { ShopCategory.Normal, generalButton },
             { ShopCategory.Skill, skillButton },
-            { ShopCategory.Score, scoreButton },
             { ShopCategory.Package, packageButton },
             //{ ShopCategory.Cash, cashButton },
         };
@@ -101,7 +96,6 @@ public class UIShopPage : UIPage
         summonButtonText.text = DataManager.Instance.GetLocalizedText("UI_Summon");
         generalButtonText.text = DataManager.Instance.GetLocalizedText("UI_Normal");
         skillButtonText.text = DataManager.Instance.GetLocalizedText("UI_Skill");
-        scoreButtonText.text = DataManager.Instance.GetLocalizedText("UI_Score");
         packageButtonText.text = DataManager.Instance.GetLocalizedText("UI_Package");
     }
 }
