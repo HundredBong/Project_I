@@ -26,7 +26,8 @@ public class UIShopPage : UIPage
     [SerializeField] private TextMeshProUGUI generalButtonText;
     [SerializeField] private TextMeshProUGUI skillButtonText;
     [SerializeField] private TextMeshProUGUI packageButtonText;
-    //[SerializeField] private TextMeshProUGUI cashButtonText;
+    [SerializeField] private TextMeshProUGUI _skillGemText;
+    [SerializeField] private TextMeshProUGUI _diamondText;
 
     private Dictionary<ShopCategory, GameObject> categoryObjects;
     private Dictionary<ShopCategory, Button> categoryButtons;
@@ -70,7 +71,7 @@ public class UIShopPage : UIPage
 
     private void OnDisable()
     {
-        
+
         LanguageManager.OnLanguageChanged -= RefreshTexts;
     }
 
@@ -97,5 +98,11 @@ public class UIShopPage : UIPage
         generalButtonText.text = DataManager.Instance.GetLocalizedText("UI_Normal");
         skillButtonText.text = DataManager.Instance.GetLocalizedText("UI_Skill");
         packageButtonText.text = DataManager.Instance.GetLocalizedText("UI_Package");
+    }
+
+    public void RefreshCurrency()
+    {
+        _diamondText.text = GameManager.Instance.stats.GetCurrency(PlayerProgressType.Diamond).ToString("N0");
+        _skillGemText.text = GameManager.Instance.stats.GetCurrency(PlayerProgressType.SkillGem).ToString("N0");
     }
 }

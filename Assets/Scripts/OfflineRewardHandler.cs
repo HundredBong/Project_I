@@ -85,7 +85,7 @@ public class OfflineRewardHandler : MonoBehaviour
             //이거 제대로 하려면 오프라인 보상 CSV도 파야할 거 같은데, 일단 하드코딩 \^o^/
 
             _spriteKey[0] = "UI_Gold";
-            _spriteKey[1] = "UI_EXP";
+            _spriteKey[1] = "UI_Exp";
 
             _amount[0] = (int)reward;
             _amount[1] = (int)reward;

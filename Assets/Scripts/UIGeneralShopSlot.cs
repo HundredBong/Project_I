@@ -201,6 +201,12 @@ public class UIGeneralShopSlot : MonoBehaviour
             if (TrySpendCurrency(_data.PriceType, totalPrice))
             {
                 GiveReward(_data.RewardType, selectedCount * _data.RewardCount);
+
+                if (UIManager.Instance.TryGetPage<UIShopPage>(out UIShopPage page))
+                {
+                    page.RefreshCurrency();
+                }
+
                 await GameManager.Instance.ShopManager.UpdatePurchaseAsync(_data.ShopId, _data.LimitType, selectedCount);
                 ObjectPoolManager.Instance.uiPool.GetReward().Init(_data.IconKey, selectedCount);
             }
