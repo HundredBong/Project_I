@@ -204,6 +204,7 @@ public class UISummonPanel : MonoBehaviour
         else
         {
             Debug.LogWarning($"[UISummonPanel] 다이아가 부족함, {GameManager.Instance.stats.Diamond}");
+            ObjectPoolManager.Instance.uiPool.GetMessage().Init("Warning_NotEnoughCurrency");
         }
     }
 

@@ -131,8 +131,8 @@ UI_PurchaseMessage,구매하시겠습니까? ,Would you like to purchase it?
 UI_ToastReward,획득 완료!,You got it! 
 UI_EnhanceDungeonName,장비 강화 던전,Enhance Stone Dengeon
 UI_SkillDungeonName,스킬 강화 던전,Skill Gem Dungeon
-UI_EnhanceDungeonDesc,장비 강화석을 획득할 수 있는 던전,장비 강화석을 획득할 수 있는 던전(영어)
-UI_SkillDungeonDesc,스킬 강화석을 획득할 수 있는 던전,스킬 강화석을 획득할 수 있는 던전인데영어
+UI_EnhanceDungeonDesc,장비 강화를 위한 강화석을 얻을 수 있는 던전,A dungeon where Enhance Stones are found for equipment upgrades.
+UI_SkillDungeonDesc,깊은 광맥에서 마법석을 채굴할 수 있는 장소,A hidden mine rich with Skill Gems.
 HUD_Dungeon,던전,Dungeon
 UI_Dungeon,던전,Dungeon
 UI_EnhanceDungeonTicket,장비 던전 입장권 ,Enhance Dungeon Ticket
@@ -171,6 +171,14 @@ UI_EnsureSignOut,정말로 로그아웃 하시겠습니까? 다시 로그인 하
 UI_EnsureQuit,게임을 종료하시겠습니까?,Do you want to quit the game?
 UI_EnsureNickname,이 닉네임으로 하시겠습니까?,Do you want to use this nickname? 
 UI_CheckGiveUp,포기하시겠습니까?,Do you want to give up? 
-UI_SkillDungeon,스킬던전 (임시),SkillDungeon (Temp)
+UI_SkillDungeon,마법석 광산,Skill Gem Mine
 UI_Challenge,도전하기,Challenge
 UI_SkillGem,스킬 강화석,Skill Gem
+UI_Summon100,100회 소환,Summon 100
+UI_Hours,시간,Hours
+UI_Minutes,분,Minutes
+UI_OfflineReward,오프라인 보상,Offline Reward
+UI_MaxOfflineTime,최대 24시간,Up to 24 hours 
+UI_RewardList,보상 목록,Reward List 
+UI_GetReward,획득하기,Claim 
+UI_ResultPopupClose,화면 터치해서 닫기,Tap screen to close 

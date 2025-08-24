@@ -33,14 +33,12 @@ public class UISummonResultPopup : UIPopup
     [SerializeField] private TextMeshProUGUI _summon30PriceText;
     [SerializeField] private TextMeshProUGUI _summon100PriceText;
 
-    private SummonSubCategory _subCategory;
-
     protected override void Awake()
     {
         base.Awake();
 
         _commonWait = new WaitForSeconds(0.05f);
-        _uncommonWait = new WaitForSeconds(0.2f);
+        _uncommonWait = new WaitForSeconds(0.3f - 0.05f);
 
         SetButtonsActive(false);
         SetLocalizedText();
@@ -177,6 +175,12 @@ public class UISummonResultPopup : UIPopup
             content.transform.SetParent(contentRoot);
             ItemData itemData = data.Dequeue();
             content.Initialize(itemData);
+
+            if (GradeType.Epic <= itemData.GradeType)
+            {
+                yield return _uncommonWait;
+            }
+
         }
 
         SetButtonsActive(true);
@@ -191,7 +195,13 @@ public class UISummonResultPopup : UIPopup
             _contents.Add(content);
 
             content.transform.SetParent(contentRoot);
-            content.Initialize(data.Dequeue());
+            SkillData skillData = data.Dequeue();
+            content.Initialize(skillData);
+
+            if (GradeType.Epic <= skillData.Grade)
+            {
+                yield return _uncommonWait;
+            }
         }
 
         SetButtonsActive(true);
