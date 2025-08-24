@@ -124,7 +124,7 @@ public class DataManager : MonoBehaviour
                     result = result.Replace("{" + kvp.Key + "}", kvp.Value.ToString());
                 }
             }
-            return result;
+            return result.Replace('|', ',');
         }
 
         Debug.LogWarning($"[DataManager] '{key}'에 해당하는 로컬라이즈 텍스트가 없음");

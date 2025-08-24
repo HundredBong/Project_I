@@ -12,8 +12,9 @@ public class SkillLightning : SkillBase
     public override void Execute(GameObject owner)
     {
         //Debug.Log($"[SkillLightning] {skillData.SkillId} ½ÇÇàµÊ");
+        int awakenLevel = SkillManager.Instance.GetSkillState(skillData.SkillId).AwakenLevel;
 
-        List<Enemy> targets = FindClosestEnemies(owner.transform.position, skillData.TargetCount);
+        List<Enemy> targets = FindClosestEnemies(owner.transform.position, skillData.TargetCount + awakenLevel);
 
         foreach (var enemy in targets)
         {

@@ -207,7 +207,7 @@ public class UISkillInfoPopup : UIPopup
         }
         else
         {
-            Debug.Log("강화에 실패함 2");
+            ObjectPoolManager.Instance.uiPool.GetMessage().Init("UI_NotEnoughSkillGem");
         }
     }
 

@@ -24,9 +24,12 @@ public class PlayerChargeState : IState
     public void OnEnter()
     {
         _skillData = _owner.CurrentSkillData;
+
+        int awakenLevel = SkillManager.Instance.GetSkillState(_skillData.SkillId).AwakenLevel;
+
         _enemies.Clear();
         _anim.SetBool("1_Move", true);
-        _hitCount = 0;
+        _hitCount = 0 - awakenLevel;
         _par = ObjectPoolManager.Instance.particlePool.GetPrefab(ParticleId.ChargeLoop);
         _par.Play(_owner.transform.position,false);
 
@@ -94,7 +97,7 @@ public class PlayerChargeState : IState
         }
 
         Vector3 dir = (target.transform.position - _owner.transform.position).normalized;
-        _owner.transform.position += dir * 15f * Time.deltaTime;
+        _owner.transform.position += dir * (_owner.player.Stat.moveSpeed * 3) * Time.deltaTime;
 
         float distance = Vector3.Distance(_owner.transform.position, target.transform.position);
 

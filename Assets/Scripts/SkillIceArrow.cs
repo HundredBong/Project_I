@@ -12,7 +12,9 @@ public class SkillIceArrow : SkillBase
         //-transform.right로 쓸 수는 있는데 지금 scale이 바뀌어도 회전은 그대로라 이 경우에서는 안됨
         Vector3 baseDir = owner.transform.localScale.x < 0 ? Vector3.right : Vector3.left;
         float spreadAngle = 60f;//120f; //퍼지는 각도
-        int count = 5; //투사체 개수
+        int awakenLevel = SkillManager.Instance.GetSkillState(skillData.SkillId).AwakenLevel;
+
+        int count = 5 + awakenLevel; //투사체 개수
 
         float half = spreadAngle * 0.5f; //중심에서 양 쪽 끝까지의 각도 (60)
         float angleStep = spreadAngle / (count - 1); //투사체간 간격(30)

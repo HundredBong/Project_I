@@ -36,7 +36,8 @@ public class ProjectileDarkBoom : Projectile
 
     private void Explode()
     {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(this.transform.position, skillData.Range, SkillManager.Instance.targetMask);
+        int awakenLevel = SkillManager.Instance.GetSkillState(skillData.SkillId).AwakenLevel;
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(this.transform.position, skillData.Range + (skillData.Range * 0.25f * awakenLevel), SkillManager.Instance.targetMask);
 
         float damage = SkillManager.Instance.CalculateSkillDamage(skillData);
 

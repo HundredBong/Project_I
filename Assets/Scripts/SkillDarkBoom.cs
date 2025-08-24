@@ -12,7 +12,6 @@ public class SkillDarkBoom : SkillBase
         //여기서 할 일은 그게 끝?
         //ㅇㅇ 끝
         //어떤 Projectile을 생성할 지만 정해주고 할일 끝, 세부 기능은 ProjectileDarkBoom에서 진행
-
         ObjectPoolManager.Instance.projectilePool.GetPrefab<ProjectileDarkBoom>(ProjectileId.DarkBoom).Initialize(skillData, owner);
     }
 
