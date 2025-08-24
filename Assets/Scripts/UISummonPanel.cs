@@ -189,7 +189,9 @@ public class UISummonPanel : MonoBehaviour
                 inventoryPage.RefreshAll();
             }
 
-            UIManager.Instance.PopupOpen<UISummonResultPopup>().StartDisplayingResult(itemDatas);
+            UISummonResultPopup resultPopup = UIManager.Instance.PopupOpen<UISummonResultPopup>();
+            resultPopup.RegistActions(() => { SummonItems(10); }, () => { SummonItems(30); }, () => { SummonItems(100); }, category);
+            resultPopup.StartDisplayingResult(itemDatas);
             Refresh(category);
             rewardPanel.Refresh(category);
             GameManager.Instance.stats.RecalculateStats();
@@ -239,7 +241,9 @@ public class UISummonPanel : MonoBehaviour
             }
 
             GameManager.Instance.stats.RecalculateStats();
-            UIManager.Instance.PopupOpen<UISummonResultPopup>().StartDisplayingResult(skillDatas);
+            UISummonResultPopup resultPopup = UIManager.Instance.PopupOpen<UISummonResultPopup>();
+            resultPopup.RegistActions(() => { SummonSkills(10); }, () => { SummonSkills(30); }, () => { SummonSkills(100); }, category);
+            resultPopup.StartDisplayingResult(skillDatas);
             Refresh(category);
             rewardPanel.Refresh(category);
         }

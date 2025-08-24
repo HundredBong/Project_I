@@ -173,3 +173,4 @@ UI_EnsureNickname,이 닉네임으로 하시겠습니까?,Do you want to use thi
 UI_CheckGiveUp,포기하시겠습니까?,Do you want to give up? 
 UI_SkillDungeon,스킬던전 (임시),SkillDungeon (Temp)
 UI_Challenge,도전하기,Challenge
+UI_SkillGem,스킬 강화석,Skill Gem
