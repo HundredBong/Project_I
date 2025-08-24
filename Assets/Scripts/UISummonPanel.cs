@@ -35,6 +35,8 @@ public class UISummonPanel : MonoBehaviour
     [SerializeField] private TextMeshProUGUI summonSkillButtonText;
     [SerializeField] private TextMeshProUGUI summon10ButtonText;
     [SerializeField] private TextMeshProUGUI summon30ButtonText;
+    [SerializeField] private TextMeshProUGUI summon10PriceText;
+    [SerializeField] private TextMeshProUGUI summon30PriceText;
 
     [Header("보상")]
     [SerializeField] private SummonRewardPannel rewardPanel;
@@ -125,6 +127,9 @@ public class UISummonPanel : MonoBehaviour
             summon30Button.onClick.AddListener(() => { SummonSkills(30); });
         }
 
+        summon10PriceText.text = DataManager.Instance.GetSummonPriceData(category, 10).ToString("N0");
+        summon30PriceText.text = DataManager.Instance.GetSummonPriceData(category, 30).ToString("N0");
+
         //소환하면 메서드 끝에 AddItem, AddExp 실행해줘야 함 둘 다 내부로직에서 저장 안함
         //GameManager.Instance.statSaver.SaveSummonProgress(GameManager.Instance.SummonManager.GetSummonProgressData());
 
@@ -150,8 +155,8 @@ public class UISummonPanel : MonoBehaviour
 
     private void SummonItems(int count)
     {
-        //TODO : 상점 가격표 CSV 대신 임시로 설정
-        int amount = count == 10 ? 1000 : 2500;
+        int amount = DataManager.Instance.GetSummonPriceData(category, count);
+
         Queue<ItemData> itemDatas = new Queue<ItemData>();
         //다이아 감소
         if (GameManager.Instance.stats.TrySpendItem(PlayerProgressType.Diamond, amount))
@@ -204,8 +209,8 @@ public class UISummonPanel : MonoBehaviour
 
     private void SummonSkills(int count)
     {
-        //TODO : 상점 가격표 CSV 대신 임시로 설정
-        int amount = count == 10 ? 1000 : 2500;
+        int amount = DataManager.Instance.GetSummonPriceData(category, count);
+
         Queue<SkillData> skillDatas = new Queue<SkillData>();
         //다이아 감소
         if (GameManager.Instance.stats.TrySpendItem(PlayerProgressType.Diamond, amount))

@@ -78,18 +78,9 @@ public class UISummonResultPopup : UIPopup
         _onSummon30 = onSummon30;
         _onSummon100 = onSummon100;
 
-        if (category == SummonSubCategory.Skill)
-        {
-            _summon10PriceText.text = "";
-            _summon30PriceText.text = "";
-            _summon100PriceText.text = "";
-        }
-        else
-        {
-            _summon10PriceText.text = "";
-            _summon30PriceText.text = "";
-            _summon100PriceText.text = "";
-        }
+        _summon10PriceText.text = DataManager.Instance.GetSummonPriceData(category, 10).ToString("N0");
+        _summon30PriceText.text = DataManager.Instance.GetSummonPriceData(category, 30).ToString("N0");
+        _summon100PriceText.text = DataManager.Instance.GetSummonPriceData(category, 100).ToString("N0");
     }
 
     private void SetButtonsActive(bool active)
@@ -114,9 +105,9 @@ public class UISummonResultPopup : UIPopup
 
     private void SetLocalizedText()
     {
-        _summon10ButtonText.text = DataManager.Instance.GetLocalizedText("");
-        _summon30ButtonText.text = DataManager.Instance.GetLocalizedText("");
-        _summon100ButtonText.text = DataManager.Instance.GetLocalizedText("");
+        _summon10ButtonText.text = DataManager.Instance.GetLocalizedText("UI_Summon10");
+        _summon30ButtonText.text = DataManager.Instance.GetLocalizedText("UI_Summon30");
+        _summon100ButtonText.text = DataManager.Instance.GetLocalizedText("UI_Summon100");
     }
 
     public void StartDisplayingResult(Queue<ItemData> data)

@@ -26,6 +26,7 @@ public class DataManager : MonoBehaviour
     private List<SkillShopData> skillShopDataList = new List<SkillShopData>();
     private Dictionary<DungeonType, DungeonData> dungeonDataTable = new Dictionary<DungeonType, DungeonData>();
     private Dictionary<DungeonType, Dictionary<int, DungeonLevelData>> dungeonLevelDataTable = new Dictionary<DungeonType, Dictionary<int, DungeonLevelData>>();
+    private Dictionary<SummonSubCategory, Dictionary<int, int>> summonPriceDataTable = new Dictionary<SummonSubCategory, Dictionary<int, int>>();
 
     private void Awake()
     {
@@ -58,6 +59,7 @@ public class DataManager : MonoBehaviour
         LoadSkillShopData();
         LoadDungeonData();
         LoadDungeonLevelData();
+        LoadSummonPriceData();
     }
 
     private void LoadSpritesData()
@@ -1044,7 +1046,49 @@ public class DataManager : MonoBehaviour
     {
         return dungeonLevelDataTable[type].Count;
     }
+
+    private void LoadSummonPriceData()
+    {
+        TextAsset textAsset = Resources.Load<TextAsset>("CSV/SummonPriceData");
+        string[] lines = textAsset.text.Split('\n');
+
+        for (int i = 1; i < lines.Length; i++)
+        {
+            if (string.IsNullOrEmpty(lines[i])) continue;
+            string[] tokens = lines[i].Split(',');
+
+            SummonSubCategory subCategory = Enum.Parse<SummonSubCategory>(tokens[0]);
+            int count = int.Parse(tokens[1]);
+            int price = int.Parse(tokens[2]);
+
+            SummonPriceData data = new SummonPriceData()
+            {
+                Category = subCategory,
+                Count = count,
+                Price = price,
+            };
+
+            if (summonPriceDataTable.TryGetValue(subCategory, out Dictionary<int, int> countAndPriceDict) == false)
+            {
+                countAndPriceDict = new Dictionary<int, int>();
+                summonPriceDataTable[subCategory] = countAndPriceDict;
+            }
+
+            countAndPriceDict[count] = price;
+        }
+    }
+
+    public int GetSummonPriceData(SummonSubCategory category, int count)
+    {
+        if (summonPriceDataTable[category].TryGetValue(count, out int price))
+        {
+            return price;
+        }
+
+        throw new Exception("해당하는 카테고리, 개수에 맞는 가격 정보 없음");
+    }
 }
+
 
 [System.Serializable]
 public class StatNameData
@@ -1285,4 +1329,11 @@ public class DungeonLevelData
     public float HPRate;
     public float ATKRate;
     public float DEFRate;
+}
+
+public class SummonPriceData
+{
+    public SummonSubCategory Category;
+    public int Count;
+    public int Price;
 }
