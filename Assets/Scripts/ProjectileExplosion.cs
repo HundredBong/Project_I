@@ -58,6 +58,7 @@ public class ProjectileExplosion : Projectile
 
             //폭발 위치에서 파티클 재생 및 타겟을 찾고 대미지 처리
             ObjectPoolManager.Instance.particlePool.GetPrefab(ParticleId.Explosion).Play(spawnPos);
+            ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Skill_Explosion_Explode", spawnPos);
             FindTarget(spawnPos);
 
             _placed.Add(spawnPos);

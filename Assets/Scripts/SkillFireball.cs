@@ -36,5 +36,7 @@ public class SkillFireball : SkillBase
             ProjectileFireball fireball = ObjectPoolManager.Instance.projectilePool.GetPrefab<ProjectileFireball>(ProjectileId.Fireball);
             fireball.SetTarget(skillData, enemy, owner);
         }
+
+        ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Skill_Fireball_Execute");
     }
 }

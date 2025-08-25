@@ -52,5 +52,7 @@ public class ProjectileDarkBoom : Projectile
                 ObjectPoolManager.Instance.particlePool.GetPrefab(ParticleId.DarkBoom).Play(enemy.transform.position);
             }
         }
+
+        ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Skill_DarkBoom_Explode");
     }
 }

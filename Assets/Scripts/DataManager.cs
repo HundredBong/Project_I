@@ -292,10 +292,11 @@ public class DataManager : MonoBehaviour
     {
         using (SHA256 sha = SHA256.Create())
         {
-            //256비트 = 32바이트
+            //ComputeHash 돌리면 크기가 32인 문자열 배열 생성
+            //16진수로 바꾸는 과정에서 바이트 하나가 문자 2개가 됨
             byte[] hash = sha.ComputeHash(data);
 
-            //표기 과정에서 리사이즈가 일어나니 미리 정해둠
+            //표기 과정에서 리사이즈가 일어나니 미리 정해둠, 사실상 64
             StringBuilder sb = new StringBuilder(hash.Length * 2);
 
             for (int i = 0; i < hash.Length; i++)

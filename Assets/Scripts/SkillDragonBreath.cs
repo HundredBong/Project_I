@@ -13,5 +13,6 @@ public class SkillDragonBreath : SkillBase
         //그럼 해야 할 일 : 플레이어 전방에 ProjectileDragonBreath를 풀에서 소환해주기
 
         ObjectPoolManager.Instance.projectilePool.GetPrefab<ProjectileDragonBreath>(ProjectileId.DragonBreath).Initialize(owner, skillData);
+        ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Skill_DragonBreath_Execute");
     }
 }

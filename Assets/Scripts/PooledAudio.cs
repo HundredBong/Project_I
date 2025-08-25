@@ -51,6 +51,27 @@ public class PooledAudio : MonoBehaviour, IPooledObject
         });
     }
 
+    public void PlaySFX(string clip, Vector2 position)
+    {
+        _targetTransform = null;
+
+        _source.loop = false;
+        _source.spatialBlend = 1f;
+
+        transform.position = new Vector3(position.x, position.y, 0);
+
+        _source.clip = DataManager.Instance.GetAudioClipByKey(clip);
+        _source.volume = AudioController.Instance.sfxVolume;
+        _source.Play();
+
+        float length = _source.clip.length;
+        DelayCallManager.Instance.CallLater(length, () =>
+        {
+            transform.position = Vector3.zero;
+            ObjectPoolManager.Instance.audioPool.Return(this);
+        });
+    }
+
     private void LateUpdate()
     {
         if (_targetTransform != null)

@@ -31,7 +31,7 @@ public class PlayerChargeState : IState
         _anim.SetBool("1_Move", true);
         _hitCount = 0 - awakenLevel;
         _par = ObjectPoolManager.Instance.particlePool.GetPrefab(ParticleId.ChargeLoop);
-        _par.Play(_owner.transform.position,false);
+        _par.Play(_owner.transform.position, false);
 
         foreach (var sprite in _sprites)
         {
@@ -105,7 +105,7 @@ public class PlayerChargeState : IState
         {
             target.TakeDamage(SkillManager.Instance.CalculateSkillDamage(_skillData));
             ObjectPoolManager.Instance.particlePool.GetPrefab(ParticleId.ChargeHit).Play(target.transform.position);
-
+            ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Skill_Charge_Hit");
             _hitCount++;
         }
 

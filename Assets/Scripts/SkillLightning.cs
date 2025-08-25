@@ -24,6 +24,7 @@ public class SkillLightning : SkillBase
             ProjectileLightning lightning = ObjectPoolManager.Instance.projectilePool.GetPrefab<ProjectileLightning>(ProjectileId.Lightning);
             lightning.Initialize(skillData, enemy.gameObject);
         }
+        ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Skill_Lightning_Execute");
     }
 
     private List<Enemy> FindClosestEnemies(Vector3 center, int count)

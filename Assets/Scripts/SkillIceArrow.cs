@@ -31,5 +31,7 @@ public class SkillIceArrow : SkillBase
             arrow.Initialize(shootDir, skillData);
         }
 
+        ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Skill_IceArrow_Execute");
+
     }
 }

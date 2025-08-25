@@ -54,6 +54,6 @@ public class SkillHolyBurst : SkillBase
             ObjectPoolManager.Instance.particlePool.GetPrefab(ParticleId.HolyBurst).Play(enemy.transform.position);
         }
 
-
+        ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Skill_HolyBurst_Execute");
     }
 }

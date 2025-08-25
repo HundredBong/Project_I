@@ -11,6 +11,7 @@ public class SkillCharge : SkillBase
         if (owner.TryGetComponent<Player>(out Player player))
         {
             player.StateMachine.ChangeState(StateType.Charge, skillData);
+            ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Skill_Charge_Execute");
         }
     }
 }
