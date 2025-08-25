@@ -80,6 +80,8 @@ public class GameManager : MonoBehaviour
         //FirebaseInit에서 초기화 완료까지 대기함
         await UniTask.WaitUntil(() => firebaseReady);
 
+        await DataManager.Instance.InitAsync(); 
+
         //불러오기 실행
         PlayerProgressSaveData playerProgress = await statSaver.LoadPlayerProgressDataAsync();
         stats.InitializeFromProgressData(playerProgress);
