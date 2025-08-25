@@ -1,7 +1,14 @@
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading;
+using Unity.Collections;
 using UnityEngine;
 
 public class DataManager : MonoBehaviour
@@ -28,6 +35,15 @@ public class DataManager : MonoBehaviour
     private Dictionary<DungeonType, Dictionary<int, DungeonLevelData>> dungeonLevelDataTable = new Dictionary<DungeonType, Dictionary<int, DungeonLevelData>>();
     private Dictionary<SummonSubCategory, Dictionary<int, int>> summonPriceDataTable = new Dictionary<SummonSubCategory, Dictionary<int, int>>();
 
+    private const string MANIFEST_URL = "https://hundredbong.github.io/Project_I_hotdata/hotdata/manifest.json";
+
+    public bool IsReady { get; private set; } = false;
+
+    private UniTaskCompletionSource _readyTcs;
+
+    private string _localDir;
+    private string _localManifestPath;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -38,13 +54,59 @@ public class DataManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
+        //로컬 캐시 루트 경로 지정, persistentDataPath : 플랫폼별 안전한 쓰기 위치
+        _localDir = Path.Combine(Application.persistentDataPath, "hotdata");
+
+        //OS에 맞게 / 또는 \ 자동으로 입력
+        _localManifestPath = Path.Combine(_localDir, "manifest.json");
+
+        try
+        {
+            //로컬 경로에 폴더가 존재하지 않는다면
+            if (Directory.Exists(_localDir) == false)
+            {
+                //폴더 새로 생성
+                Directory.CreateDirectory(_localDir);
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[DataManager] 로컬 디렉토리 생성 실패, {e.Message}");
+        }
+
+        _readyTcs = new UniTaskCompletionSource();
+
         //-------------------------------------------
 
         LoadSpritesData();
         LoadAudioData();
+    }
+
+    public async UniTask InitAsync()
+    {
+        HotdataManifest remote = await TryDownloadManifestAsync();
+        Debug.Log($"[DataManager] 원격 manifest 다운로드 {(remote != null ? "성공" : "실패")}");
+
+        HotdataManifest local = await TryLoadLocalManifestAsync();
+        Debug.Log($"[DataManager] 로컬 manifest {(local != null ? "존재함" : "없음")}");
+
+        if (remote != null)
+        {
+            Debug.Log("[DataManager] CompareAndUpdateAsync 호출");
+            await CompareAndUpdateAsync(remote, local);
+            Debug.Log("[DataManager] CompareAndUpdateAsync 완료");
+
+            //서버에서 받은 매니페스트를 json 문자열로 직렬화
+            await File.WriteAllTextAsync(_localManifestPath, JsonUtility.ToJson(remote, true), System.Text.Encoding.UTF8);
+            Debug.Log("[DataManager] 로컬 manifest 저장 완료");
+        }
+        else
+        {
+            //원격 매니페스트 실패 -> 로컬 매니페스트 사용,
+            //로컬 매니페스트도 없으면 리소스 사용
+        }
+
         LoadLocalizedTexts();
-        //LoadStatName();
-        //LoadHUDName();
         LoadExpData();
         LoadEnemyData();
         LoadStageData();
@@ -60,6 +122,217 @@ public class DataManager : MonoBehaviour
         LoadDungeonData();
         LoadDungeonLevelData();
         LoadSummonPriceData();
+
+        Debug.Log("[DataManager] LoadData 완료");
+
+        IsReady = true;
+        _readyTcs.TrySetResult();
+    }
+
+    private async UniTask<HotdataManifest> TryDownloadManifestAsync()
+    {
+        try
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.Timeout = TimeSpan.FromSeconds(10);
+                string json = await client.GetStringAsync(MANIFEST_URL);
+                HotdataManifest manifest = JsonUtility.FromJson<HotdataManifest>(json);
+                return manifest;
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[DataManager] 매니페스트 다운로드 실패 : {e.Message}");
+            return null;
+        }
+    }
+
+    private async UniTask<HotdataManifest> TryLoadLocalManifestAsync()
+    {
+        try
+        {
+            //매니페스트 파일이 존재하는지 확인
+            if (File.Exists(_localManifestPath))
+            {
+                string json = await File.ReadAllTextAsync(_localManifestPath, Encoding.UTF8);
+                HotdataManifest hotdata = JsonUtility.FromJson<HotdataManifest>(json);
+                return hotdata;
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[DataManager] 로컬 매니페스트 불러오기 실패 : {e.Message}");
+        }
+        return null;
+    }
+
+    private async UniTask CompareAndUpdateAsync(HotdataManifest remote, HotdataManifest local)
+    {
+        if (remote.file == null || remote.file.Length == 0)
+        {
+            return;
+        }
+
+        foreach (HotdataFile remoteFile in remote.file)
+        {
+            bool needDownload = true;
+            string localPath = Path.Combine(_localDir, remoteFile.name);
+            if (local != null && local.file != null)
+            {
+                foreach (HotdataFile localFile in local.file)
+                {
+                    bool sameName = string.Equals(remoteFile.name, localFile.name);
+
+                    //이름부터가 다르면 바로 다음 루프로
+                    if (sameName == false)
+                    {
+                        continue;
+                    }
+
+                    bool sameVersion = string.Equals(remoteFile.version, localFile.version, StringComparison.OrdinalIgnoreCase);
+                    bool sameSchema = string.Equals(remoteFile.schemaVersion, localFile.schemaVersion, StringComparison.OrdinalIgnoreCase);
+                    bool sameHash = string.Equals(remoteFile.sha256, localFile.sha256);
+                    bool sameSize = remoteFile.size == localFile.size;
+
+                    bool fileExists = File.Exists(localPath);
+
+                    if (sameVersion && sameSchema && sameHash && sameSize && fileExists)
+                    {
+                        Debug.Log("[DataManager] 동일한 파일, 다운로드 생략");
+                        needDownload = false;
+                        break;
+                    }
+                }
+            }
+
+            if (!needDownload) continue;
+
+            Debug.Log($"[DataManager] {remoteFile.name} 다운로드 필요");
+
+            bool ok = await DownloadAndVerifyAsync(remoteFile.url, remoteFile.sha256, remoteFile.size, localPath);
+
+            if (ok == false)
+            {
+                Debug.LogWarning($"[DataManager] 다운로드에 실패함, {remoteFile.name}");
+            }
+        }
+    }
+
+    private async UniTask<bool> DownloadAndVerifyAsync(string url, string expectedSha256, long expectedSize, string savePath)
+    {
+        //persistanceDataPath/hotdata/SomeData.csv.tmp 
+        string tmpPath = savePath + ".tmp";
+
+        Debug.Log($"[DataManager] {Path.GetFileName(savePath)} 다운로드 시작: {url}");
+
+        try
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.Timeout = TimeSpan.FromSeconds(10);
+
+                byte[] bytes = await client.GetByteArrayAsync(url);
+
+                Debug.Log($"[DataManager] {Path.GetFileName(savePath)} 다운로드 완료 ({bytes.Length} bytes)");
+
+                //받은 파일의 크기가 동일하지 않다면
+                if (expectedSize > 0 && bytes.LongLength != expectedSize)
+                {
+                    Debug.LogWarning($"[DataManager] 다운로드받은 파일의 크기가 일치하지 않음. 기대 크기 : {expectedSize}, 받은 파일 크기 : {bytes.LongLength}, url : {url}");
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(expectedSha256) == false)
+                {
+                    string got = ComputeSha256Hex(bytes);
+
+                    if (StringComparer.OrdinalIgnoreCase.Equals(got, expectedSha256) == false)
+                    {
+                        Debug.LogWarning($"[DataManager] SHA256 키가 맞지 않음. 기대 값 : {expectedSha256}, 받은 값 : {got}, url : {url}");
+                        return false;
+                    }
+                }
+
+                await File.WriteAllBytesAsync(tmpPath, bytes);
+
+                //로컬에 이미 파일이 존재한다면 
+                if (File.Exists(savePath))
+                {
+                    //기존 파일 삭제
+                    File.Delete(savePath);
+                }
+                //.csv.tmp 에서 .csv로 변경
+                File.Move(tmpPath, savePath);
+
+                Debug.Log($"[DataManager] {Path.GetFileName(savePath)} 저장 완료");
+
+                return true;
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[DataManager] Download err: {e.Message}, url : {url}");
+
+            try
+            {
+                //임시 파일 제거
+                if (File.Exists(tmpPath))
+                {
+                    File.Delete(tmpPath);
+                }
+            }
+            catch { }
+
+            return false;
+        }
+    }
+
+    private string ComputeSha256Hex(byte[] data)
+    {
+        using (SHA256 sha = SHA256.Create())
+        {
+            //256비트 = 32바이트
+            byte[] hash = sha.ComputeHash(data);
+
+            //표기 과정에서 리사이즈가 일어나니 미리 정해둠
+            StringBuilder sb = new StringBuilder(hash.Length * 2);
+
+            for (int i = 0; i < hash.Length; i++)
+            {
+                //1바이트를 16진수로 표기
+                sb.Append(hash[i].ToString("x2"));
+            }
+
+            return sb.ToString();
+        }
+    }
+
+    private string[] LoadCsvLines(string fileName)
+    {
+        string cachedPath = Path.Combine(_localDir, fileName);
+
+        //persistentDataPath/hotdata에 있는 파일 확인
+        if (File.Exists(cachedPath))
+        {
+            //있으면 한 줄씩 읽어서 반환
+            return File.ReadAllLines(cachedPath, Encoding.UTF8);
+        }
+
+        //없다면 Resources/CSV에서 읽어오기
+
+        //csv확장자 버리고 가져옴
+        string resourceKey = Path.GetFileNameWithoutExtension(fileName);
+
+        TextAsset asset = Resources.Load<TextAsset>($"CSV/{resourceKey}");
+
+        if (asset == null)
+        {
+            Debug.LogWarning($"[DataManager] CSV 리소스 없음: {fileName}");
+            return Array.Empty<string>();
+        }
+
+        return asset.text.Split('\n');
     }
 
     private void LoadSpritesData()
@@ -86,8 +359,9 @@ public class DataManager : MonoBehaviour
 
     private void LoadLocalizedTexts()
     {
-        TextAsset textAsset = Resources.Load<TextAsset>("CSV/LocalizedTextData");
-        string[] lines = textAsset.text.Split('\n');
+        //TextAsset textAsset = Resources.Load<TextAsset>("CSV/LocalizedTextData");
+        //string[] lines = textAsset.text.Split('\n');
+        string[] lines = LoadCsvLines("LocalizedTextData.csv");
 
         for (int i = 1; i < lines.Length; i++)
         {
@@ -205,9 +479,9 @@ public class DataManager : MonoBehaviour
 
     private void LoadExpData()
     {
-        TextAsset expData = Resources.Load<TextAsset>("CSV/ExpData");
-        string[] lines = expData.text.Split('\n');
-
+        //TextAsset expData = Resources.Load<TextAsset>("CSV/ExpData");
+        //string[] lines = expData.text.Split('\n');
+        string[] lines = LoadCsvLines("ExpData.csv");
         for (int i = 1; i < lines.Length; i++)
         {
             if (string.IsNullOrEmpty(lines[i])) { continue; }
@@ -236,8 +510,9 @@ public class DataManager : MonoBehaviour
 
     private void LoadEnemyData()
     {
-        TextAsset enemyText = Resources.Load<TextAsset>("CSV/EnemyData");
-        string[] lines = enemyText.text.Split('\n');
+        //TextAsset enemyText = Resources.Load<TextAsset>("CSV/EnemyData");
+        //string[] lines = enemyText.text.Split('\n');
+        string[] lines = LoadCsvLines("EnemyData.csv");
 
         for (int i = 1; i < lines.Length; i++)
         {
@@ -278,8 +553,9 @@ public class DataManager : MonoBehaviour
 
     private void LoadStageData()
     {
-        TextAsset stageText = Resources.Load<TextAsset>("CSV/StageData");
-        string[] lines = stageText.text.Split('\n');
+        //TextAsset stageText = Resources.Load<TextAsset>("CSV/StageData");
+        //string[] lines = stageText.text.Split('\n');
+        string[] lines = LoadCsvLines("StageData.csv");
 
         for (int i = 1; i < lines.Length; i++)
         {
@@ -323,8 +599,9 @@ public class DataManager : MonoBehaviour
 
     private void LoadSkillData()
     {
-        TextAsset skillText = Resources.Load<TextAsset>("CSV/SkillData");
-        string[] lines = skillText.text.Split('\n');
+        //TextAsset skillText = Resources.Load<TextAsset>("CSV/SkillData");
+        //string[] lines = skillText.text.Split('\n');
+        string[] lines = LoadCsvLines("SkillData.csv");
 
         for (int i = 1; i < lines.Length; i++)
         {
@@ -362,7 +639,6 @@ public class DataManager : MonoBehaviour
         }
         //Debug.Log($"[DataManager] skillDataTable : {skillDataTable.Count}개의 데이터를 로드함");
     }
-
     public List<SkillData> GetAllSkillData()
     {
         List<SkillData> skillList = new List<SkillData>();
@@ -382,8 +658,9 @@ public class DataManager : MonoBehaviour
 
     private void LoadGoldUpgradeData()
     {
-        TextAsset goldUpgradeText = Resources.Load<TextAsset>("CSV/GoldUpgradeData");
-        string[] lines = goldUpgradeText.text.Split('\n');
+        //TextAsset goldUpgradeText = Resources.Load<TextAsset>("CSV/GoldUpgradeData");
+        //string[] lines = goldUpgradeText.text.Split('\n');
+        string[] lines = LoadCsvLines("GoldUpgradeData.csv");
 
         for (int i = 1; i < lines.Length; i++)
         {
@@ -423,8 +700,9 @@ public class DataManager : MonoBehaviour
 
     private void LoadItemData()
     {
-        TextAsset itemText = Resources.Load<TextAsset>("CSV/ItemData");
-        string[] lines = itemText.text.Split('\n');
+        //TextAsset itemText = Resources.Load<TextAsset>("CSV/ItemData");
+        //string[] lines = itemText.text.Split('\n');
+        string[] lines = LoadCsvLines("ItemData.csv");
 
         for (int i = 1; i < lines.Length; i++)
         {
@@ -476,7 +754,6 @@ public class DataManager : MonoBehaviour
 
     }
 
-
     public AudioClip GetAudioClipByKey(string key)
     {
         if (audioDic.TryGetValue(key, out AudioClip audioClip))
@@ -492,8 +769,9 @@ public class DataManager : MonoBehaviour
 
     private void LoadSummonExpData()
     {
-        TextAsset expText = Resources.Load<TextAsset>("CSV/SummonExpData");
-        string[] lines = expText.text.Split('\n');
+        //TextAsset expText = Resources.Load<TextAsset>("CSV/SummonExpData");
+        //string[] lines = expText.text.Split('\n');
+        string[] lines = LoadCsvLines("SummonExpData.csv");
 
         for (int i = 1; i < lines.Length; i++)
         {
@@ -530,8 +808,10 @@ public class DataManager : MonoBehaviour
 
     private void LoadSummonGradeProbabilities()
     {
-        TextAsset textAsset = Resources.Load<TextAsset>("CSV/GradeProbabilities");
-        string[] lines = textAsset.text.Split('\n');
+        //TextAsset textAsset = Resources.Load<TextAsset>("CSV/GradeProbabilities");
+        //string[] lines = textAsset.text.Split('\n');
+        string[] lines = LoadCsvLines("GradeProbabilities.csv");
+
         string[] headers = lines[0].Split(',');
 
         for (int i = 1; i < lines.Length; i++)
@@ -586,8 +866,10 @@ public class DataManager : MonoBehaviour
 
     private void LoadSummonStageProbabilities()
     {
-        TextAsset asset = Resources.Load<TextAsset>("CSV/StageProbabilities");
-        string[] lines = asset.text.Split('\n');
+        //TextAsset asset = Resources.Load<TextAsset>("CSV/StageProbabilities");
+        //string[] lines = asset.text.Split('\n');
+        string[] lines = LoadCsvLines("StageProbabilities.csv");
+
         string[] headers = lines[0].Split(',');
 
         for (int i = 1; i < lines.Length; i++)
@@ -800,8 +1082,9 @@ public class DataManager : MonoBehaviour
 
     private void LoadSummonRewardData()
     {
-        TextAsset asset = Resources.Load<TextAsset>("CSV/SummonLevelRewardData");
-        string[] lines = asset.text.Split('\n');
+        //TextAsset asset = Resources.Load<TextAsset>("CSV/SummonLevelRewardData");
+        //string[] lines = asset.text.Split('\n');
+        string[] lines = LoadCsvLines("SummonLevelRewardData.csv");
 
         for (int i = 1; i < lines.Length; i++)
         {
@@ -845,8 +1128,9 @@ public class DataManager : MonoBehaviour
 
     private void LoadGeneralShopData()
     {
-        TextAsset asset = Resources.Load<TextAsset>("CSV/GeneralShopData");
-        string[] lines = asset.text.Split('\n');
+        //TextAsset asset = Resources.Load<TextAsset>("CSV/GeneralShopData");
+        //string[] lines = asset.text.Split('\n');
+        string[] lines = LoadCsvLines("GeneralShopData.csv");
 
         for (int i = 1; i < lines.Length; i++)
         {
@@ -877,8 +1161,9 @@ public class DataManager : MonoBehaviour
 
     private void LoadSkillShopData()
     {
-        TextAsset asset = Resources.Load<TextAsset>("CSV/SkillShopData");
-        string[] lines = asset.text.Split('\n');
+        //TextAsset asset = Resources.Load<TextAsset>("CSV/SkillShopData");
+        //string[] lines = asset.text.Split('\n');
+        string[] lines = LoadCsvLines("SkillShopData.csv");
 
         for (int i = 1; i < lines.Length; i++)
         {
@@ -910,8 +1195,9 @@ public class DataManager : MonoBehaviour
 
     private void LoadDungeonData()
     {
-        TextAsset asset = Resources.Load<TextAsset>("CSV/DungeonData");
-        string[] lines = asset.text.Split('\n');
+        //TextAsset asset = Resources.Load<TextAsset>("CSV/DungeonData");
+        //string[] lines = asset.text.Split('\n');
+        string[] lines = LoadCsvLines("DungeonData.csv");
 
         for (int i = 1; i < lines.Length; i++)
         {
@@ -947,13 +1233,6 @@ public class DataManager : MonoBehaviour
         return skillShopDataList;
     }
 
-
-
-    public int GetDungeonDataCount()
-    {
-        return dungeonDataTable.Count;
-    }
-
     public DungeonData GetDungeonData(DungeonType type)
     {
         if (dungeonDataTable.TryGetValue(type, out DungeonData data))
@@ -971,8 +1250,9 @@ public class DataManager : MonoBehaviour
 
     private void LoadDungeonLevelData()
     {
-        TextAsset asset = Resources.Load<TextAsset>("CSV/DUngeonLevelData");
-        string[] lines = asset.text.Split('\n');
+        //TextAsset asset = Resources.Load<TextAsset>("CSV/DUngeonLevelData");
+        //string[] lines = asset.text.Split('\n');
+        string[] lines = LoadCsvLines("DungeonLevelData.csv");
 
 
         for (int i = 1; i < lines.Length; i++)
@@ -1049,8 +1329,9 @@ public class DataManager : MonoBehaviour
 
     private void LoadSummonPriceData()
     {
-        TextAsset textAsset = Resources.Load<TextAsset>("CSV/SummonPriceData");
-        string[] lines = textAsset.text.Split('\n');
+        //TextAsset textAsset = Resources.Load<TextAsset>("CSV/SummonPriceData");
+        //string[] lines = textAsset.text.Split('\n');
+        string[] lines = LoadCsvLines("SummonPriceData.csv");
 
         for (int i = 1; i < lines.Length; i++)
         {
@@ -1336,4 +1617,23 @@ public class SummonPriceData
     public SummonSubCategory Category;
     public int Count;
     public int Price;
+}
+
+[Serializable]
+public sealed class HotdataManifest
+{
+    public string manifestVersion;
+    public string generatedAt;
+    public HotdataFile[] file;
+}
+
+[Serializable]
+public sealed class HotdataFile
+{
+    public string name;
+    public string url;
+    public string version;
+    public string schemaVersion;
+    public string sha256;
+    public long size;
 }
