@@ -13,6 +13,16 @@ public class PooledAudio : MonoBehaviour, IPooledObject
         _source = GetComponent<AudioSource>();
     }
 
+    private void OnEnable()
+    {
+        AudioController.Instance.OnSfxVolumeChanged += UpdateVolume;
+    }
+
+    private void OnDisable()
+    {
+        AudioController.Instance.OnSfxVolumeChanged -= UpdateVolume;
+    }
+
     public void PlaySFX(string clip)
     {
         _source.loop = false;
@@ -70,6 +80,11 @@ public class PooledAudio : MonoBehaviour, IPooledObject
             transform.position = Vector3.zero;
             ObjectPoolManager.Instance.audioPool.Return(this);
         });
+    }
+
+    private void UpdateVolume(float volume)
+    {
+        _source.volume = volume;
     }
 
     private void LateUpdate()

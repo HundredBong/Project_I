@@ -21,6 +21,8 @@ public class AudioController : MonoBehaviour
         { DungeonType.SkillDungeon, "SkillDungeon" }
     };
 
+    public event Action<float> OnSfxVolumeChanged;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -56,6 +58,7 @@ public class AudioController : MonoBehaviour
     {
         sfxVolume = volume;
         LocalSetting.SaveSfxVolume(volume);
+        OnSfxVolumeChanged?.Invoke(volume);
     }
 
     public void MuteAllVolume()
