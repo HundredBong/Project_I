@@ -91,7 +91,7 @@ public class FirebaseStatSaver : MonoBehaviour
                 DataSnapshot snapshot = await dbRef.Child(path).GetValueAsync();
                 string json = snapshot.GetRawJsonValue();
                 float duration = Time.realtimeSinceStartup - start;
-
+                Debug.Log($"[PlayerProgressData] Duration : {duration:F3}");
                 if (firstResult == null)
                 {
                     firstResult = json;
@@ -154,8 +154,7 @@ public class FirebaseStatSaver : MonoBehaviour
                 DataSnapshot snapshot = await dbRef.Child(path).GetValueAsync();
                 string json = snapshot.GetRawJsonValue();
                 float duration = Time.realtimeSinceStartup - start;
-
-                Debug.Log($"DURATION : {duration}");
+                Debug.Log($"[StageData] Duration : {duration:F3}");
 
                 if (firstResult == null)
                 {
@@ -218,6 +217,7 @@ public class FirebaseStatSaver : MonoBehaviour
                 DataSnapshot snapshot = await dbRef.Child(path).GetValueAsync();
                 string json = snapshot.GetRawJsonValue();
                 float duration = Time.realtimeSinceStartup - start;
+                Debug.Log($"[SkillEquipSaveData] Duration : {duration:F3}");
 
                 if (firstResult == null)
                 {
@@ -276,6 +276,7 @@ public class FirebaseStatSaver : MonoBehaviour
                 DataSnapshot snapShot = await dbRef.Child(path).GetValueAsync();
                 string json = snapShot.GetRawJsonValue();
                 float duration = Time.realtimeSinceStartup - start;
+                Debug.Log($"[PlayerSkillSaveData] Duration : {duration:F3}");
 
                 if (firstResult == null)
                 {
@@ -357,6 +358,7 @@ public class FirebaseStatSaver : MonoBehaviour
                 DataSnapshot snapshot = await dbRef.Child(path).GetValueAsync();
                 string json = snapshot.GetRawJsonValue();
                 float duration = Time.realtimeSinceStartup - start;
+                Debug.Log($"[InventorySaveData] Duration : {duration:F3}");
 
                 if (firstResult == null)
                 {
@@ -414,6 +416,7 @@ public class FirebaseStatSaver : MonoBehaviour
                 DataSnapshot snapshot = await dbRef.Child(path).GetValueAsync();
                 string json = snapshot.GetRawJsonValue();
                 float duration = Time.realtimeSinceStartup - start;
+                Debug.Log($"[SummonProgressData] Duration : {duration:F3}");
 
                 if (firstResult == null)
                 {
@@ -472,6 +475,7 @@ public class FirebaseStatSaver : MonoBehaviour
                 string json = snapshot.GetRawJsonValue();
 
                 float duration = Time.realtimeSinceStartup - start;
+                Debug.Log($"[ShopPurchaseData] Duration : {duration:F3}");
 
                 if (firstResult == null)
                 {
@@ -529,6 +533,7 @@ public class FirebaseStatSaver : MonoBehaviour
                 string json = snapshot.GetRawJsonValue();
 
                 float duration = Time.realtimeSinceStartup - start;
+                Debug.Log($"[DungeonSaveData] Duration : {duration:F3}");
 
                 if (firstResult == null)
                 {
@@ -643,6 +648,7 @@ public class FirebaseStatSaver : MonoBehaviour
                 DataSnapshot snapshot = await dbRef.Child(path).GetValueAsync();
                 string loadedName = snapshot.Value.ToString();
                 float duration = Time.realtimeSinceStartup - start;
+                Debug.Log($"[Nickname] Duration : {duration:F3}");
 
                 if (firstResult == null)
                 {

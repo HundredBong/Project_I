@@ -65,7 +65,7 @@ public class OfflineRewardHandler : MonoBehaviour
             //5분 미만일 경우 기준 갱신
             if (offlineMs < MIN_OFFLINE_MS)
             {
-                ObjectPoolManager.Instance.uiPool.GetMessage().Log($"방치 시간이 5분 미만임, {offlineMs}");
+                ObjectPoolManager.Instance.uiPool.GetMessage().Log($"방치 시간이 5분 미만임, {offlineMs / 60000.0:F2}");
                 Debug.LogWarning($"방치 시간이 5분 미만임, {offlineMs}");
                 await GameManager.Instance.statSaver.SaveLastActiveMsAsync(nowMs);
                 return;

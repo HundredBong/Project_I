@@ -19,6 +19,7 @@ public class UIDungeonSlot : MonoBehaviour
     private void OnEnable()
     {
         LanguageManager.OnLanguageChanged += SetLocalizedText;
+        SetLocalizedText();
     }
 
     private void OnDisable()
