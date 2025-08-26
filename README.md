@@ -34,3 +34,6 @@
 - 클라우드 연동 경험 : Firebase Realtime Database의 비동기 처리 흐름 이해 및 적용
 - 성능 최적화 경험 : 오브젝트 풀링과 딜레이 콜 매니저를 통한 성능 개선
 - 설계 패턴 적용 : 인터페이스 기반 추상화, 유한 상태머신, 팩토리 패턴 적용을 통한 유지보수성과 확장성 향상
+
+## 📥 다운로드
+- [Android APK] https://github.com/HundredBong/Project_I/releases/download/v0.1.0/20250827_6.apk
