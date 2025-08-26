@@ -54,8 +54,8 @@ public class OfflineRewardHandler : MonoBehaviour
             //기록이 없거나 이상한 값이 들어오면 기준 갱신
             if (lastMs <= 0 || nowMs <= lastMs)
             {
-                ObjectPoolManager.Instance.uiPool.GetMessage().Log($"기록이 없거나, 이상한 값이 들어옴 {lastMs}, {nowMs}, 이상한값 여부 : {nowMs <= lastMs}");
-                Debug.LogWarning($"기록이 없거나, 이상한 값이 들어옴 {lastMs}, {nowMs}, 이상한값 여부 : {nowMs <= lastMs}");
+                //ObjectPoolManager.Instance.uiPool.GetMessage().Log($"기록이 없거나, 이상한 값이 들어옴 {lastMs}, {nowMs}, 이상한값 여부 : {nowMs <= lastMs}");
+                //Debug.LogWarning($"기록이 없거나, 이상한 값이 들어옴 {lastMs}, {nowMs}, 이상한값 여부 : {nowMs <= lastMs}");
                 await GameManager.Instance.statSaver.SaveLastActiveMsAsync(nowMs);
                 return;
             }
@@ -65,7 +65,7 @@ public class OfflineRewardHandler : MonoBehaviour
             //5분 미만일 경우 기준 갱신
             if (offlineMs < MIN_OFFLINE_MS)
             {
-                ObjectPoolManager.Instance.uiPool.GetMessage().Log($"방치 시간이 5분 미만임, {offlineMs / 60000.0:F2}");
+                //ObjectPoolManager.Instance.uiPool.GetMessage().Log($"방치 시간이 5분 미만임, {offlineMs / 60000.0:F2}");
                 Debug.LogWarning($"방치 시간이 5분 미만임, {offlineMs}");
                 await GameManager.Instance.statSaver.SaveLastActiveMsAsync(nowMs);
                 return;

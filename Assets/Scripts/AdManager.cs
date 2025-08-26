@@ -59,14 +59,8 @@ public class AdManager : MonoBehaviour
 
     private async UniTaskVoid RunLaunchInterstitialFlowAsync(CancellationToken ct)
     {
-#if UNITY_EDITOR
-        ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] 에디터에서 전면 광고 스킵");
-        Debug.Log("[AdManager] 에디터에서 전면 광고 스킵");
-        ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("GameStart");
-        _hasShownThisLaunch = true;
-        GameManager.Instance.loadSceneReady = true;
-        return;
-#elif UNITY_ANDROID || UNITY_IOS
+
+#if UNITY_ANDROID || UNITY_IOS
         await WaitUntilConsentReadyAsync(10000, ct);
 
         bool loaded = await LoadInterstitialAsync(ct);
@@ -81,12 +75,19 @@ public class AdManager : MonoBehaviour
         await UniTask.Delay(300, cancellationToken: ct);
 
         ShowInterstitialOnce();
+#else 
+        //ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] 에디터에서 전면 광고 스킵");
+        Debug.Log("[AdManager] 에디터에서 전면 광고 스킵");
+        ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("GameStart");
+        _hasShownThisLaunch = true;
+        GameManager.Instance.loadSceneReady = true;
+        return;
 #endif
     }
 
     private async UniTask WaitUntilConsentReadyAsync(int timeoutMs, CancellationToken ct)
     {
-        ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] UMP 상태 업데이트중");
+        //ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] UMP 상태 업데이트중");
         //광고 보여주기전에 동의 처리 해주는 함수
         //Google UMP 사용함
 
@@ -108,23 +109,23 @@ public class AdManager : MonoBehaviour
 
         //비동기 결과를 나중에 알려주도록
         UniTaskCompletionSource<bool> tcsUpdate = new UniTaskCompletionSource<bool>();
-        ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] tcsUpdate 생성");
+        //ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] tcsUpdate 생성");
 
         //Google 서버나 로컬 저장된 데이터 기반으로 동의 상태 최신화, 
         ConsentInformation.Update(requestParams, (FormError updateError) =>
         {
-            ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] ConsentInformation 업데이트중");
+            //ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] ConsentInformation 업데이트중");
 
             if (updateError != null)
             {
-                ObjectPoolManager.Instance.uiPool.GetMessage().Log($"[AdManager] UMP 상태 업데이트 실패 : {updateError.Message}");
+                //ObjectPoolManager.Instance.uiPool.GetMessage().Log($"[AdManager] UMP 상태 업데이트 실패 : {updateError.Message}");
 
                 Debug.LogWarning($"[AdManager] UMP 상태 업데이트 실패 : {updateError.Message}");
             }
             //에러가 없다면 상태 업데이트 성공
             else
             {
-                ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] ConsentInformation 업데이트 성공");
+                //ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] ConsentInformation 업데이트 성공");
 
                 tcsUpdate.TrySetResult(true);
             }
@@ -138,7 +139,7 @@ public class AdManager : MonoBehaviour
         }
 
         //업데이트가 완료될 때까지 대기
-        ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] tcsUpdate 대기 완료");
+        //ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] tcsUpdate 대기 완료");
 
 
         if (ConsentInformation.IsConsentFormAvailable())
@@ -149,12 +150,12 @@ public class AdManager : MonoBehaviour
             {
                 if (loadError != null || form == null)
                 {
-                    ObjectPoolManager.Instance.uiPool.GetMessage().LogError($"[AdManager] UMP 폼 로드 실패함 : {loadError.Message}");
+                    //ObjectPoolManager.Instance.uiPool.GetMessage().LogError($"[AdManager] UMP 폼 로드 실패함 : {loadError.Message}");
                     Debug.LogWarning($"[AdManager] UMP 폼 로드 실패함 : {loadError.Message}");
                     tcsLoad.TrySetException(new System.Exception(loadError.Message ?? "ConsetnForm is null"));
                     return;
                 }
-                ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] consentForm Show 실행 전");
+                //ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] consentForm Show 실행 전");
                 tcsLoad.TrySetResult(form);
             });
 
@@ -176,13 +177,13 @@ public class AdManager : MonoBehaviour
 
                 if (showError != null)
                 {
-                    ObjectPoolManager.Instance.uiPool.GetMessage().LogError($"[AdManager] UMP 폼 표시 실패 : {showError.Message}");
+                    //ObjectPoolManager.Instance.uiPool.GetMessage().LogError($"[AdManager] UMP 폼 표시 실패 : {showError.Message}");
                     Debug.LogWarning($"[AdManager] UMP 폼 표시 실패 : {showError.Message}");
                     tcsShow.TrySetResult(false);
                     return;
                 }
 
-                ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] UMP 폼 표시 완료");
+                //ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] UMP 폼 표시 완료");
                 tcsShow.TrySetResult(true);
             });
 
@@ -215,7 +216,7 @@ public class AdManager : MonoBehaviour
         }
         else
         {
-            ObjectPoolManager.Instance.uiPool.GetMessage().LogError($"[AdManager] UMP 폼 표시 가능한 상태가 아님");
+            //ObjectPoolManager.Instance.uiPool.GetMessage().LogError($"[AdManager] UMP 폼 표시 가능한 상태가 아님");
         }
 
         int waited = 0;
@@ -260,7 +261,7 @@ public class AdManager : MonoBehaviour
             //전면 광고 이벤트 핸들러 등록
             _interstitial.OnAdFullScreenContentClosed += () =>
             {
-                ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] 전면 광고 닫힘");
+                //ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] 전면 광고 닫힘");
                 GameManager.Instance.loadSceneReady = true;
                 ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("GameStart");
                 _interstitial = null;
@@ -274,7 +275,7 @@ public class AdManager : MonoBehaviour
                 _interstitial = null;
             };
 
-            ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] 전면 광고 로드 성공");
+            //ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] 전면 광고 로드 성공");
             tcs.TrySetResult(true);
         });
 
@@ -311,7 +312,7 @@ public class AdManager : MonoBehaviour
             //광고는 소모품이므로 한 번 보여주면 폐기하고 다시 로드해야 함
             _rewarded.OnAdFullScreenContentClosed += () =>
             {
-                ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] 보상형 광고 닫힘");
+                //ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] 보상형 광고 닫힘");
                 _rewarded = null;
             };
 
@@ -322,7 +323,7 @@ public class AdManager : MonoBehaviour
                 _rewarded = null;
             };
 
-            ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] 보상형 광고 로드 성공");
+            //ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] 보상형 광고 로드 성공");
             tcs.TrySetResult(true);
         });
 
@@ -334,12 +335,7 @@ public class AdManager : MonoBehaviour
 
     public async UniTask<bool> ShowRewardedAsync(CancellationToken ct)
     {
-#if UNITY_EDITOR
-        ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] 에디터에서 보상형 광고 스킵");
-        Debug.Log("[AdManager] 에디터에서 보상형 광고 스킵");
-        await UniTask.Yield();
-        return true;
-#elif UNITY_ANDROID || UNITY_IOS
+#if UNITY_ANDROID || UNITY_IOS
         //광고 불러오기
         bool loaded = await LoadRewardedAsync(ct);
 
@@ -376,6 +372,11 @@ public class AdManager : MonoBehaviour
             //광고가 끝날 때까지 대기
             return await tcsShow.Task;
         }
+#else
+        //ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] 에디터에서 보상형 광고 스킵");
+        Debug.Log("[AdManager] 에디터에서 보상형 광고 스킵");
+        await UniTask.Yield();
+        return true;
 #endif
     }
 

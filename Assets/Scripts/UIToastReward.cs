@@ -69,6 +69,7 @@ public class UIToastReward : PooledUI
         UITweening.PlayToast(_cg, MOVE_TIME, () =>
         {
             transform.SetParent(ObjectPoolManager.Instance.uiPool.transform);
+            transform.localScale = Vector3.one;
             ObjectPoolManager.Instance.uiPool.Return(this);
         });
         ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Toast_Reward");
@@ -114,6 +115,7 @@ public class UIToastReward : PooledUI
         UITweening.PlayToast(_cg, MOVE_TIME, () =>
         {
             transform.SetParent(ObjectPoolManager.Instance.uiPool.transform);
+            transform.localScale = Vector3.one;
             ObjectPoolManager.Instance.uiPool.Return(this);
         });
         ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Toast_Reward");
@@ -169,6 +171,7 @@ public class UIToastReward : PooledUI
         UITweening.PlayToast(_cg, MOVE_TIME, () =>
         {
             transform.SetParent(ObjectPoolManager.Instance.uiPool.transform);
+            transform.localScale = Vector3.one;
             ObjectPoolManager.Instance.uiPool.Return(this);
         });
 

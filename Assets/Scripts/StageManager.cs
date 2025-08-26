@@ -208,6 +208,7 @@ public class StageManager : MonoBehaviour
         if (newStage != _stageType)
         {
             AudioController.Instance.ChangeBGM(stage);
+            _stageType = newStage;
         }
 
         DelayCallManager.Instance.CallLater(FADE_DURATION / 2f, () =>

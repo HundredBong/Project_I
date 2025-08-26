@@ -58,6 +58,8 @@ public class UISleepPopup : UIPopup
             _refreshCoroutine = null;
         }
 
+        UIManager.Instance.sleepPopupShowing = false;
+
         base.Close();
     }
 

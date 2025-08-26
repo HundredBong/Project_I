@@ -646,7 +646,7 @@ public class FirebaseStatSaver : MonoBehaviour
             try
             {
                 DataSnapshot snapshot = await dbRef.Child(path).GetValueAsync();
-                string loadedName = snapshot.Value.ToString();
+                string loadedName = snapshot.Value?.ToString() ?? "Default"; //Value에서 NRE떠서 교체함
                 float duration = Time.realtimeSinceStartup - start;
                 Debug.Log($"[Nickname] Duration : {duration:F3}");
 
@@ -667,7 +667,7 @@ public class FirebaseStatSaver : MonoBehaviour
             }
             catch (Exception e)
             {
-                Debug.LogWarning($"[재시도 {i + 1}/{MAX_RETRY_COUNT}] 던전 정보 불러오기 실패, {e}");
+                Debug.LogWarning($"[재시도 {i + 1}/{MAX_RETRY_COUNT}] 닉네임 정보 불러오기 실패, {e}");
                 await UniTask.Delay(RETRY_DELAY_MS);
             }
         }
@@ -790,9 +790,8 @@ public class FirebaseStatSaver : MonoBehaviour
 
     private string GetUserId()
     {
-#if UNITY_EDITOR
-        return "test_user"; //에디터에서는 테스트 유저 ID 사용
-#endif
+
+#if UNITY_ANDROID || UNITY_IOS
         FirebaseUser user = FirebaseAuth.DefaultInstance.CurrentUser;
 
         if (user == null)
@@ -800,6 +799,9 @@ public class FirebaseStatSaver : MonoBehaviour
             throw new Exception("[FirebaseStatSaver] 현재 로그인된 유저가 없음");
         }
         return user?.UserId;
+#else
+        return "test_user"; //에디터에서는 테스트 유저 ID 사용
+#endif
     }
 
 

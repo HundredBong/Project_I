@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -21,6 +22,11 @@ public class UIManager : MonoBehaviour
     private Transform _toastRoot;
 
     public Transform ToastRoot { get { return _toastRoot; } }
+
+    private float _idleTimer = 0f;
+    [SerializeField] private float _idleThreshold = 300f; //5분
+    public bool sleepPopupShowing = false;
+
 
 
     private void Awake()
@@ -241,10 +247,43 @@ public class UIManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            if (openPopups.Count != 0)
+            {
+                if (openPopups.Peek() is UINicknamePopup || openPopups.Peek() is UISleepPopup)
+                {
+                    //닉네임 팝업, 슬립 팝업 닫으면 큰일남
+                    return;
+                }
+            }
+
             if (currentPage == null && openPopups.Count <= 0)
             {
                 PopupOpen<UIConfirmPopup>().Init(() => { Application.Quit(); }, "UI_EnsureQuit");
             }
         }
+
+        if (HasInput())
+        {
+            _idleTimer = 0f;
+        }
+        else
+        {
+            _idleTimer += Time.unscaledDeltaTime;
+        }
+
+        if (sleepPopupShowing == false && _idleTimer >= _idleThreshold)
+        {
+            PopupOpen<UISleepPopup>();
+            sleepPopupShowing = true;
+        }
+    }
+
+    private bool HasInput()
+    {
+        if (Input.anyKeyDown) return true;
+        if (Input.touchCount > 0) return true;
+        if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(2)) return true;
+
+        return false;
     }
 }

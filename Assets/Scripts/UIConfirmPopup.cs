@@ -32,9 +32,9 @@ public class UIConfirmPopup : UIPopup
         _confirmButton.onClick.AddListener(() =>
         {
             onClickConfirm?.Invoke();
-            Close();
+            UIManager.Instance.PopupClose();
         });
 
-        _cancelButton.onClick.AddListener(Close);
+        _cancelButton.onClick.AddListener(()=> UIManager.Instance.PopupClose());
     }
 }

@@ -49,6 +49,7 @@ public class GameManager : MonoBehaviour
 
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
     }
 
     private void FindComponent()
@@ -80,11 +81,21 @@ public class GameManager : MonoBehaviour
         //FirebaseInit에서 초기화 완료까지 대기함
         await UniTask.WaitUntil(() => firebaseReady);
 
-        await DataManager.Instance.InitAsync(); 
+        await DataManager.Instance.InitAsync();
 
         //불러오기 실행
         PlayerProgressSaveData playerProgress = await statSaver.LoadPlayerProgressDataAsync();
-        stats.InitializeFromProgressData(playerProgress);
+
+        if (playerProgress.progressValues == null || playerProgress.progressValues.Count == 0)
+        {
+            Debug.Log("[GameManager] 신규 유저 다이아 지급");
+            stats.Diamond = 100000;
+            await statSaver.SavePlayerProgressDataAsync(stats.GetProgressSaveData());
+        }
+        else
+        {
+            stats.InitializeFromProgressData(playerProgress);
+        }
 
         StageSaveData stageData = await statSaver.LoadStageDataAsync();
         if (stageData == null || stageData.CurrentStageId == 0 || stageData.MaxClearedStageId == 0)

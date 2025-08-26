@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class FirebaseGoogleSignInAuth : MonoBehaviour
 {
-    private string _webClientId = "982715551252-h6jlh8rv1temm6skbbq27aue7io5d8cs.apps.googleusercontent.com";
+    private string _webClientId = "982715551252-nndsdi9f9a2qrr05k7ance020o5gh26m.apps.googleusercontent.com";
 
     private FirebaseAuth _auth;
     private GoogleSignInConfiguration _config;
@@ -46,7 +46,9 @@ public class FirebaseGoogleSignInAuth : MonoBehaviour
 
     public void SignIn()
     {
-#if UNITY_EDITOR
+#if UNITY_ANDROID || UNITY_IOS
+        SignInAsync().Forget();
+#else
         //AdManager.Instance.ShowLaunchInterstitialOnce();
 
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
@@ -73,9 +75,7 @@ public class FirebaseGoogleSignInAuth : MonoBehaviour
 
         _signInButton?.gameObject.SetActive(false);
 
-        return;
 #endif
-        SignInAsync().Forget();
     }
 
     public async UniTaskVoid SignInAsync()
@@ -103,10 +103,10 @@ public class FirebaseGoogleSignInAuth : MonoBehaviour
 
             _signInButton?.gameObject.SetActive(false);
         }
-        catch (System.Exception e)
+        catch (GoogleSignIn.SignInException e)
         {
-            Debug.LogError($"[Auth] 로그인 예외 : {e}");
-            ObjectPoolManager.Instance.uiPool.GetMessage().LogError($"[Auth] 로그인 예외 : {e.Message}");
+            Debug.LogError($"[Auth] 로그인 예외 : {e.Message}, {e.Status}"); 
+            ObjectPoolManager.Instance.uiPool.GetMessage().LogError($"[Auth] 로그인 예외 : {e.Message}, {e.Status}");
         }
     }
 

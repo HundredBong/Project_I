@@ -15,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "982715551252-5ag94j3bg2kogsk1gbndl4ggnfrdm8s3.apps.googleusercontent.com",
+          "client_id": "982715551252-u2k2ubskgasn1mrctmv6f5fe5ofp1t6e.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.HundredBong.Project_I",
-            "certificate_hash": "0bf557af2e078acf231d27bad3f6c58c17f80c13"
+            "certificate_hash": "b7e1e5435a4fd1b99d0dbf874991e1df63e2d8c2"
           }
         },
         {

@@ -218,11 +218,11 @@ public class SkillManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            //디버그용, 모든 스킬 쿨타임 초기화
-            RequestResetAllCooldowns();
-        }
+        //if (Input.GetKeyDown(KeyCode.R))
+        //{
+        //    //디버그용, 모든 스킬 쿨타임 초기화
+        //    RequestResetAllCooldowns();
+        //}
     }
 
 
