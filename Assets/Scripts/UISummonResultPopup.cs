@@ -41,13 +41,12 @@ public class UISummonResultPopup : UIPopup
         _uncommonWait = new WaitForSeconds(0.3f);
 
         SetButtonsActive(false);
-        SetLocalizedText();
     }
 
     private void OnEnable()
     {
         LanguageManager.OnLanguageChanged += SetLocalizedText;
-
+        SetLocalizedText();
         _summon10Button.onClick.AddListener(() => _onSummon10?.Invoke());
         _summon30Button.onClick.AddListener(() => _onSummon30?.Invoke());
         _summon100Button.onClick.AddListener(() => _onSummon100?.Invoke());

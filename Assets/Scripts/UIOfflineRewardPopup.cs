@@ -59,12 +59,12 @@ public class UIOfflineRewardPopup : UIPopup
         if (hours > 0)
         {
             //n시간 n분
-            _offlineMinutesText.text = $"{hours}{DataManager.Instance.GetLocalizedText("UI_Hours")} {offlineMinutes}{DataManager.Instance.GetLocalizedText("UI_Minutes")}";
+            _offlineMinutesText.text = $"{hours}{DataManager.Instance.GetLocalizedText("UI_Hours")} {remainMinutes}{DataManager.Instance.GetLocalizedText("UI_Minutes")}";
         }
         else
         {
             //n분
-            _offlineMinutesText.text = $"{offlineMinutes}{DataManager.Instance.GetLocalizedText("UI_Minutes")}";
+            _offlineMinutesText.text = $"{remainMinutes}{DataManager.Instance.GetLocalizedText("UI_Minutes")}";
         }
 
         _onClickGetButton = onClickGetButton;

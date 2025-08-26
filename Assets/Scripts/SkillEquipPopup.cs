@@ -7,7 +7,7 @@ public class SkillEquipPopup : UIPopup
 {
 
     [SerializeField] private Transform slotRoot; //슬롯들이 들어갈 부모 오브젝트
-    [SerializeField] private GameObject slotPrefab; //슬롯 프리팹
+    //[SerializeField] private GameObject slotPrefab; //슬롯 프리팹
     [SerializeField] private Transform listRoot; //보유 스킬 버튼들 부모 오브젝트
     [SerializeField] private SkillSelectButton skillSelectButtonPrefab; //보유 스킬 버튼 프리팹
     [SerializeField] private ActiveSkillPanel activeSkillPanel; //업데이트할 패널

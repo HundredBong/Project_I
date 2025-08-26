@@ -24,10 +24,10 @@ public class OfflineRewardHandler : MonoBehaviour
 
     private void OnApplicationFocus(bool hasFocus)
     {
-        if (hasFocus)
-        {
-            CheckAndGiveRewards().Forget();
-        }
+        //if (hasFocus)
+        //{
+        //    CheckAndGiveRewards().Forget();
+        //}
     }
 
     private void OnApplicationPause(bool pause)

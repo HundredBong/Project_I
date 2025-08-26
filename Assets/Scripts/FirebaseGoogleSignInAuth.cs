@@ -31,17 +31,17 @@ public class FirebaseGoogleSignInAuth : MonoBehaviour
 
     private void OnEnable()
     {
-        _signInButton.onClick.AddListener(SignIn);
+        _signInButton?.onClick.AddListener(SignIn);
     }
 
     private void OnDisable()
     {
-        _signInButton.onClick.RemoveListener(SignIn);
+        _signInButton?.onClick.RemoveListener(SignIn);
     }
 
     private void Start()
     {
-        _signInButton.gameObject.SetActive(true);
+        _signInButton?.gameObject.SetActive(true);
     }
 
     public void SignIn()
@@ -71,7 +71,7 @@ public class FirebaseGoogleSignInAuth : MonoBehaviour
             }
         });
 
-        _signInButton.gameObject.SetActive(false);
+        _signInButton?.gameObject.SetActive(false);
 
         return;
 #endif
@@ -101,7 +101,7 @@ public class FirebaseGoogleSignInAuth : MonoBehaviour
 
             GameManager.Instance.firebaseReady = true;
 
-            _signInButton.gameObject.SetActive(false);
+            _signInButton?.gameObject.SetActive(false);
         }
         catch (System.Exception e)
         {

@@ -31,6 +31,8 @@ public class UIStageInfoPanel : MonoBehaviour
     {
         if (StageManager.Instance == null) { return; }
 
+        LanguageManager.OnLanguageChanged += SetLocalizedText;
+
         StageManager.Instance.OnKillUpdated += RefreshKill;
         StageManager.Instance.OnStageChanged += RefreshStage;
         StageManager.Instance.OnBossStageEntered += RefreshBossStage;
@@ -52,6 +54,8 @@ public class UIStageInfoPanel : MonoBehaviour
     private void OnDisable()
     {
         if (StageManager.Instance == null) { return; }
+
+        LanguageManager.OnLanguageChanged -= SetLocalizedText;
 
         StageManager.Instance.OnKillUpdated -= RefreshKill;
         StageManager.Instance.OnStageChanged -= RefreshStage;

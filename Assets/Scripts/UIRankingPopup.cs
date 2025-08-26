@@ -76,7 +76,7 @@ public class UIRankingPopup : UIPopup
             foreach (RankingSaveData item in rankingSaveDatas)
             {
                 UIRankingSlot slot = ObjectPoolManager.Instance.uiPool.GetRankingSlot();
-                slot.transform.SetParent(_contentRoot.transform);
+                slot.transform.SetParent(_contentRoot.transform, false);
                 slot.Init(item, rank);
                 Debug.Log($"∑©≈© : {rank}, µ•¿Ã≈Õ : {item.NickName}, {item.MaxClearedStage}, {item.Level} ");
                 rank++;
@@ -87,7 +87,7 @@ public class UIRankingPopup : UIPopup
         int myRank = await GetMyRankAsync(myStage, ct);
 
         UIRankingSlot mySlot = ObjectPoolManager.Instance.uiPool.GetRankingSlot();
-        mySlot.transform.SetParent(_myRankRoot.transform);
+        mySlot.transform.SetParent(_myRankRoot.transform, false);
         mySlot.Init(myData, myRank);
         _rankingSlots.Add(mySlot);
         _loadingArea.SetActive(false);
