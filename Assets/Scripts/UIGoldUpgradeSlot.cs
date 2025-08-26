@@ -70,7 +70,7 @@ public class UIGoldUpgradeSlot : MonoBehaviour
                 totalPrice += data.Price + data.PriceIncrease * (upgradeValue + i);
             }
 
-            priceText.text = $"{totalPrice:F1}";
+            priceText.text = NumberFormatter.FormatNumber(totalPrice);
         }
         else
         {
