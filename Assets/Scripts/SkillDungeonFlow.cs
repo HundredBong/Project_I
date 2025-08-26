@@ -61,7 +61,7 @@ public class SkillDungeonFlow : IStageFlow
         {
             return;
         }
-
+        ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Dungeon_Clear");
         _isCleared = true;
         StageManager.Instance.UpdateClearedLevel(DungeonType.SkillDungeon, StageManager.Instance.skillDungeonLevel + 1);
 
@@ -121,6 +121,7 @@ public class SkillDungeonFlow : IStageFlow
 
     public void OnPlayerDead()
     {
+        ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Dungeon_Fail");
         StageManager.Instance.StopTimer();
         ObjectPoolManager.Instance.enemyPool.ReturnAllEnemies();
 

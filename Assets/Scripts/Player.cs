@@ -98,6 +98,7 @@ public class Player : MonoBehaviour
     public void OnAttackHit()
     {
         StateMachine?.CurrentAttackState?.OnAttackHit();
+        
     }
 
     private void FlipSprite()

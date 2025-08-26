@@ -38,7 +38,7 @@ public class UISummonResultPopup : UIPopup
         base.Awake();
 
         _commonWait = new WaitForSeconds(0.05f);
-        _uncommonWait = new WaitForSeconds(0.3f - 0.05f);
+        _uncommonWait = new WaitForSeconds(0.3f);
 
         SetButtonsActive(false);
         SetLocalizedText();
@@ -162,13 +162,8 @@ public class UISummonResultPopup : UIPopup
 
     private IEnumerator StartDisplayingResultCoroutine(Queue<ItemData> data)
     {
-        //1. 아이템 데이터의 타입을 받아서 이게 무기인지, 방어구인지 검사하고
-        //2. 10회, 30회, 100회 짜리 버튼을 SetActive(true)로 만들고,
-        //3. 그 버튼이 UISummonPanel의 Summon버튼과 동일한 역할을 하도록 해야 함.
-
         while (data.Count != 0)
         {
-            yield return _commonWait;
             UIResultContent content = ObjectPoolManager.Instance.uiPool.GetResult();
             _contents.Add(content);
 
@@ -178,7 +173,13 @@ public class UISummonResultPopup : UIPopup
 
             if (GradeType.Epic <= itemData.GradeType)
             {
+                ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Summon_Result_Uncommon");
                 yield return _uncommonWait;
+            }
+            else
+            {
+                ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Summon_Result_Common");
+                yield return _commonWait;
             }
 
         }
@@ -190,7 +191,6 @@ public class UISummonResultPopup : UIPopup
     {
         while (data.Count != 0)
         {
-            yield return _commonWait;
             UIResultContent content = ObjectPoolManager.Instance.uiPool.GetResult();
             _contents.Add(content);
 
@@ -200,7 +200,13 @@ public class UISummonResultPopup : UIPopup
 
             if (GradeType.Epic <= skillData.Grade)
             {
+                ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Summon_Result_Uncommon");
                 yield return _uncommonWait;
+            }
+            else
+            {
+                ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Summon_Result_Common");
+                yield return _commonWait;
             }
         }
 

@@ -71,6 +71,7 @@ public class UIToastReward : PooledUI
             transform.SetParent(ObjectPoolManager.Instance.uiPool.transform);
             ObjectPoolManager.Instance.uiPool.Return(this);
         });
+        ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Toast_Reward");
     }
 
     public void Init(string rewardIconKey, int rewardCount)
@@ -115,6 +116,7 @@ public class UIToastReward : PooledUI
             transform.SetParent(ObjectPoolManager.Instance.uiPool.transform);
             ObjectPoolManager.Instance.uiPool.Return(this);
         });
+        ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Toast_Reward");
     }
 
     public void Init(string[] rewardIconKeys, int[] rewardAmounts)
@@ -169,5 +171,7 @@ public class UIToastReward : PooledUI
             transform.SetParent(ObjectPoolManager.Instance.uiPool.transform);
             ObjectPoolManager.Instance.uiPool.Return(this);
         });
+
+        ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Toast_Reward");
     }
 }

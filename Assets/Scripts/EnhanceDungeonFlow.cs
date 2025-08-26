@@ -64,6 +64,7 @@ public class EnhanceDungeonFlow : IStageFlow
             return;
         }
 
+        ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Dungeon_Clear");
         _isCleared = true;
         StageManager.Instance.UpdateClearedLevel(DungeonType.EnhanceDungeon, StageManager.Instance.enhanceDungeonLevel + 1);
 
@@ -118,6 +119,7 @@ public class EnhanceDungeonFlow : IStageFlow
 
     public void OnPlayerDead()
     {
+        ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Dungeon_Fail");
         StageManager.Instance.StopTimer();
         ObjectPoolManager.Instance.enemyPool.ReturnAllEnemies();
 

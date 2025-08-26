@@ -246,6 +246,8 @@ public class UIItemInfoPopup : UIPopup
             Refresh(); //자기 자신의 UI 갱신
             GameManager.Instance.stats.RecalculateStats(); //스탯 재계산
             UITweening.PlayShine(tweeningImage);
+            ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Upgrade");
+
         }
         //Debug.Log($"[UIItemInfoPopup] 아이템 강화 시도 : {success}");
 

@@ -196,6 +196,7 @@ public class UISkillInfoPopup : UIPopup
             {
                 Debug.Log("강화에 성공함");       
                 SetLocalizedText();
+                ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Upgrade");
                 GameManager.Instance.stats.RecalculateStats();
                 GameManager.Instance.statSaver.SavePlayerSkillDataAsync(SkillManager.Instance.BuildSaveData()).Forget();
             }
@@ -216,6 +217,7 @@ public class UISkillInfoPopup : UIPopup
         if (SkillManager.Instance.TryAwaken(_skillData))
         {
             Debug.Log("각성에 성공함");
+            ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Upgrade");
             SetLocalizedText();
             GameManager.Instance.statSaver.SavePlayerSkillDataAsync(SkillManager.Instance.BuildSaveData()).Forget();
         }

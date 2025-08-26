@@ -103,5 +103,7 @@ public class PlayerAttackState : IState
                 enemy.TakeDamage(finalDamage);
             }
         }
+
+        //ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Player_Attack_Hit");
     }
 }

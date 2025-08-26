@@ -1,3 +1,4 @@
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -65,6 +66,7 @@ public class UIStatSlot : MonoBehaviour
         {
             stats.AddStat(statType, StatUpgradeAmount.statSlotAmount);
             UITweening.PlayShine(tweeningImage);
+            ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Upgrade");
             Refresh();
         }
         else

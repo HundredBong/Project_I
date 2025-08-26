@@ -86,6 +86,7 @@ public class UIGoldUpgradeSlot : MonoBehaviour
         if (stats.AddStat(upgradeType, StatUpgradeAmount.statSlotAmount))
         {
             UITweening.PlayShine(tweeningImage);
+            ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Upgrade");
         }
         else
         {
