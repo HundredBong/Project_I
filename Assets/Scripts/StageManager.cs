@@ -69,7 +69,7 @@ public class StageManager : MonoBehaviour
             return;
         }
 
-        currentStage = data.CurrentStageId;
+        currentStage = data.CurrentStageId; Debug.Log("CurrentStage : "+currentStage);
         maxClearedStage = data.MaxClearedStageId;
         bossChallengable = data.BossChallengable ?? new bool[DataManager.Instance.stageDataTable.Count];
         bossDefeated = data.BossDefeated ?? new bool[DataManager.Instance.stageDataTable.Count];

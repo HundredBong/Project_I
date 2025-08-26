@@ -14,6 +14,7 @@ public class UIItemSlot : MonoBehaviour
     [Header("UI")]
     [SerializeField] private Image lockedImage;
     [SerializeField] private Button openPopupButton;
+    [SerializeField] private Image _equippedMark;
 
     private ItemData itemData;
     private InventoryItem inventoryItem;
@@ -48,6 +49,8 @@ public class UIItemSlot : MonoBehaviour
 
         itemIcon.sprite = DataManager.Instance.GetSpriteByKey(itemData.IconKey);
         openPopupButton.onClick.AddListener(OnClick);
+
+        _equippedMark.gameObject.SetActive(inventoryItem != null && inventoryItem.IsEquipped);
     }
 
     private void OnClick()
@@ -86,6 +89,7 @@ public class UIItemSlot : MonoBehaviour
         }
 
         itemIcon.sprite = DataManager.Instance.GetSpriteByKey(itemData.IconKey);
+        _equippedMark.gameObject.SetActive(inventoryItem != null && inventoryItem.IsEquipped);
     }
 
     //UISummonResultPopup용 오버로딩

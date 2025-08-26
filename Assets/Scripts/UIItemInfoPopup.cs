@@ -255,6 +255,7 @@ public class UIItemInfoPopup : UIPopup
     {
         InventoryManager.Instance.UnequipItem(itemData.ItemType);
         InventoryManager.Instance.EquipItem(itemData.Id);
+        onSynthesisComplete?.Invoke(); //마침 인벤페이지의 RefreshAll연결되어 있어서 재활용함
         Refresh();
         GameManager.Instance.stats.RecalculateStats();
     }
