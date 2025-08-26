@@ -101,7 +101,7 @@ public class UIItemInfoPopup : UIPopup
         maxButton.onClick.AddListener(OnClickMaxButton);
         positiveButton.onClick.AddListener(OnClickPositiveButton);
 
-        LanguageManager.OnLanguageChanged += Refresh; 
+        LanguageManager.OnLanguageChanged += Refresh;
     }
 
     private void OnDisable()
@@ -111,7 +111,7 @@ public class UIItemInfoPopup : UIPopup
         maxButton.onClick.RemoveListener(OnClickMaxButton);
         positiveButton.onClick.RemoveListener(OnClickPositiveButton);
 
-        LanguageManager.OnLanguageChanged -= Refresh; 
+        LanguageManager.OnLanguageChanged -= Refresh;
     }
 
     public void Init(ItemData itemData, InventoryItem inventoryItem, Action onUpgraded, Action onSynthesisComplete)
@@ -201,7 +201,6 @@ public class UIItemInfoPopup : UIPopup
         synthesisCountText.text = synthesisCount.ToString();
 
         synthesisButton.interactable = synthesisCount != 0;
-        batchSynthesisButton.interactable = synthesisCount != 0;
 
 
     }
@@ -232,7 +231,6 @@ public class UIItemInfoPopup : UIPopup
         equipButton.interactable = inventoryItem.IsEquipped == true ? false : true;
 
         synthesisButton.interactable = synthesisCount != 0;
-        batchSynthesisButton.interactable = synthesisCount != 0;
     }
 
     private void OnClickEnhance()
@@ -311,7 +309,6 @@ public class UIItemInfoPopup : UIPopup
         synthesisCountText.text = synthesisCount.ToString();
 
         synthesisButton.interactable = synthesisCount != 0;
-        batchSynthesisButton.interactable = synthesisCount != 0;
     }
 
     private void OnClickSynthesisButton()
@@ -329,9 +326,10 @@ public class UIItemInfoPopup : UIPopup
             //UI 새로고침 및 스탯 반영되도록 재계산
             onSynthesisComplete?.Invoke();
             Refresh();
+            synthesisCount = 0;
             RefreshSynthesisUI();
+            ObjectPoolManager.Instance.uiPool.GetReward().Init(nextItem.IconKey, synthesisCount);
             GameManager.Instance.stats.RecalculateStats();
-
         }
 
     }
@@ -339,40 +337,48 @@ public class UIItemInfoPopup : UIPopup
     private void OnClickBatchSynthesisButton()
     {
         //아이템 A가 100개 있음 -> 일괄 합성하면 B가 20개 생성됨 -> B가 5개 이상이니까 합성 또 진행함 -> C가 4개 생성됨 -> 중단
-
-        int currentId = itemData.Id;
-
-        while (true)
+        UIManager.Instance.PopupOpen<UIConfirmPopup>().Init(() =>
         {
-            //현재 아이템 정보 받아오기
-            InventoryItem currentItem = InventoryManager.Instance.GetItem(currentId);
+            int currentId = itemData.Id;
 
-            //아이템 정보를 받아올 수 없거나, 아이템의 숫자가 5 미만이라면 합성 중지
-            if (currentItem == null || currentItem.Count > 5)
+            ItemData lastCreatedItem = null;
+            int lastCreatedCount = 0;
+
+            while (true)
             {
-                break;
+                //현재 아이템 정보 받아오기
+                InventoryItem currentItem = InventoryManager.Instance.GetItem(currentId);
+
+                //아이템 정보를 받아올 수 없거나, 아이템의 숫자가 5 미만이라면 합성 중지
+                if (currentItem == null || currentItem.Count < 5)
+                {
+                    break;
+                }
+
+                //다음 아이템이 존재하지 않는다면 중지
+                if (DataManager.Instance.GetItemData().TryGetValue(currentId + 1, out ItemData nextItemData) == false)
+                {
+                    break;
+                }
+
+                int canSynthesisCount = currentItem.Count / 5;
+                InventoryManager.Instance.SubtractItem(currentItem.Data, canSynthesisCount * 5);
+                InventoryManager.Instance.AddItem(nextItemData, canSynthesisCount);
+
+                lastCreatedItem = nextItemData;
+                lastCreatedCount = canSynthesisCount;
+                currentId++;
             }
 
-            //다음 아이템이 존재하지 않는다면 중지
-            if (DataManager.Instance.GetItemData().TryGetValue(itemData.Id + 1, out ItemData nextItemData) == false)
-            {
-                break; 
-            }
+            GameManager.Instance.statSaver.RequestSave(InventoryManager.Instance.BuildSaveData());
 
-            //현재 아이템을 합성할 횟수 * 5만큼 차감
-            InventoryManager.Instance.SubtractItem(currentItem.Data, synthesisCount * 5);
-            //합성할 횟수만큼 다음 아이템 추가
-            InventoryManager.Instance.AddItem(nextItemData, synthesisCount);
-
-            currentId++;
-        }
-
-        GameManager.Instance.statSaver.RequestSave(InventoryManager.Instance.BuildSaveData());
-
-        onSynthesisComplete?.Invoke();
-        Refresh();
-        RefreshSynthesisUI();
-        GameManager.Instance.stats.RecalculateStats();
+            onSynthesisComplete?.Invoke();
+            Refresh();
+            synthesisCount = 0;
+            RefreshSynthesisUI();
+            if (lastCreatedItem != null) { ObjectPoolManager.Instance.uiPool.GetReward().Init(lastCreatedItem.IconKey, lastCreatedCount); }
+            GameManager.Instance.stats.RecalculateStats();
+        }, "UI_EnsureBatchSynthesis");     
     }
 
     [ContextMenu("테스트")]
