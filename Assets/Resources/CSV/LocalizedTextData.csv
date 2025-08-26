@@ -216,4 +216,4 @@ Skill_Charge_Awaken_3,최대 강화 레벨 증가| 최대 돌진 횟수 증가 ,
 Skill_Charge_Awaken_4,최대 강화 레벨 증가| 최대 돌진 횟수 증가 ,Increase Max Enhancement Level| Increase Max Charge Count
 UI_CantExecute,스킬을 사용할 수 없습니다.,Cannot use skill.
 UI_GlobalCooldown,글로벌 쿨타임 진행중입니다. ,Global cooldown in progress.
-UI_NotEnoughSkillGem,스킬 강화석이 부족합니다.,No tEnough Skill Gem
+UI_NotEnoughSkillGem,스킬 강화석이 부족합니다.,Not Enough Skill Gem

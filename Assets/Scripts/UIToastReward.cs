@@ -38,7 +38,7 @@ public class UIToastReward : PooledUI
         }
         else
         {
-            transform.SetParent(root);
+            transform.SetParent(root, false);
         }
 
         foreach (var image in _rewardIcons)
@@ -96,7 +96,7 @@ public class UIToastReward : PooledUI
         }
         else
         {
-            transform.SetParent(root);
+            transform.SetParent(root, false);
         }
 
         //이미 있는게 다시 Init되지는 않음. 애초에 사용중이고 풀에 들어가있어야 Init이 실행될거임.
@@ -139,7 +139,7 @@ public class UIToastReward : PooledUI
         }
         else
         {
-            transform.SetParent(root);
+            transform.SetParent(root, false);
         }
 
         foreach (var image in _rewardIcons)

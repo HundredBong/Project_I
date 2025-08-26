@@ -30,7 +30,7 @@ public class UIToastMessage : PooledUI
         }
         else
         {
-            transform.SetParent(root);
+            transform.SetParent(root, false);
         }
         _cg.alpha = 0;
         UITweening.PlayToast(_cg, MOVE_TIME, () =>
@@ -56,7 +56,7 @@ public class UIToastMessage : PooledUI
         }
         else
         {
-            transform.SetParent(root);
+            transform.SetParent(root, false);
         }
         _cg.alpha = 0;
         UITweening.PlayToast(_cg, MOVE_TIME, () =>
@@ -82,7 +82,7 @@ public class UIToastMessage : PooledUI
         }
         else
         {
-            transform.SetParent(root);
+            transform.SetParent(root, false);
         }
         _cg.alpha = 0;
         UITweening.PlayToast(_cg, MOVE_TIME, () =>

@@ -87,7 +87,7 @@ public class UIStageResultPopup : UIPopup
 
         while (remain > 0)
         {
-            _autoExitText.text = $"{(int)remain}{DataManager.Instance.GetLocalizedText("UI_AutoExit")}";
+            _autoExitText.text = $"{(int)remain} {DataManager.Instance.GetLocalizedText("UI_AutoExit")}";
             yield return _wait;
             remain--;
         }
