@@ -7,6 +7,7 @@ public class ProjectileDarkBoom : Projectile
     [SerializeField] private ParticleSystem par;
 
     private SkillData skillData;
+    private readonly Collider2D[] _buffer = new Collider2D[64];
 
     private void Awake()
     {
@@ -37,15 +38,17 @@ public class ProjectileDarkBoom : Projectile
     private void Explode()
     {
         int awakenLevel = SkillManager.Instance.GetSkillState(skillData.SkillId).AwakenLevel;
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(this.transform.position, skillData.Range + (skillData.Range * 0.25f * awakenLevel), SkillManager.Instance.targetMask);
-
+        int count = Physics2D.OverlapCircleNonAlloc(this.transform.position, skillData.Range + (skillData.Range * 0.25f * awakenLevel),
+            _buffer, SkillManager.Instance.targetMask);
         float damage = SkillManager.Instance.CalculateSkillDamage(skillData);
 
-        foreach (Collider2D col in colliders)
+        for (int i = 0; i < count; i++)
         {
-            if (col.TryGetComponent<Enemy>(out Enemy enemy) && enemy.isDead == false)
+            Collider2D col = _buffer[i];
+
+            if (col != null && col.TryGetComponent<Enemy>(out Enemy enemy) && enemy.isDead == false)
             {
-                for (int i = 0; i < skillData.HitCount; i++)
+                for (int k = 0; k < skillData.HitCount; k++)
                 {
                     enemy.TakeDamage(damage);
                 }

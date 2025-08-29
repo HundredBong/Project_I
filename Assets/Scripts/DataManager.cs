@@ -44,6 +44,8 @@ public class DataManager : MonoBehaviour
     private string _localDir;
     private string _localManifestPath;
 
+    [SerializeField] private bool loadByResources = false;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -80,10 +82,37 @@ public class DataManager : MonoBehaviour
 
         LoadSpritesData();
         LoadAudioData();
+
+        if (loadByResources)
+        {
+            LoadLocalizedTexts();
+            LoadExpData();
+            LoadEnemyData();
+            LoadStageData();
+            LoadSkillData();
+            LoadGoldUpgradeData();
+            LoadItemData();
+            LoadSummonExpData();
+            LoadSummonGradeProbabilities();
+            LoadSummonStageProbabilities();
+            LoadSummonRewardData();
+            LoadGeneralShopData();
+            LoadSkillShopData();
+            LoadDungeonData();
+            LoadDungeonLevelData();
+            LoadSummonPriceData();
+        }
+
     }
 
     public async UniTask InitAsync()
     {
+        if (loadByResources)
+        {
+            _readyTcs.TrySetResult();
+            return;
+        }
+
         HotdataManifest remote = await TryDownloadManifestAsync();
         Debug.Log($"[DataManager] 원격 manifest 다운로드 {(remote != null ? "성공" : "실패")}");
 
@@ -311,29 +340,47 @@ public class DataManager : MonoBehaviour
 
     private string[] LoadCsvLines(string fileName)
     {
-        string cachedPath = Path.Combine(_localDir, fileName);
-
-        //persistentDataPath/hotdata에 있는 파일 확인
-        if (File.Exists(cachedPath))
+        if (loadByResources)
         {
-            //있으면 한 줄씩 읽어서 반환
-            return File.ReadAllLines(cachedPath, Encoding.UTF8);
+            string resourceKey = Path.GetFileNameWithoutExtension(fileName);
+
+            TextAsset asset = Resources.Load<TextAsset>($"CSV/{resourceKey}");
+
+            if (asset == null)
+            {
+                Debug.LogWarning($"[DataManager] CSV 리소스 없음: {fileName}");
+                return Array.Empty<string>();
+            }
+
+            return asset.text.Split('\n');
+        }
+        else
+        {
+            string cachedPath = Path.Combine(_localDir, fileName);
+
+            //persistentDataPath/hotdata에 있는 파일 확인
+            if (File.Exists(cachedPath))
+            {
+                //있으면 한 줄씩 읽어서 반환
+                return File.ReadAllLines(cachedPath, Encoding.UTF8);
+            }
+
+            //없다면 Resources/CSV에서 읽어오기
+
+            //csv확장자 버리고 가져옴
+            string resourceKey = Path.GetFileNameWithoutExtension(fileName);
+
+            TextAsset asset = Resources.Load<TextAsset>($"CSV/{resourceKey}");
+
+            if (asset == null)
+            {
+                Debug.LogWarning($"[DataManager] CSV 리소스 없음: {fileName}");
+                return Array.Empty<string>();
+            }
+
+            return asset.text.Split('\n');
         }
 
-        //없다면 Resources/CSV에서 읽어오기
-
-        //csv확장자 버리고 가져옴
-        string resourceKey = Path.GetFileNameWithoutExtension(fileName);
-
-        TextAsset asset = Resources.Load<TextAsset>($"CSV/{resourceKey}");
-
-        if (asset == null)
-        {
-            Debug.LogWarning($"[DataManager] CSV 리소스 없음: {fileName}");
-            return Array.Empty<string>();
-        }
-
-        return asset.text.Split('\n');
     }
 
     private void LoadSpritesData()
@@ -354,6 +401,7 @@ public class DataManager : MonoBehaviour
         foreach (AudioClip clip in clips)
         {
             audioDic.Add(clip.name, clip);
+            Debug.Log(clip.name);
         }
     }
 
