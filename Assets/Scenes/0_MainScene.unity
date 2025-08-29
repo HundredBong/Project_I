@@ -1448,7 +1448,7 @@ MonoBehaviour:
   projectilePool: {fileID: 1221533700}
   particlePool: {fileID: 170859274}
   uiPool: {fileID: 909315520}
-  audioPool: {fileID: 0}
+  audioPool: {fileID: 8498138}
 --- !u!4 &669830587
 Transform:
   m_ObjectHideFlags: 0

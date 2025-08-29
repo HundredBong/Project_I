@@ -101,6 +101,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 10
+  _par: {fileID: 5112403345868107899, guid: 249d0621c2996ee4880ffd05711a9416, type: 3}
+  _GCTest: 0
 --- !u!96 &207857349397866335
 TrailRenderer:
   serializedVersion: 3

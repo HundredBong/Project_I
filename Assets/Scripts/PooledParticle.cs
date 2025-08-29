@@ -8,10 +8,12 @@ public class PooledParticle : MonoBehaviour, IPooledObject
     public GameObject prefabReference { get; set; }
 
     private ParticleSystem par;
-
+    private float _duration;
+    private float _lifeTime;
     private void Awake()
     {
         par = GetComponent<ParticleSystem>();
+        _duration = par.main.duration;
     }
 
     public void Play(Vector3 pos, bool isReturn = true)
@@ -20,7 +22,7 @@ public class PooledParticle : MonoBehaviour, IPooledObject
         par.transform.position = pos;
         par.transform.rotation = Quaternion.identity;
         par.Play();
-
+        _lifeTime = _duration;
         if (isReturn)
         {
             DelayCallManager.Instance.CallLater(par.main.duration, () => { ObjectPoolManager.Instance.particlePool.Return(this); });
@@ -31,11 +33,23 @@ public class PooledParticle : MonoBehaviour, IPooledObject
     {
         transform.SetParent(parent);
         Play(pos);
+        _lifeTime = _duration;
+
     }
 
     public void Stop()
     {
         par.Stop();
         ObjectPoolManager.Instance.particlePool.Return(this);
+    }
+
+    private void Update()
+    {
+        _lifeTime -= Time.deltaTime;
+
+        if (_lifeTime < 0)
+        {
+          ObjectPoolManager.Instance.particlePool.Return(this);
+        }
     }
 }

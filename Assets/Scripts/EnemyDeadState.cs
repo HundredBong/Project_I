@@ -4,7 +4,8 @@ public class EnemyDeadState : IState
 {
     private EnemyStateMachine owner;
     private Animator anim;
-
+    private float _elapsed;
+    private float _deadTime;
     public EnemyDeadState(EnemyStateMachine owner)
     {
         this.owner = owner;
@@ -27,13 +28,14 @@ public class EnemyDeadState : IState
             anim.SetTrigger("Death");
         }
 
-        float deadTime = anim.GetCurrentAnimatorStateInfo(0).length;
+        _elapsed = 0;
+        _deadTime = anim.GetCurrentAnimatorStateInfo(0).length;
 
-        DelayCallManager.Instance.CallLater(deadTime, () =>
-        {
-            owner.enemy.transform.localScale = owner.enemy.OriginScale;
-            ObjectPoolManager.Instance.enemyPool.Return(owner.enemy);
-        });
+        //DelayCallManager.Instance.CallLater(deadTime, () =>
+        //{
+        //    owner.enemy.transform.localScale = owner.enemy.OriginScale;
+        //    ObjectPoolManager.Instance.enemyPool.Return(owner.enemy);
+        //});
 
         GameManager.Instance.player.GetExp(owner.enemy.expValue);
         GameManager.Instance.player.GetGold(owner.enemy.goldValue);
@@ -59,6 +61,13 @@ public class EnemyDeadState : IState
 
     public void Update()
     {
+        _elapsed += Time.deltaTime;
+
+        if (_elapsed > _deadTime)
+        {
+            owner.enemy.transform.localScale = owner.enemy.OriginScale;
+            ObjectPoolManager.Instance.enemyPool.Return(owner.enemy);
+        }
 
     }
 }

@@ -273,7 +273,7 @@ public class UIManager : MonoBehaviour
 
         if (sleepPopupShowing == false && _idleTimer >= _idleThreshold)
         {
-            PopupOpen<UISleepPopup>();
+            //PopupOpen<UISleepPopup>();
             sleepPopupShowing = true;
         }
     }
