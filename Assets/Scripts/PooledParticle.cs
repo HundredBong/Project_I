@@ -49,7 +49,7 @@ public class PooledParticle : MonoBehaviour, IPooledObject
 
         if (_lifeTime < 0)
         {
-          ObjectPoolManager.Instance.particlePool.Return(this);
+           ObjectPoolManager.Instance.particlePool.Return(this);
         }
     }
 }

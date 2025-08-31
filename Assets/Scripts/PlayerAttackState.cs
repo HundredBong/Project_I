@@ -87,24 +87,31 @@ public class PlayerAttackState : IState
         //최종 대미지 계산, 크리일시 baseDamage로, 아니면 baseDamage에다가 크리티컬 보너스 추가
         float finalDamage = isCritical ? baseDamage * (2f + (criBonus * 0.01f)) : baseDamage;
 
-        for (int i = 0; i < count; i++)
-        {
-            Collider2D col = _buffer[i];
-            if (col != null && col.TryGetComponent<Enemy>(out Enemy enemy) && enemy.isDead == false)
-            {
-                enemy.TakeDamage(finalDamage);
-            }
-        }
-
-        //foreach (Collider2D col in hitEnemies)
+        //for (int i = 0; i < count; i++)
         //{
-        //    Enemy enemy = col.GetComponent<Enemy>();
-
-        //    if (enemy != null && enemy.isDead == false)
+        //    Collider2D col = _buffer[i];
+        //    if (col != null && col.TryGetComponent<Enemy>(out Enemy enemy) && enemy.isDead == false)
         //    {
         //        enemy.TakeDamage(finalDamage);
         //    }
         //}
+        Vector3 rawDir = owner.player.TargetEnemy.transform.position - owner.player.transform.position;
+
+        Vector3 dir = new Vector3(rawDir.x, 0f, 0f).normalized;
+
+        Vector3 center = owner.player.transform.position + (dir * owner.player.Stat.attackRange);
+
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll
+            (center, owner.player.Stat.attackRange, owner.player.targetLayerMask);
+        foreach (Collider2D col in hitEnemies)
+        {
+            Enemy enemy = col.GetComponent<Enemy>();
+
+            if (enemy != null && enemy.isDead == false)
+            {
+                enemy.TakeDamage(finalDamage);
+            }
+        }
 
         //ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Player_Attack_Hit");
     }

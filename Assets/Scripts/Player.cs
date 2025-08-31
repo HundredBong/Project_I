@@ -118,32 +118,32 @@ public class Player : MonoBehaviour
         Stat.GetGold(gold);
     }
 
-    private void OnDrawGizmos()
-    {
-        if (TargetEnemy != null)
-        {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawLine(transform.position, TargetEnemy.transform.position);
-        }
+    //private void OnDrawGizmos()
+    //{
+    //    if (TargetEnemy != null)
+    //    {
+    //        Gizmos.color = Color.blue;
+    //        Gizmos.DrawLine(transform.position, TargetEnemy.transform.position);
+    //    }
 
-        //공격 범위 시각화
-        //Vector3 dir = (TargetEnemy.transform.position - transform.position).normalized;
-        //Vector3 center = transform.position + (dir * Stat.attackRange);
+    //    //공격 범위 시각화
+    //    //Vector3 dir = (TargetEnemy.transform.position - transform.position).normalized;
+    //    //Vector3 center = transform.position + (dir * Stat.attackRange);
 
-        //Gizmos.color = Color.red;
-        //Gizmos.DrawWireSphere(center, Stat.attackRange);
+    //    //Gizmos.color = Color.red;
+    //    //Gizmos.DrawWireSphere(center, Stat.attackRange);
 
-        if (TargetEnemy != null)
-        {
-            Vector3 rawDir = TargetEnemy.transform.position - transform.position;
-            Vector3 dir = new Vector3(rawDir.x, 0f, 0f).normalized;
-            Vector3 center = transform.position + dir * Stat.attackRange;
+    //    if (TargetEnemy != null)
+    //    {
+    //        Vector3 rawDir = TargetEnemy.transform.position - transform.position;
+    //        Vector3 dir = new Vector3(rawDir.x, 0f, 0f).normalized;
+    //        Vector3 center = transform.position + dir * Stat.attackRange;
 
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(center, Stat.attackRange);
-        }
+    //        Gizmos.color = Color.red;
+    //        Gizmos.DrawWireSphere(center, Stat.attackRange);
+    //    }
 
-    }
+    //}
 
     public void TakeDamage(float damage)
     {

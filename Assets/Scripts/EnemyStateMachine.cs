@@ -10,9 +10,19 @@ public class EnemyStateMachine : MonoBehaviour
 
     public Enemy enemy { get; private set; }
 
+    private EnemyIdleState _idle;
+    private EnemyChaseState _chase;
+    private EnemyAttackState _attack;
+    private EnemyDeadState _dead;
+
     private void Awake()
     {
         enemy = GetComponent<Enemy>();
+
+        _idle = new EnemyIdleState(this);
+        _chase = new EnemyChaseState(this);
+        _attack = new EnemyAttackState(this);
+        _dead = new EnemyDeadState(this);
     }
 
     private void OnEnable()
@@ -43,7 +53,17 @@ public class EnemyStateMachine : MonoBehaviour
 
         //상태 전이
         currentKey = nextState;
-        currentState = CreateState(nextState);
+
+        currentState = nextState switch
+        {
+            StateType.Idle => _idle,
+            StateType.Chase => _chase,
+            StateType.Attack => _attack,
+            StateType.Dead => _dead,
+            _ => currentState
+        };
+
+        //currentState = CreateState(nextState);
 
         //새로운 상태에 진입할 때 메서드 실행
         currentState.OnEnter();

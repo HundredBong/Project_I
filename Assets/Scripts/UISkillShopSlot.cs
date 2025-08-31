@@ -191,6 +191,7 @@ public class UISkillShopSlot : MonoBehaviour
         if (max <= 0)
         {
             ObjectPoolManager.Instance.uiPool.GetMessage().Init("Warning_NotPurchasable");
+            Debug.LogWarning($"Max : {max}, _data.PriceAmount : {_data.PriceAmount}, progress : {progress}");
             _isClicking = false;
             return;
         }

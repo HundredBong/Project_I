@@ -169,7 +169,7 @@ public class GameManager : MonoBehaviour
         }
 
         string nickName = await statSaver.LoadNickname();
-
+        Debug.Log(nickName);
         if (string.IsNullOrEmpty(nickName) || nickName == "Default")
         {
             UniTaskCompletionSource<string> tcs = new UniTaskCompletionSource<string>();

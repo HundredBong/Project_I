@@ -332,7 +332,7 @@ public class FirebaseStatSaver : MonoBehaviour
     {
         string json = JsonUtility.ToJson(data);
         string userId = GetUserId();
-        string path = $"users/{userId}/InventoryData";
+        string path = $"users/{userId}/inventoryData";
 
         try
         {
@@ -347,7 +347,7 @@ public class FirebaseStatSaver : MonoBehaviour
     public async UniTask<InventorySaveData> LoadInventoryDataAsync()
     {
         string userId = GetUserId();
-        string path = $"users/{userId}/InventoryData";
+        string path = $"users/{userId}/inventoryData";
         string firstResult = null;
 
         for (int i = 0; i < MAX_RETRY_COUNT; i++)
@@ -389,7 +389,7 @@ public class FirebaseStatSaver : MonoBehaviour
     {
         string json = JsonUtility.ToJson(data);
         string userId = GetUserId();
-        string path = $"users/{userId}/SummonProgress";
+        string path = $"users/{userId}/summonProgress";
 
         try
         {
@@ -404,7 +404,7 @@ public class FirebaseStatSaver : MonoBehaviour
     public async UniTask<SummonProgressData> LoadSummonProgressDataAsync()
     {
         string userId = GetUserId();
-        string path = $"users/{userId}/SummonProgress";
+        string path = $"users/{userId}/summonProgress";
         string firstResult = null;
 
         for (int i = 0; i < MAX_RETRY_COUNT; i++)
@@ -448,7 +448,7 @@ public class FirebaseStatSaver : MonoBehaviour
     {
         string json = JsonConvert.SerializeObject(data);
         string userId = GetUserId();
-        string path = $"users/{userId}/ShopPurchaseData";
+        string path = $"users/{userId}/shopPurchaseData";
 
         try
         {
@@ -463,7 +463,7 @@ public class FirebaseStatSaver : MonoBehaviour
     public async UniTask<ShopPurchaseData> LoadPurchaseData()
     {
         string userId = GetUserId();
-        string path = $"users/{userId}/ShopPurchaseData";
+        string path = $"users/{userId}/shopPurchaseData";
         string firstResult = null;
 
         for (int i = 0; i < MAX_RETRY_COUNT; i++)
@@ -506,7 +506,7 @@ public class FirebaseStatSaver : MonoBehaviour
     {
         string json = JsonConvert.SerializeObject(data);
         string userId = GetUserId();
-        string path = $"users/{userId}/DungeonClearedData";
+        string path = $"users/{userId}/dungeonClearedData";
 
         try
         {
@@ -521,7 +521,7 @@ public class FirebaseStatSaver : MonoBehaviour
     public async UniTask<DungeonSaveData> LoadDungeonClearedData()
     {
         string userId = GetUserId();
-        string path = $"users/{userId}/DungeonClearedData";
+        string path = $"users/{userId}/dungeonClearedData";
         string firstResult = null;
 
         for (int i = 0; i < MAX_RETRY_COUNT; i++)
@@ -621,7 +621,7 @@ public class FirebaseStatSaver : MonoBehaviour
     public async UniTask SaveNickname(string nickname)
     {
         string userId = GetUserId();
-        string path = $"users/{userId}/Nickname";
+        string path = $"users/{userId}/nickname";
 
         try
         {
@@ -637,7 +637,7 @@ public class FirebaseStatSaver : MonoBehaviour
     public async UniTask<string> LoadNickname()
     {
         string userId = GetUserId();
-        string path = $"users/{userId}/Nickname";
+        string path = $"users/{userId}/nickname";
         string firstResult = null;
 
         for (int i = 0; i < MAX_RETRY_COUNT; i++)
