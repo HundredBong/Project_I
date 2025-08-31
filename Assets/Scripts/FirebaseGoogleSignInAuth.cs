@@ -92,7 +92,7 @@ public class FirebaseGoogleSignInAuth : MonoBehaviour
                 return;
             }
 
-            //파이어베이스 자격 증명 생성
+            //파이어베이스 자격 증명 생성, 
             Credential credential = GoogleAuthProvider.GetCredential(googleUser.IdToken, null);
 
 

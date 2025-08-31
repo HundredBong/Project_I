@@ -303,7 +303,7 @@ public class ShopManager
     private string GetWindowKey(ShopLimitType limitType, DateTime utcNow)
     {
         //현재 시간을 문자열로 만들어주고 WindowKey로 저장
-
+        utcNow = utcNow.AddHours(9);
         switch (limitType)
         {
             case ShopLimitType.Daily:

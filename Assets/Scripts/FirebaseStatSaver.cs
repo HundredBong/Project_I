@@ -751,7 +751,7 @@ public class FirebaseStatSaver : MonoBehaviour
 
         throw new Exception("서버 시간 가져오기 실패함");
     }
-
+    
     public async UniTask<long> GetLastActiveMsAsync()
     {
         //마지막 활동 시간 불러오기

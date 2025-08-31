@@ -91,7 +91,6 @@ public class AdManager : MonoBehaviour
         //광고 보여주기전에 동의 처리 해주는 함수
         //Google UMP 사용함
 
-        //GoogleMobileAds.Ump.Api
         ConsentRequestParameters requestParams = new ConsentRequestParameters()
         {
             //만 13세와 미만 같은 어린 사용자 여부, true면 맞춤형 광고 제한 걸림
@@ -99,34 +98,26 @@ public class AdManager : MonoBehaviour
             ConsentDebugSettings = new ConsentDebugSettings()
             {
                 //테스트용으로 사용
-                DebugGeography = DebugGeography.EEA,//유럽 경제 지역(European Economic Area)으로 설정
+                //DebugGeography = DebugGeography.EEA,//유럽 경제 지역(European Economic Area)으로 설정
                 TestDeviceHashedIds = new List<string>()
                 {
-                    "A58D6EFF70C15B53A410BFEC76E0DE17"
+                    //"A58D6EFF70C15B53A410BFEC76E0DE17"
                 }
             }
         };
 
-        //비동기 결과를 나중에 알려주도록
         UniTaskCompletionSource<bool> tcsUpdate = new UniTaskCompletionSource<bool>();
-        //ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] tcsUpdate 생성");
 
-        //Google 서버나 로컬 저장된 데이터 기반으로 동의 상태 최신화, 
+        //Google 서버나 로컬 저장된 데이터 기반으로 동의 상태 최신화
         ConsentInformation.Update(requestParams, (FormError updateError) =>
         {
-            //ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] ConsentInformation 업데이트중");
-
             if (updateError != null)
             {
-                //ObjectPoolManager.Instance.uiPool.GetMessage().Log($"[AdManager] UMP 상태 업데이트 실패 : {updateError.Message}");
-
                 Debug.LogWarning($"[AdManager] UMP 상태 업데이트 실패 : {updateError.Message}");
             }
             //에러가 없다면 상태 업데이트 성공
             else
             {
-                //ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] ConsentInformation 업데이트 성공");
-
                 tcsUpdate.TrySetResult(true);
             }
         });
@@ -138,10 +129,6 @@ public class AdManager : MonoBehaviour
             await tcsUpdate.Task;
         }
 
-        //업데이트가 완료될 때까지 대기
-        //ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] tcsUpdate 대기 완료");
-
-
         if (ConsentInformation.IsConsentFormAvailable())
         {
             UniTaskCompletionSource<ConsentForm> tcsLoad = new UniTaskCompletionSource<ConsentForm>();
@@ -150,19 +137,14 @@ public class AdManager : MonoBehaviour
             {
                 if (loadError != null || form == null)
                 {
-                    //ObjectPoolManager.Instance.uiPool.GetMessage().LogError($"[AdManager] UMP 폼 로드 실패함 : {loadError.Message}");
                     Debug.LogWarning($"[AdManager] UMP 폼 로드 실패함 : {loadError.Message}");
                     tcsLoad.TrySetException(new System.Exception(loadError.Message ?? "ConsetnForm is null"));
                     return;
                 }
-                //ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] consentForm Show 실행 전");
                 tcsLoad.TrySetResult(form);
             });
 
             ConsentForm loadedForm;
-
-            //중간에 취소될 수 있도록 CancellationToken을 사용하여 대기
-            //ct가 취소되면 tcsLoad를 취소 처리
             using (ct.Register(() => tcsLoad.TrySetCanceled()))
             {
                 //결과가 SetResult되거나 취소되거나 예외가 발생할 때까지 대기
@@ -174,16 +156,12 @@ public class AdManager : MonoBehaviour
             loadedForm.Show((FormError showError) =>
             {
                 //폼이 닫히면 이 콜백이 호출됨
-
                 if (showError != null)
                 {
-                    //ObjectPoolManager.Instance.uiPool.GetMessage().LogError($"[AdManager] UMP 폼 표시 실패 : {showError.Message}");
                     Debug.LogWarning($"[AdManager] UMP 폼 표시 실패 : {showError.Message}");
                     tcsShow.TrySetResult(false);
                     return;
                 }
-
-                //ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] UMP 폼 표시 완료");
                 tcsShow.TrySetResult(true);
             });
 
@@ -192,26 +170,6 @@ public class AdManager : MonoBehaviour
                 bool showOk = await tcsShow.Task;
 
                 var status = ConsentInformation.ConsentStatus;
-
-                //switch (status)
-                //{
-                //    case ConsentStatus.Unknown: //초기상태
-                //        break;
-                //    case ConsentStatus.Required: //동의가 필요한 상태
-                //        ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] 동의가 필요함");
-                //        UIManager.Instance.PopupOpen<UIConfirmPopup>().Init(() =>
-                //        {
-                //            Application.Quit();
-                //        }, "UI_ConsentConfirm");
-                //        break;
-                //    case ConsentStatus.NotRequired: //해당 지역, 상황에서는 동의 절차가 필요하지 않음
-                //        break;
-                //    case ConsentStatus.Obtained: //동의가 완료된 상태
-                //        break;
-                //    default:
-                //        break;
-
-                //}
             }
         }
         else
@@ -255,7 +213,7 @@ public class AdManager : MonoBehaviour
                 return;
             }
 
-            //에러가 없다면 광고 객체를 저장함, 전면 광고는 소모품이고 한 번 보여주면 끝이라서 저장해줘야 함
+            //에러가 없다면 광고 객체를 저장함, 전면 광고는 소모품이고 한 번 보여주면 끝
             _interstitial = ad;
 
             //전면 광고 이벤트 핸들러 등록
@@ -275,7 +233,6 @@ public class AdManager : MonoBehaviour
                 _interstitial = null;
             };
 
-            //ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] 전면 광고 로드 성공");
             tcs.TrySetResult(true);
         });
 
@@ -312,7 +269,6 @@ public class AdManager : MonoBehaviour
             //광고는 소모품이므로 한 번 보여주면 폐기하고 다시 로드해야 함
             _rewarded.OnAdFullScreenContentClosed += () =>
             {
-                //ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] 보상형 광고 닫힘");
                 _rewarded = null;
             };
 
