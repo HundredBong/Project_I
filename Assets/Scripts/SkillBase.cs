@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -15,6 +16,8 @@ public abstract class SkillBase
     public bool IsReady => Time.time >= lastUsedTime + skillData.Cooldown;
 
     public float Cooldown => skillData.Cooldown;
+
+    private Collider2D[] _buffer = new Collider2D[32];
 
     //생성자로 데이터 초기화함. 불변성 확보
     public SkillBase(SkillData data)
@@ -62,8 +65,9 @@ public abstract class SkillBase
         float range = skillData.Range;
         LayerMask mask = SkillManager.Instance.targetMask;
 
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(owner.transform.position, range, mask);
-        return hitColliders.Length > 0;
+        int count = Physics2D.OverlapCircleNonAlloc(owner.transform.position, range, _buffer, mask);
+
+        return count > 0;
     }
 
     public void ResetCooldown()

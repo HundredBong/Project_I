@@ -46,7 +46,7 @@ public class UIStatusBar : MonoBehaviour
         float health = Mathf.Max(0, _stats.health);
         currentHealthText.text = NumberFormatter.FormatNumber(health);
         float exp = _stats.currentExp / _stats.maxExp * 100;
-        currentExpText.text = $"{exp:F2}%";
+        currentExpText.SetText("{0:2}", exp);
         currentLevelText.text = $"Lv.{_stats.level}";
 
         healthFillImage.fillAmount = Mathf.Min(1f, _stats.health / _stats.maxHealth);

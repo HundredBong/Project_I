@@ -174,7 +174,7 @@ public class ActiveSkillSlot : MonoBehaviour
         {
             if (cooldownRemain > 0f)
             {
-                cooldownText.SetText("{0:F1}", cooldownRemain);
+                cooldownText.SetText("{0:1}", cooldownRemain);
             }
             else
             {
