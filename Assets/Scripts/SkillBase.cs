@@ -66,8 +66,9 @@ public abstract class SkillBase
         LayerMask mask = SkillManager.Instance.targetMask;
 
         int count = Physics2D.OverlapCircleNonAlloc(owner.transform.position, range, _buffer, mask);
-
         return count > 0;
+        //Collider2D[] colliders = Physics2D.OverlapCircleAll(owner.transform.position, range, mask);
+        //return colliders.Length > 0;
     }
 
     public void ResetCooldown()

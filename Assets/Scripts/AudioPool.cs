@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class AudioPool : GenericPoolManager<PooledAudio>
 {
-    public GameObject audioSource;
+    public GameObject pooledAudio;
 
     private void Start()
     {
-        Preload(audioSource, 30);
+        Preload(pooledAudio, 30);
     }
 
     public PooledAudio GetAudio()
     {
-        return base.Get(audioSource) as PooledAudio;
+        return base.Get(pooledAudio) as PooledAudio;
     }
 }

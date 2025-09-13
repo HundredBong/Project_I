@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
+using System;
 
 public class Enemy : MonoBehaviour, IPooledObject
 {
@@ -9,19 +10,16 @@ public class Enemy : MonoBehaviour, IPooledObject
     [SerializeField] private EnemyId enemyId;
     public bool isDead = false;
 
-    //private필드, 원활한 디버깅을 위해 public으로 함
-    //TODO : private으로 변경
-    //public EnemyType enemyType;
-    public float health;
-    public float maxHealth;
-    public float damage;
-    public float defend;
-    public float moveSpeed;
-    public float attackRange;
-    public float attackInterval;
-    public float expValue = 1f;
-    public float goldValue;
-    public float chaseRange;
+    [HideInInspector] public float health;
+    [HideInInspector] public float maxHealth;
+    [HideInInspector] public float damage;
+    [HideInInspector] public float defend;
+    [HideInInspector] public float moveSpeed;
+    [HideInInspector] public float attackRange;
+    [HideInInspector] public float attackInterval;
+    [HideInInspector] public float expValue = 1f;
+    [HideInInspector] public float goldValue;
+    [HideInInspector] public float chaseRange;
 
     private bool isFlip;
 
@@ -39,11 +37,10 @@ public class Enemy : MonoBehaviour, IPooledObject
     private Vector3 flipScale;
 
     public int deadCount = 0;
+    public event Action OnHealthChanged;    
 
     private void Awake()
     {
-
-
         OriginScale = transform.localScale;
         Vector3 flipVector = new Vector3(-1f, 1f, 1f);
         flipScale = Vector3.Scale(transform.localScale, flipVector);
@@ -211,6 +208,7 @@ public class Enemy : MonoBehaviour, IPooledObject
     public void TakeDamage(float damage)
     {
         health -= damage;
+        OnHealthChanged?.Invoke();
     }
 
     //private void OnDrawGizmosSelected()
