@@ -457,9 +457,13 @@ public class DataManager : MonoBehaviour
     public string GetSkillDesc(SkillData data, SkillId id)
     {
         //string, object타입보다는 string, string으로 하는게 박싱 적음
+
+        PlayerSkillState state = SkillManager.Instance.GetSkillState(id);
+        float persent = data.BaseValue + (state.Level * data.BaseValueIncrease);
+
         Dictionary<string, string> args = new Dictionary<string, string>
         {
-            { "damage", SkillManager.Instance.CalculateSkillDamage(data).ToString("F0") },
+            { "damage", persent.ToString("F0") },
             { "hitCount", ((int)data.HitCount).ToString() },
             { "targetCount", ((int)data.TargetCount).ToString() },
             { "chance", ((float)data.StatucChance).ToString("F0") },

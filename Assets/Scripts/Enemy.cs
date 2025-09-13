@@ -37,7 +37,7 @@ public class Enemy : MonoBehaviour, IPooledObject
     private Vector3 flipScale;
 
     public int deadCount = 0;
-    public event Action OnHealthChanged;    
+    public event Action OnHealthChanged;
 
     private void Awake()
     {
@@ -207,8 +207,10 @@ public class Enemy : MonoBehaviour, IPooledObject
 
     public void TakeDamage(float damage)
     {
+        Debug.Log($"Damage : {damage}");
         health -= damage;
         OnHealthChanged?.Invoke();
+        ObjectPoolManager.Instance.uiPool.GetDamageText().Show(damage, transform.position + Vector3.up * 1.5f);
     }
 
     //private void OnDrawGizmosSelected()

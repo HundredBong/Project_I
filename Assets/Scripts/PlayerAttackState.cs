@@ -86,15 +86,18 @@ public class PlayerAttackState : IState
 
         //최종 대미지 계산, 크리일시 baseDamage로, 아니면 baseDamage에다가 크리티컬 보너스 추가
         float finalDamage = isCritical ? baseDamage * (2f + (criBonus * 0.01f)) : baseDamage;
+        Debug.Log($"damage : {baseDamage}, final : {finalDamage}");
 
-        //for (int i = 0; i < count; i++)
-        //{
-        //    Collider2D col = _buffer[i];
-        //    if (col != null && col.TryGetComponent<Enemy>(out Enemy enemy) && enemy.isDead == false)
-        //    {
-        //        enemy.TakeDamage(finalDamage);
-        //    }
-        //}
+        for (int i = 0; i < count; i++)
+        {
+            Collider2D col = _buffer[i];
+            if (col != null && col.TryGetComponent<Enemy>(out Enemy enemy) && enemy.isDead == false)
+            {
+                enemy.TakeDamage(finalDamage);
+            }
+        }
+
+        return;
         Vector3 rawDir = owner.player.TargetEnemy.transform.position - owner.player.transform.position;
 
         Vector3 dir = new Vector3(rawDir.x, 0f, 0f).normalized;
@@ -103,6 +106,7 @@ public class PlayerAttackState : IState
 
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll
             (center, owner.player.Stat.attackRange, owner.player.targetLayerMask);
+
         foreach (Collider2D col in hitEnemies)
         {
             Enemy enemy = col.GetComponent<Enemy>();

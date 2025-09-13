@@ -14,6 +14,7 @@ public class ObjectPoolManager : MonoBehaviour
     public UIPool uiPool;
     public AudioPool audioPool;
 
+
     private void Awake()
     {
         if (Instance != null && Instance != this)

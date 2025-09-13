@@ -216,15 +216,6 @@ public class SkillManager : MonoBehaviour
         onRequestResetAllCooldowns?.Invoke();
     }
 
-    private void Update()
-    {
-        //if (Input.GetKeyDown(KeyCode.R))
-        //{
-        //    //디버그용, 모든 스킬 쿨타임 초기화
-        //    RequestResetAllCooldowns();
-        //}
-    }
-
 
     [ContextMenu("ALL")]
     private void AddAllSkill()

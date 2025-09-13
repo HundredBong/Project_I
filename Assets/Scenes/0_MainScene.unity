@@ -2832,7 +2832,8 @@ MonoBehaviour:
   toastMessagePrefab: {fileID: 5398472024194139556, guid: fbad3cbbd860d5947acb12da64447048, type: 3}
   toastRewardPrefab: {fileID: 2623857179059229367, guid: 7d8738b28e8e6674f83aad4c5f5e0614, type: 3}
   rewardSlotPrebfab: {fileID: 3391573251040031817, guid: d3d506d8b6f136149b0865441b6ec410, type: 3}
-  rankingPrefab: {fileID: 0}
+  rankingPrefab: {fileID: 564382478753553678, guid: 1b9817485dff30140a3eb1663a1f093d, type: 3}
+  damageTextPrefab: {fileID: 2132055427162243304, guid: fe07ba2cfc4190b4587c26aaff1b4ea0, type: 3}
 --- !u!1 &957239923
 GameObject:
   m_ObjectHideFlags: 0
