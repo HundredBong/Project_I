@@ -36,4 +36,4 @@
 - 설계 패턴 적용 : 인터페이스 기반 추상화, 유한 상태머신, 팩토리 패턴 적용을 통한 유지보수성과 확장성 향상
 
 ## 📥 다운로드
-- [Android APK] 
+- [Android APK] https://github.com/HundredBong/Project_I/releases/tag/temp
