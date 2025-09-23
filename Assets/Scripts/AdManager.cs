@@ -13,7 +13,17 @@ public class AdManager : MonoBehaviour
     private InterstitialAd _interstitial;
     private RewardedAd _rewarded;
     private bool _hasShownThisLaunch = false; //앱 시작 시 광고를 보여줬는지 여부
-    private bool _rewardEarned = false; //광고에서 보상을 받았는지 여부
+    private bool _interstitialReady = false;
+    private bool _rewardEarned = false;
+    public bool InterstitialReady
+    {
+        get
+        {
+            return _interstitial != null && _interstitialReady == true;
+
+        }
+    }
+
     private CancellationTokenSource _cts;
 
     private void Awake()
@@ -57,10 +67,39 @@ public class AdManager : MonoBehaviour
         RunLaunchInterstitialFlowAsync(_cts.Token).Forget();
     }
 
+    public async UniTask PreloadLaunchInterstitialAsync(CancellationToken ct)
+    {
+#if UNITY_EDITOR                 
+        Debug.Log("[AdManager] 에디터에서 전면 광고 스킵");
+        return;
+#elif UNITY_ANDROID || UNITY_IOS                           
+        if (_interstitial != null || _interstitialReady)
+        {
+            return;
+        }
+
+        await WaitUntilConsentReadyAsync(10000, ct);
+
+        bool ok = await LoadInterstitialAsync(ct);
+
+        if (ok && _interstitial != null)
+        {
+            _interstitialReady = true;
+        }
+#endif
+    }
+
+
     private async UniTaskVoid RunLaunchInterstitialFlowAsync(CancellationToken ct)
     {
-
-#if UNITY_ANDROID || UNITY_IOS
+#if UNITY_EDITOR
+        //ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] 에디터에서 전면 광고 스킵");
+        Debug.Log("[AdManager] 에디터에서 전면 광고 스킵");
+        ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("GameStart");
+        _hasShownThisLaunch = true;
+        GameManager.Instance.loadSceneReady = true;
+        return;
+#elif UNITY_ANDROID || UNITY_IOS
         await WaitUntilConsentReadyAsync(10000, ct);
 
         bool loaded = await LoadInterstitialAsync(ct);
@@ -75,13 +114,7 @@ public class AdManager : MonoBehaviour
         await UniTask.Delay(300, cancellationToken: ct);
 
         ShowInterstitialOnce();
-#else 
-        //ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] 에디터에서 전면 광고 스킵");
-        Debug.Log("[AdManager] 에디터에서 전면 광고 스킵");
-        ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("GameStart");
-        _hasShownThisLaunch = true;
-        GameManager.Instance.loadSceneReady = true;
-        return;
+
 #endif
     }
 
@@ -96,14 +129,6 @@ public class AdManager : MonoBehaviour
             //만 13세와 미만 같은 어린 사용자 여부, true면 맞춤형 광고 제한 걸림
             TagForUnderAgeOfConsent = false,
             ConsentDebugSettings = new ConsentDebugSettings()
-            {
-                //테스트용으로 사용
-                //DebugGeography = DebugGeography.EEA,//유럽 경제 지역(European Economic Area)으로 설정
-                TestDeviceHashedIds = new List<string>()
-                {
-                    //"A58D6EFF70C15B53A410BFEC76E0DE17"
-                }
-            }
         };
 
         UniTaskCompletionSource<bool> tcsUpdate = new UniTaskCompletionSource<bool>();
@@ -192,6 +217,7 @@ public class AdManager : MonoBehaviour
     {
         if (_interstitial != null)
         {
+            _interstitialReady = true;
             return true;
         }
 
@@ -209,12 +235,14 @@ public class AdManager : MonoBehaviour
             if (error != null || ad == null)
             {
                 Debug.LogWarning($"[AdManager] 전면 광고 로드 실패: {error?.GetMessage()}");
+                _interstitialReady = false;
                 tcs.TrySetResult(false);
                 return;
             }
 
             //에러가 없다면 광고 객체를 저장함, 전면 광고는 소모품이고 한 번 보여주면 끝
             _interstitial = ad;
+            _interstitialReady = true;
 
             //전면 광고 이벤트 핸들러 등록
             _interstitial.OnAdFullScreenContentClosed += () =>
@@ -223,6 +251,7 @@ public class AdManager : MonoBehaviour
                 GameManager.Instance.loadSceneReady = true;
                 ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("GameStart");
                 _interstitial = null;
+                _interstitialReady = false;
             };
 
             _interstitial.OnAdFullScreenContentFailed += (AdError adError) =>
@@ -231,6 +260,7 @@ public class AdManager : MonoBehaviour
                 GameManager.Instance.loadSceneReady = true;
                 ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("GameStart");
                 _interstitial = null;
+                _interstitialReady = false;
             };
 
             tcs.TrySetResult(true);
@@ -240,6 +270,41 @@ public class AdManager : MonoBehaviour
         {
             return await tcs.Task;
         }
+    }
+
+    public async UniTask TryShowPreloadedLaunchInterstitialAsync(CancellationToken ct)
+    {
+#if UNITY_EDITOR                 
+        Debug.Log("[AdManager] 에디터에서 전면 광고 스킵");
+        ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("GameStart");
+        _hasShownThisLaunch = true;
+        GameManager.Instance.loadSceneReady = true;
+        return;
+#elif UNITY_ANDROID || UNITY_IOS
+        if (_hasShownThisLaunch)
+        {
+            return;
+        }
+
+        if (InterstitialReady)
+        {
+            ShowInterstitialOnce();
+            return;
+        }
+
+        //프리로드 실패시 다시 로드
+        bool ok = await LoadInterstitialAsync(ct);
+
+        if (ok && _interstitial != null)
+        {
+            _interstitialReady = true;
+        }
+
+        if (InterstitialReady)
+        {
+            ShowInterstitialOnce();
+        }
+#endif
     }
 
     private async UniTask<bool> LoadRewardedAsync(CancellationToken ct)
@@ -291,7 +356,12 @@ public class AdManager : MonoBehaviour
 
     public async UniTask<bool> ShowRewardedAsync(CancellationToken ct)
     {
-#if UNITY_ANDROID || UNITY_IOS
+#if UNITY_EDITOR
+        //ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] 에디터에서 보상형 광고 스킵");
+        Debug.Log("[AdManager] 에디터에서 보상형 광고 스킵");
+        await UniTask.Yield();
+        return true;
+#elif UNITY_ANDROID || UNITY_IOS
         //광고 불러오기
         bool loaded = await LoadRewardedAsync(ct);
 
@@ -319,7 +389,7 @@ public class AdManager : MonoBehaviour
 
         _rewarded.OnAdFullScreenContentFailed += (AdError adError) =>
         {
-            ObjectPoolManager.Instance.uiPool.GetMessage().LogError($"[AdManager] 보상형 광고 실패: {adError.GetMessage()}");
+            //ObjectPoolManager.Instance.uiPool.GetMessage().LogError($"[AdManager] 보상형 광고 실패: {adError.GetMessage()}");
             tcsShow.TrySetResult(false);
         };
 
@@ -328,11 +398,7 @@ public class AdManager : MonoBehaviour
             //광고가 끝날 때까지 대기
             return await tcsShow.Task;
         }
-#else
-        //ObjectPoolManager.Instance.uiPool.GetMessage().Log("[AdManager] 에디터에서 보상형 광고 스킵");
-        Debug.Log("[AdManager] 에디터에서 보상형 광고 스킵");
-        await UniTask.Yield();
-        return true;
+
 #endif
     }
 
@@ -361,7 +427,7 @@ public class AdManager : MonoBehaviour
 #elif UNITY_IOS
     return "ca-app-pub-3940256099942544/4411468910"; //테스트 전면 광고
 #else
-    return "unexpected_platform";
+        return "unexpected_platform";
 #endif
     }
 

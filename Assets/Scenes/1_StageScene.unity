@@ -9393,7 +9393,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 296867241}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
   m_Name: 
@@ -65354,6 +65354,7 @@ MonoBehaviour:
   closeButton: {fileID: 6343602377650178897}
   contentRoot: {fileID: 7935282931002458467}
   closeButtonText: {fileID: 216712000}
+  _scrollRect: {fileID: 1825392728}
   _summon10Button: {fileID: 1604276011}
   _summon30Button: {fileID: 568704131}
   _summon100Button: {fileID: 948078144}

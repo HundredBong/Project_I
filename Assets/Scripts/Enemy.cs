@@ -207,7 +207,7 @@ public class Enemy : MonoBehaviour, IPooledObject
 
     public void TakeDamage(float damage)
     {
-        Debug.Log($"Damage : {damage}");
+        //Debug.Log($"Damage : {damage}");
         health -= damage;
         OnHealthChanged?.Invoke();
         ObjectPoolManager.Instance.uiPool.GetDamageText().Show(damage, transform.position + Vector3.up * 1.5f);

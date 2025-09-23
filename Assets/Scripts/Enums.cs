@@ -47,3 +47,5 @@ public enum ShopLimitType { None, Daily, Weekly, Monthly, Account }
 public enum DungeonType { None = -1, EnhanceDungeon, SkillDungeon }
 
 public enum StageMoveType { Manual, Dead, Clear }
+
+public enum  FirebaseLoadStep { None, PlayerProgress, Stage, Skill, SkillEquip, Inventory, SummonProgress, PurchaseProgress, DungeonCleared, Nickname,}

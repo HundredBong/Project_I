@@ -101,7 +101,7 @@ public class OfflineRewardHandler : MonoBehaviour
 
 
 
-            ObjectPoolManager.Instance.uiPool.GetMessage().Log($"방치 시간 : {minutes}, 획득한 보상 : {(int)reward}");
+            //ObjectPoolManager.Instance.uiPool.GetMessage().Log($"방치 시간 : {minutes}, 획득한 보상 : {(int)reward}");
             Debug.Log($"방치 시간 : {minutes}, 획득한 보상 : {(int)reward}");
 
             //중복 지급 방지용 시간 저장

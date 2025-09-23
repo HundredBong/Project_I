@@ -46,6 +46,8 @@ public class DataManager : MonoBehaviour
 
     [SerializeField] private bool loadByResources = false;
 
+    public Action<int, int> OnDataLoading;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -203,8 +205,11 @@ public class DataManager : MonoBehaviour
             return;
         }
 
+        int count = 0;
+
         foreach (HotdataFile remoteFile in remote.file)
         {
+            float timeStart = Time.realtimeSinceStartup;
             bool needDownload = true;
             string localPath = Path.Combine(_localDir, remoteFile.name);
             if (local != null && local.file != null)
@@ -235,7 +240,12 @@ public class DataManager : MonoBehaviour
                 }
             }
 
-            if (!needDownload) continue;
+            if (!needDownload) 
+            {
+                count++;
+                OnDataLoading?.Invoke(count, remote.file.Length);
+                continue; 
+            }
 
             Debug.Log($"[DataManager] {remoteFile.name} 다운로드 필요");
 
@@ -245,6 +255,8 @@ public class DataManager : MonoBehaviour
             {
                 Debug.LogWarning($"[DataManager] 다운로드에 실패함, {remoteFile.name}");
             }
+            count++;
+            OnDataLoading?.Invoke(count, remote.file.Length);
         }
     }
 
@@ -401,7 +413,6 @@ public class DataManager : MonoBehaviour
         foreach (AudioClip clip in clips)
         {
             audioDic.Add(clip.name, clip);
-            Debug.Log(clip.name);
         }
     }
 

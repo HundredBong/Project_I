@@ -86,7 +86,7 @@ public class PlayerAttackState : IState
 
         //최종 대미지 계산, 크리일시 baseDamage로, 아니면 baseDamage에다가 크리티컬 보너스 추가
         float finalDamage = isCritical ? baseDamage * (2f + (criBonus * 0.01f)) : baseDamage;
-        Debug.Log($"damage : {baseDamage}, final : {finalDamage}");
+        //Debug.Log($"damage : {baseDamage}, final : {finalDamage}");
 
         for (int i = 0; i < count; i++)
         {

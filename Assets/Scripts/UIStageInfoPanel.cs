@@ -92,7 +92,7 @@ public class UIStageInfoPanel : MonoBehaviour
     private void RefreshStage(DungeonType type, int stage, bool canBoss)
     {
         stageText.text = $"{DataManager.Instance.GetLocalizedText($"UI_{type}")} {stage}";
-        Debug.Log($"타입 : {DataManager.Instance.GetLocalizedText($"UI_{type}")} 스테 : {stage}");
+        //Debug.Log($"타입 : {DataManager.Instance.GetLocalizedText($"UI_{type}")} 스테 : {stage}");
         StopTimer();
 
 

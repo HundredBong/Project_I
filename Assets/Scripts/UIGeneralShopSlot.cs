@@ -306,7 +306,7 @@ public class UIGeneralShopSlot : MonoBehaviour
             else
             {
                 //광고 미시청, 표시 실패
-                ObjectPoolManager.Instance.uiPool.GetMessage().Init("Warning_AdNotCompleted");
+                //ObjectPoolManager.Instance.uiPool.GetMessage().Init("");
             }
 
             _isClicking = false;

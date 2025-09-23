@@ -13,10 +13,23 @@ public class DelayCallManager : MonoBehaviour
     {
         public float time; //남은 시간
         public System.Action callback; //시간 됐을 때 실행할 함수
+
+        public void Init(float delay, System.Action cb)
+        {
+            time = delay;
+            callback = cb;
+        }
+
+        public void Clear()
+        {
+            time = 0f;
+            callback = null;
+        }
     }
 
     //예약된 딜레이 작업들
     private readonly List<DelayTask> taskList = new List<DelayTask>();
+    private readonly Stack<DelayTask> pool = new Stack<DelayTask>();
 
     private void Awake()
     {
@@ -37,23 +50,37 @@ public class DelayCallManager : MonoBehaviour
         //i는 증가하는데 Count가 줄어들거나 하면 요소가 건너뛰어질 위험도 있음
         for (int i = taskList.Count - 1; i >= 0; i--)
         {
-            taskList[i].time -= delta;
+            DelayTask task = taskList[i];
+            task.time -= delta;
 
-            if (taskList[i].time <= 0f)
+            if (task.time <= 0f)
             {
-                taskList[i].callback?.Invoke();
+                task.callback?.Invoke();
+
+                task.Clear();
                 taskList.RemoveAt(i);
+                pool.Push(task);
             }
         }
     }
 
     public void CallLater(float delay, System.Action callback)
     {
-        //외부에서 호출하면 taskList에 저장되고, Update에서 Invoke시켜줌
-        taskList.Add(new DelayTask
+        DelayTask task;
+
+        if (pool.Count > 0)
         {
-            time = delay,
-            callback = callback
-        });
+            Debug.Log("DelayTask 풀에서 재사용");
+            task = pool.Pop();
+        }
+        else
+        {
+            Debug.Log("DelayTask 풀에서 새로 생성");
+            task = new DelayTask();
+        }
+
+        //외부에서 호출하면 taskList에 저장되고, Update에서 Invoke시켜줌
+        task.Init(delay, callback);
+        taskList.Add(task);
     }
 }

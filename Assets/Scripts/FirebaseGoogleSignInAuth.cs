@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using Firebase;
 using Firebase.Auth;
 using Google;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,7 +14,8 @@ public class FirebaseGoogleSignInAuth : MonoBehaviour
     private GoogleSignInConfiguration _config;
 
     [SerializeField] private Button _signInButton;
-
+    [SerializeField] private TextMeshProUGUI _signInButtonText;
+    
     private void Awake()
     {
         _auth = FirebaseAuth.DefaultInstance;
@@ -32,11 +34,19 @@ public class FirebaseGoogleSignInAuth : MonoBehaviour
     private void OnEnable()
     {
         _signInButton?.onClick.AddListener(SignIn);
+
+        DataManager.Instance.OnDataLoading += UpdateDataText;
+        GameManager.Instance.OnFirebaseLoading += UpdateFirebaseText;
+        GameManager.Instance.OnFirebaseLoadComplete += HideButton;
     }
 
     private void OnDisable()
     {
         _signInButton?.onClick.RemoveListener(SignIn);
+
+        DataManager.Instance.OnDataLoading -= UpdateDataText;
+        GameManager.Instance.OnFirebaseLoading -= UpdateFirebaseText;
+        GameManager.Instance.OnFirebaseLoadComplete -= HideButton;
     }
 
     private void Start()
@@ -46,9 +56,7 @@ public class FirebaseGoogleSignInAuth : MonoBehaviour
 
     public void SignIn()
     {
-#if UNITY_ANDROID || UNITY_IOS
-        SignInAsync().Forget();
-#else
+#if UNITY_EDITOR             
         //AdManager.Instance.ShowLaunchInterstitialOnce();
 
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
@@ -73,8 +81,9 @@ public class FirebaseGoogleSignInAuth : MonoBehaviour
             }
         });
 
-        _signInButton?.gameObject.SetActive(false);
-
+        _signInButton.interactable = false;
+#elif UNITY_ANDROID || UNITY_IOS
+        SignInAsync().Forget();
 #endif
     }
 
@@ -88,7 +97,7 @@ public class FirebaseGoogleSignInAuth : MonoBehaviour
             if (googleUser == null || string.IsNullOrEmpty(googleUser.IdToken))
             {
                 Debug.LogError("[Auth] Google Sign-In 실패 : IdToken 없음");
-                ObjectPoolManager.Instance.uiPool.GetMessage().LogError("[Auth] Google Sign-In 실패 : IdToken 없음");
+                //ObjectPoolManager.Instance.uiPool.GetMessage().LogError("[Auth] Google Sign-In 실패 : IdToken 없음");
                 return;
             }
 
@@ -101,12 +110,12 @@ public class FirebaseGoogleSignInAuth : MonoBehaviour
 
             GameManager.Instance.firebaseReady = true;
 
-            _signInButton?.gameObject.SetActive(false);
+            _signInButton.interactable = false;
         }
         catch (GoogleSignIn.SignInException e)
         {
-            Debug.LogError($"[Auth] 로그인 예외 : {e.Message}, {e.Status}"); 
-            ObjectPoolManager.Instance.uiPool.GetMessage().LogError($"[Auth] 로그인 예외 : {e.Message}, {e.Status}");
+            Debug.LogError($"[Auth] 로그인 예외 : {e.Message}, {e.Status}");
+            //ObjectPoolManager.Instance.uiPool.GetMessage().LogError($"[Auth] 로그인 예외 : {e.Message}, {e.Status}");
         }
     }
 
@@ -122,7 +131,7 @@ public class FirebaseGoogleSignInAuth : MonoBehaviour
             catch (System.Exception e)
             {
                 Debug.LogError($"[Auth] 로그아웃 예외 : {e}");
-                ObjectPoolManager.Instance.uiPool.GetMessage().LogError($"[Auth] 로그아웃 예외 : {e.Message}");
+                //ObjectPoolManager.Instance.uiPool.GetMessage().LogError($"[Auth] 로그아웃 예외 : {e.Message}");
             }
             finally
             {
@@ -130,5 +139,20 @@ public class FirebaseGoogleSignInAuth : MonoBehaviour
             }
         }
         , "UI_EnsureSignOut");
+    }
+
+    private void UpdateDataText(int current, int total)
+    {
+        _signInButtonText.text = $"{DataManager.Instance.GetLocalizedText("DataLoading...")} {current} / {total}";
+    }
+
+    private void UpdateFirebaseText(int current, int total)
+    {
+        _signInButtonText.text = $"{DataManager.Instance.GetLocalizedText("UI_FirebaseLoading")} {current} / {total}";
+    }
+
+    private void HideButton()
+    {
+        _signInButton?.gameObject.SetActive(false);
     }
 }

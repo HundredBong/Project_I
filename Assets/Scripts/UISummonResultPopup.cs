@@ -10,6 +10,7 @@ public class UISummonResultPopup : UIPopup
 {
     [SerializeField] private Transform contentRoot;
     [SerializeField] private TextMeshProUGUI closeButtonText;
+    [SerializeField] private ScrollRect _scrollRect;
 
     private Coroutine showResultCoroutine;
     private WaitForSeconds _commonWait;
@@ -180,7 +181,7 @@ public class UISummonResultPopup : UIPopup
                 ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Summon_Result_Common");
                 yield return _commonWait;
             }
-
+            _scrollRect.verticalNormalizedPosition = 0f;
         }
 
         SetButtonsActive(true);
@@ -207,6 +208,7 @@ public class UISummonResultPopup : UIPopup
                 ObjectPoolManager.Instance.audioPool.GetAudio().PlaySFX("Summon_Result_Common");
                 yield return _commonWait;
             }
+            _scrollRect.verticalNormalizedPosition = 0f;
         }
 
         SetButtonsActive(true);

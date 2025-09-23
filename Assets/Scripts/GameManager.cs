@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
 using UnityEditor;
 #if UNITY_EDITOR
 using UnityEditor.SceneManagement;
@@ -30,6 +31,9 @@ public class GameManager : MonoBehaviour
     public bool loadSceneReady = false;
 
     public ShopManager ShopManager { get; private set; }
+
+    public Action<int, int> OnFirebaseLoading;
+    public Action OnFirebaseLoadComplete;
 
     private void Awake()
     {
@@ -81,7 +85,12 @@ public class GameManager : MonoBehaviour
         //FirebaseInit에서 초기화 완료까지 대기함
         await UniTask.WaitUntil(() => firebaseReady);
 
+        CancellationTokenSource adCts = new CancellationTokenSource();
+        AdManager.Instance.PreloadLaunchInterstitialAsync(adCts.Token).Forget();
+
         await DataManager.Instance.InitAsync();
+
+        int total = Enum.GetValues(typeof(FirebaseLoadStep)).Length - 1;
 
         //불러오기 실행
         PlayerProgressSaveData playerProgress = await statSaver.LoadPlayerProgressDataAsync();
@@ -89,13 +98,15 @@ public class GameManager : MonoBehaviour
         if (playerProgress.progressValues == null || playerProgress.progressValues.Count == 0)
         {
             Debug.Log("[GameManager] 신규 유저 다이아 지급");
-            stats.Diamond = 100000;
+            stats.Diamond = 500000;
             await statSaver.SavePlayerProgressDataAsync(stats.GetProgressSaveData());
         }
         else
         {
             stats.InitializeFromProgressData(playerProgress);
         }
+
+        OnFirebaseLoading?.Invoke((int)FirebaseLoadStep.PlayerProgress, total);
 
         StageSaveData stageData = await statSaver.LoadStageDataAsync();
         if (stageData == null || stageData.CurrentStageId == 0 || stageData.MaxClearedStageId == 0)
@@ -106,14 +117,21 @@ public class GameManager : MonoBehaviour
         }
         StageManager.Instance.SetStageData(stageData);
 
+        OnFirebaseLoading?.Invoke((int)FirebaseLoadStep.Stage, total);
+
+
         //StageManager 
         //StageManager.Instance.StartStage();
 
         PlayerSkillSaveData skillState = await statSaver.LoadPlayerSkillDataAsync();
         SkillManager.Instance.LoadFrom(skillState);
 
+        OnFirebaseLoading?.Invoke((int)FirebaseLoadStep.Skill, total);
+
         SkillEquipSaveData equipData = await statSaver.LoadSkillEquipDataAsync();
         SkillManager.Instance.SetEquippedSkills(equipData.equippedSkills);
+
+        OnFirebaseLoading?.Invoke((int)FirebaseLoadStep.SkillEquip, total);
 
         //ActiveSkillPanel의 Start에서 Refresh하도록 함
         //FindObjectOfType<ActiveSkillPanel>().Refresh(SkillManager.Instance.GetEquippedSkills());
@@ -133,6 +151,8 @@ public class GameManager : MonoBehaviour
         InventoryManager.Instance.SetInventoryData(inventoryData);
         inventoryReady = true;
 
+        OnFirebaseLoading?.Invoke((int)FirebaseLoadStep.Inventory, total);
+
         var summonProgressData = await statSaver.LoadSummonProgressDataAsync();
         if (summonProgressData == null || summonProgressData.SummonProgressEntries.Count == 0)
         {
@@ -145,6 +165,8 @@ public class GameManager : MonoBehaviour
             await statSaver.SaveSummonProgressAsync(ShopManager.BuildSummonProgressData());
         }
         ShopManager.InitSummonProgressData(summonProgressData);
+
+        OnFirebaseLoading?.Invoke((int)FirebaseLoadStep.SummonProgress, total);
 
         var purchaseProgressData = await statSaver.LoadPurchaseData();
 
@@ -161,23 +183,14 @@ public class GameManager : MonoBehaviour
         ShopManager.InitPurchaseData(purchaseProgressData);
         summonReady = true;
 
+        OnFirebaseLoading?.Invoke((int)FirebaseLoadStep.PurchaseProgress, total);
+
         var dungeonClearedData = await statSaver.LoadDungeonClearedData();
 
         if (dungeonClearedData == null)
         {
             dungeonClearedData = new DungeonSaveData();
         }
-
-        string nickName = await statSaver.LoadNickname();
-        Debug.Log(nickName);
-        if (string.IsNullOrEmpty(nickName) || nickName == "Default")
-        {
-            UniTaskCompletionSource<string> tcs = new UniTaskCompletionSource<string>();
-            UIManager.Instance.PopupOpen<UINicknamePopup>().Init(tcs);
-            string newNickName = await tcs.Task;
-            await statSaver.SaveNickname(newNickName);
-        }
-
         //게임을 처음 시작한 경우
         if (dungeonClearedData.DungeonClearedData.Count == 0)
         {
@@ -189,12 +202,23 @@ public class GameManager : MonoBehaviour
 
             statSaver.SaveDungeonClearedData(dungeonClearedData).Forget();
         }
-
         StageManager.Instance.SetDungeonData(dungeonClearedData);
 
-        //loadSceneReady = true; <- AdManager에서 처리
+        OnFirebaseLoading?.Invoke((int)FirebaseLoadStep.DungeonCleared, total);
 
-        AdManager.Instance.ShowLaunchInterstitialOnce();// <- 파이어베이스 로그인에서 처리
+        string nickName = await statSaver.LoadNickname();
+        Debug.Log(nickName);
+        if (string.IsNullOrEmpty(nickName) || nickName == "Default")
+        {
+            UniTaskCompletionSource<string> tcs = new UniTaskCompletionSource<string>();
+            UIManager.Instance.PopupOpen<UINicknamePopup>().Init(tcs);
+            string newNickName = await tcs.Task;
+            await statSaver.SaveNickname(newNickName);
+        }
+
+        OnFirebaseLoading?.Invoke((int)FirebaseLoadStep.Nickname, total);
+
+        await AdManager.Instance.TryShowPreloadedLaunchInterstitialAsync(adCts.Token);
     }
 
     private bool CheckReadyForLoad()
